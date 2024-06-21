@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DiningHub.Models;
 using Microsoft.AspNetCore.Identity;
 
-namespace DiningHub.Areas.Identity.Data;
-
-// Add profile data for application users by adding properties to the DiningHubUser class
-public class DiningHubUser : IdentityUser
+namespace DiningHub.Areas.Identity.Data
 {
-    public string Address { get; set; }
+    public class DiningHubUser : IdentityUser
+    {
+        public int Points { get; set; }
+        public CustomerProfile Profile { get; set; }
+        public ICollection<Order> Orders { get; set; }
+        public ICollection<Feedback> Feedbacks { get; set; }
+    }
 }
-

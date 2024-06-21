@@ -6,14 +6,10 @@ namespace DiningHub.Models
 {
     public class CustomerProfile
     {
-        [Key]
         public int CustomerProfileId { get; set; }
-
-        [ForeignKey("User")]
+        public string Address { get; set; }
+        public string PhoneNumber { get; set; }
         public string UserId { get; set; }
         public DiningHubUser User { get; set; }
-
-        public int Points { get; set; }
-        // Add other customer-specific properties here
     }
 }

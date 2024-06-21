@@ -7,7 +7,7 @@ var connectionString = builder.Configuration.GetConnectionString("DiningHubConte
 
 // Configure DbContext with SQL Server
 builder.Services.AddDbContext<DiningHubContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DiningHubContextConnection")));
 
 // Configure Identity
 builder.Services.AddDefaultIdentity<DiningHubUser>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -16,6 +16,7 @@ builder.Services.AddDefaultIdentity<DiningHubUser>(options => options.SignIn.Req
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages();
 
 var app = builder.Build();
 

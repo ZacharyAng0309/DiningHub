@@ -2,5 +2,6 @@
 
 public class UserRole : IdentityRole
 {
-    public string Description { get; set; }
+    public int UserRoleId { get; set; }
+    public string RoleName { get; set; }
 }
