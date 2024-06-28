@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DiningHub.Migrations
 {
     [DbContext(typeof(DiningHubContext))]
-    [Migration("20240621174307_initial-db")]
-    partial class initialdb
+    [Migration("20240628195455_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
