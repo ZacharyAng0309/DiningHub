@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DiningHub.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class dbcreation : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -30,6 +30,8 @@ namespace DiningHub.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Points = table.Column<int>(type: "int", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -52,32 +54,37 @@ namespace DiningHub.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Menus",
+                name: "InventoryItems",
                 columns: table => new
                 {
-                    MenuId = table.Column<int>(type: "int", nullable: false)
+                    InventoryItemId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Menus", x => x.MenuId);
+                    table.PrimaryKey("PK_InventoryItems", x => x.InventoryItemId);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Reports",
+                name: "MenuItems",
                 columns: table => new
                 {
-                    ReportId = table.Column<int>(type: "int", nullable: false)
+                    MenuItemId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ReportType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    GeneratedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ReportData = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Category = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsAvailable = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Reports", x => x.ReportId);
+                    table.PrimaryKey("PK_MenuItems", x => x.MenuItemId);
                 });
 
             migrationBuilder.CreateTable(
@@ -187,34 +194,14 @@ namespace DiningHub.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CustomerProfiles",
-                columns: table => new
-                {
-                    CustomerProfileId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CustomerProfiles", x => x.CustomerProfileId);
-                    table.ForeignKey(
-                        name: "FK_CustomerProfiles_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Feedbacks",
                 columns: table => new
                 {
                     FeedbackId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Comments = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Comments = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    Rating = table.Column<int>(type: "int", nullable: false),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -234,37 +221,18 @@ namespace DiningHub.Migrations
                 {
                     OrderId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CustomerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Orders", x => x.OrderId);
                     table.ForeignKey(
-                        name: "FK_Orders_AspNetUsers_CustomerId",
-                        column: x => x.CustomerId,
+                        name: "FK_Orders_AspNetUsers_UserId",
+                        column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Inventories",
-                columns: table => new
-                {
-                    InventoryId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ItemName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
-                    MenuId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Inventories", x => x.InventoryId);
-                    table.ForeignKey(
-                        name: "FK_Inventories_Menus_MenuId",
-                        column: x => x.MenuId,
-                        principalTable: "Menus",
-                        principalColumn: "MenuId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -272,44 +240,23 @@ namespace DiningHub.Migrations
                 name: "OrderItems",
                 columns: table => new
                 {
-                    OrderItemId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
                     OrderId = table.Column<int>(type: "int", nullable: false),
-                    MenuId = table.Column<int>(type: "int", nullable: false),
-                    Quantity = table.Column<int>(type: "int", nullable: false)
+                    MenuItemId = table.Column<int>(type: "int", nullable: false),
+                    OrderItemId = table.Column<int>(type: "int", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_OrderItems", x => x.OrderItemId);
+                    table.PrimaryKey("PK_OrderItems", x => new { x.OrderId, x.MenuItemId });
                     table.ForeignKey(
-                        name: "FK_OrderItems_Menus_MenuId",
-                        column: x => x.MenuId,
-                        principalTable: "Menus",
-                        principalColumn: "MenuId",
+                        name: "FK_OrderItems_MenuItems_MenuItemId",
+                        column: x => x.MenuItemId,
+                        principalTable: "MenuItems",
+                        principalColumn: "MenuItemId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_OrderItems_Orders_OrderId",
-                        column: x => x.OrderId,
-                        principalTable: "Orders",
-                        principalColumn: "OrderId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Receipts",
-                columns: table => new
-                {
-                    ReceiptId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    OrderId = table.Column<int>(type: "int", nullable: false),
-                    TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    DateIssued = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Receipts", x => x.ReceiptId);
-                    table.ForeignKey(
-                        name: "FK_Receipts_Orders_OrderId",
                         column: x => x.OrderId,
                         principalTable: "Orders",
                         principalColumn: "OrderId",
@@ -356,41 +303,19 @@ namespace DiningHub.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CustomerProfiles_UserId",
-                table: "CustomerProfiles",
-                column: "UserId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Feedbacks_UserId",
                 table: "Feedbacks",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Inventories_MenuId",
-                table: "Inventories",
-                column: "MenuId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_OrderItems_MenuId",
+                name: "IX_OrderItems_MenuItemId",
                 table: "OrderItems",
-                column: "MenuId");
+                column: "MenuItemId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OrderItems_OrderId",
-                table: "OrderItems",
-                column: "OrderId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Orders_CustomerId",
+                name: "IX_Orders_UserId",
                 table: "Orders",
-                column: "CustomerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Receipts_OrderId",
-                table: "Receipts",
-                column: "OrderId",
-                unique: true);
+                column: "UserId");
         }
 
         /// <inheritdoc />
@@ -412,28 +337,19 @@ namespace DiningHub.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "CustomerProfiles");
-
-            migrationBuilder.DropTable(
                 name: "Feedbacks");
 
             migrationBuilder.DropTable(
-                name: "Inventories");
+                name: "InventoryItems");
 
             migrationBuilder.DropTable(
                 name: "OrderItems");
 
             migrationBuilder.DropTable(
-                name: "Receipts");
-
-            migrationBuilder.DropTable(
-                name: "Reports");
-
-            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Menus");
+                name: "MenuItems");
 
             migrationBuilder.DropTable(
                 name: "Orders");

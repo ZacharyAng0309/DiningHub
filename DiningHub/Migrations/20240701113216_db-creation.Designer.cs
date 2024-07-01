@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DiningHub.Migrations
 {
     [DbContext(typeof(DiningHubContext))]
-    [Migration("20240628195455_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20240701113216_db-creation")]
+    partial class dbcreation
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -43,6 +43,16 @@ namespace DiningHub.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -93,34 +103,6 @@ namespace DiningHub.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("DiningHub.Models.CustomerProfile", b =>
-                {
-                    b.Property<int>("CustomerProfileId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CustomerProfileId"));
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("CustomerProfileId");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("CustomerProfiles");
-                });
-
             modelBuilder.Entity("DiningHub.Models.Feedback", b =>
                 {
                     b.Property<int>("FeedbackId")
@@ -131,10 +113,14 @@ namespace DiningHub.Migrations
 
                     b.Property<string>("Comments")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -147,49 +133,71 @@ namespace DiningHub.Migrations
                     b.ToTable("Feedbacks");
                 });
 
-            modelBuilder.Entity("DiningHub.Models.Inventory", b =>
+            modelBuilder.Entity("DiningHub.Models.InventoryItem", b =>
                 {
-                    b.Property<int>("InventoryId")
+                    b.Property<int>("InventoryItemId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("InventoryId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("InventoryItemId"));
 
-                    b.Property<string>("ItemName")
+                    b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
-                    b.Property<int>("MenuId")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.HasKey("InventoryId");
+                    b.HasKey("InventoryItemId");
 
-                    b.HasIndex("MenuId");
-
-                    b.ToTable("Inventories");
+                    b.ToTable("InventoryItems");
                 });
 
-            modelBuilder.Entity("DiningHub.Models.Menu", b =>
+            modelBuilder.Entity("DiningHub.Models.MenuItem", b =>
                 {
-                    b.Property<int>("MenuId")
+                    b.Property<int>("MenuItemId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MenuId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MenuItemId"));
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsAvailable")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.HasKey("MenuId");
+                    b.HasKey("MenuItemId");
 
-                    b.ToTable("Menus");
+                    b.ToTable("MenuItems");
                 });
 
             modelBuilder.Entity("DiningHub.Models.Order", b =>
@@ -200,93 +208,45 @@ namespace DiningHub.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
 
-                    b.Property<string>("CustomerId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("OrderId");
 
-                    b.HasIndex("CustomerId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("DiningHub.Models.OrderItem", b =>
                 {
-                    b.Property<int>("OrderItemId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderItemId"));
-
-                    b.Property<int>("MenuId")
-                        .HasColumnType("int");
-
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
+
+                    b.Property<int>("MenuItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrderItemId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.HasKey("OrderItemId");
+                    b.HasKey("OrderId", "MenuItemId");
 
-                    b.HasIndex("MenuId");
-
-                    b.HasIndex("OrderId");
+                    b.HasIndex("MenuItemId");
 
                     b.ToTable("OrderItems");
-                });
-
-            modelBuilder.Entity("DiningHub.Models.Receipt", b =>
-                {
-                    b.Property<int>("ReceiptId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReceiptId"));
-
-                    b.Property<DateTime>("DateIssued")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("TotalAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("ReceiptId");
-
-                    b.HasIndex("OrderId")
-                        .IsUnique();
-
-                    b.ToTable("Receipts");
-                });
-
-            modelBuilder.Entity("DiningHub.Models.Report", b =>
-                {
-                    b.Property<int>("ReportId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReportId"));
-
-                    b.Property<DateTime>("GeneratedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ReportData")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ReportType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ReportId");
-
-                    b.ToTable("Reports");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -426,17 +386,6 @@ namespace DiningHub.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("DiningHub.Models.CustomerProfile", b =>
-                {
-                    b.HasOne("DiningHub.Areas.Identity.Data.DiningHubUser", "User")
-                        .WithOne("Profile")
-                        .HasForeignKey("DiningHub.Models.CustomerProfile", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("DiningHub.Models.Feedback", b =>
                 {
                     b.HasOne("DiningHub.Areas.Identity.Data.DiningHubUser", "User")
@@ -448,33 +397,22 @@ namespace DiningHub.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("DiningHub.Models.Inventory", b =>
+            modelBuilder.Entity("DiningHub.Models.Order", b =>
                 {
-                    b.HasOne("DiningHub.Models.Menu", "Menu")
-                        .WithMany("Inventories")
-                        .HasForeignKey("MenuId")
+                    b.HasOne("DiningHub.Areas.Identity.Data.DiningHubUser", "User")
+                        .WithMany("Orders")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Menu");
-                });
-
-            modelBuilder.Entity("DiningHub.Models.Order", b =>
-                {
-                    b.HasOne("DiningHub.Areas.Identity.Data.DiningHubUser", "Customer")
-                        .WithMany("Orders")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Customer");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("DiningHub.Models.OrderItem", b =>
                 {
-                    b.HasOne("DiningHub.Models.Menu", "Menu")
-                        .WithMany("OrderItems")
-                        .HasForeignKey("MenuId")
+                    b.HasOne("DiningHub.Models.MenuItem", "MenuItem")
+                        .WithMany()
+                        .HasForeignKey("MenuItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -484,18 +422,7 @@ namespace DiningHub.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Menu");
-
-                    b.Navigation("Order");
-                });
-
-            modelBuilder.Entity("DiningHub.Models.Receipt", b =>
-                {
-                    b.HasOne("DiningHub.Models.Order", "Order")
-                        .WithOne("Receipt")
-                        .HasForeignKey("DiningHub.Models.Receipt", "OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("MenuItem");
 
                     b.Navigation("Order");
                 });
@@ -556,24 +483,11 @@ namespace DiningHub.Migrations
                     b.Navigation("Feedbacks");
 
                     b.Navigation("Orders");
-
-                    b.Navigation("Profile")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("DiningHub.Models.Menu", b =>
-                {
-                    b.Navigation("Inventories");
-
-                    b.Navigation("OrderItems");
                 });
 
             modelBuilder.Entity("DiningHub.Models.Order", b =>
                 {
                     b.Navigation("OrderItems");
-
-                    b.Navigation("Receipt")
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

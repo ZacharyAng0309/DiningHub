@@ -8,20 +8,17 @@ namespace DiningHub.Models
     public class Order
     {
         public int OrderId { get; set; }
-        public string CustomerId { get; set; }
-        public DiningHubUser Customer { get; set; }
+
+        [Required]
         public DateTime OrderDate { get; set; }
+
+        [Required]
+        [Range(0.01, double.MaxValue)]
+        public decimal TotalAmount { get; set; }
+
+        public string UserId { get; set; }
+        public DiningHubUser User { get; set; }
         public ICollection<OrderItem> OrderItems { get; set; }
-        public Receipt Receipt { get; set; }
     }
 
-    public class OrderItem
-    {
-        public int OrderItemId { get; set; }
-        public int OrderId { get; set; }
-        public Order Order { get; set; }
-        public int MenuId { get; set; }
-        public Menu Menu { get; set; }
-        public int Quantity { get; set; }
-    }
 }
