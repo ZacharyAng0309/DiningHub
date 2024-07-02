@@ -155,7 +155,6 @@ async Task EnsureAdminAsync(UserManager<DiningHubUser> userManager, ILogger logg
     }
 }
 
-
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

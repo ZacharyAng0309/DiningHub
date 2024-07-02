@@ -1,0 +1,25 @@
+﻿@model DiningHub.Models.Feedback
+
+@{
+    ViewData["Title"] = $"Feedback Details - {Model.FeedbackId}";
+}
+
+<h2>Feedback Details</h2>
+
+<div>
+    <h4>User</h4>
+    <p>@Model.User.UserName</p>
+
+    <h4>Comments</h4>
+    <p>@Model.Comments</p>
+
+    <h4>Rating</h4>
+    <p>@Model.Rating</p>
+
+    <h4>Date</h4>
+    <p>@Model.Date.ToString("g")</p>
+</div>
+
+<div>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</div>

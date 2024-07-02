@@ -53,7 +53,7 @@ namespace DiningHub.Areas.Identity.Pages.Account.Manage
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
-                RewardPoints = user.Points // Assuming Points is the property for reward points
+                RewardPoints = user.Points
             };
         }
 

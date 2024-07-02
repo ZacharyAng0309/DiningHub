@@ -1,0 +1,43 @@
+﻿@model IEnumerable<DiningHub.Models.ShoppingCartItem>
+
+@{
+    ViewData["Title"] = "Shopping Cart";
+}
+
+<h2>Shopping Cart</h2>
+
+<form method="post" asp-action="UpdateQuantity">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Item Name</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.MenuItem.Name</td>
+                    <td>
+                        <input type="number" name="quantity" value="@item.Quantity" min="1" class="form-control" />
+                        <input type="hidden" name="cartItemId" value="@item.ShoppingCartItemId" />
+                    </td>
+                    <td>@item.MenuItem.Price.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("ms-MY"))</td>
+                    <td>@(item.Quantity * item.MenuItem.Price).ToString("C", System.Globalization.CultureInfo.GetCultureInfo("ms-MY"))</td>
+                    <td>
+                        <button type="submit" formaction="@Url.Action("UpdateQuantity", new { cartItemId = item.ShoppingCartItemId })" class="btn btn-primary">Update</button>
+                        <a asp-action="RemoveFromCart" asp-route-cartItemId="@item.ShoppingCartItemId" class="btn btn-danger">Remove</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</form>
+
+<div>
+    <a asp-action="Checkout" class="btn btn-primary">Checkout</a>
+</div>

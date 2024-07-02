@@ -17,9 +17,12 @@ namespace DiningHub.Models
 
         [Required]
         [Range(1, 5)]
-        public int Rating { get; set; }  // e.g., rating out of 5
+        public int Rating { get; set; }
 
         [Required]
         public DateTime Date { get; set; }
+
+        public int OrderId { get; set; } 
+        public Order Order { get; set; }
     }
 }

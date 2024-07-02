@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DiningHub.Migrations
 {
     [DbContext(typeof(DiningHubContext))]
-    [Migration("20240701113216_db-creation")]
-    partial class dbcreation
+    [Migration("20240702122745_database-setup")]
+    partial class databasesetup
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -119,6 +119,12 @@ namespace DiningHub.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("DiningHubUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Rating")
                         .HasColumnType("int");
 
@@ -127,6 +133,11 @@ namespace DiningHub.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("FeedbackId");
+
+                    b.HasIndex("DiningHubUserId");
+
+                    b.HasIndex("OrderId")
+                        .IsUnique();
 
                     b.HasIndex("UserId");
 
@@ -247,6 +258,55 @@ namespace DiningHub.Migrations
                     b.HasIndex("MenuItemId");
 
                     b.ToTable("OrderItems");
+                });
+
+            modelBuilder.Entity("DiningHub.Models.Receipt", b =>
+                {
+                    b.Property<int>("ReceiptId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReceiptId"));
+
+                    b.Property<DateTime>("DateIssued")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("ReceiptId");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("Receipts");
+                });
+
+            modelBuilder.Entity("DiningHub.Models.ShoppingCartItem", b =>
+                {
+                    b.Property<int>("ShoppingCartItemId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ShoppingCartItemId"));
+
+                    b.Property<int>("MenuItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ShoppingCartItemId");
+
+                    b.HasIndex("MenuItemId");
+
+                    b.ToTable("ShoppingCartItems");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -388,11 +448,23 @@ namespace DiningHub.Migrations
 
             modelBuilder.Entity("DiningHub.Models.Feedback", b =>
                 {
-                    b.HasOne("DiningHub.Areas.Identity.Data.DiningHubUser", "User")
+                    b.HasOne("DiningHub.Areas.Identity.Data.DiningHubUser", null)
                         .WithMany("Feedbacks")
+                        .HasForeignKey("DiningHubUserId");
+
+                    b.HasOne("DiningHub.Models.Order", "Order")
+                        .WithOne("Feedback")
+                        .HasForeignKey("DiningHub.Models.Feedback", "OrderId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("DiningHub.Areas.Identity.Data.DiningHubUser", "User")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Order");
 
                     b.Navigation("User");
                 });
@@ -425,6 +497,28 @@ namespace DiningHub.Migrations
                     b.Navigation("MenuItem");
 
                     b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("DiningHub.Models.Receipt", b =>
+                {
+                    b.HasOne("DiningHub.Models.Order", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("DiningHub.Models.ShoppingCartItem", b =>
+                {
+                    b.HasOne("DiningHub.Models.MenuItem", "MenuItem")
+                        .WithMany()
+                        .HasForeignKey("MenuItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MenuItem");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -487,6 +581,9 @@ namespace DiningHub.Migrations
 
             modelBuilder.Entity("DiningHub.Models.Order", b =>
                 {
+                    b.Navigation("Feedback")
+                        .IsRequired();
+
                     b.Navigation("OrderItems");
                 });
 #pragma warning restore 612, 618

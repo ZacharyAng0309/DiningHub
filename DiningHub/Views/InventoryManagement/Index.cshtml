@@ -1,0 +1,35 @@
+﻿@model IEnumerable<DiningHub.Models.InventoryItem>
+
+@{
+    ViewData["Title"] = "Manage Inventory";
+}
+
+<h2>Manage Inventory</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Quantity</th>
+            <th>Last Updated</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.Description</td>
+                <td>@item.Quantity</td>
+                <td>@item.LastUpdated.ToString("g")</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.InventoryItemId" class="btn btn-info">Details</a>
+                    <a asp-action="Edit" asp-route-id="@item.InventoryItemId" class="btn btn-primary">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@item.InventoryItemId" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

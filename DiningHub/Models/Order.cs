@@ -19,6 +19,7 @@ namespace DiningHub.Models
         public string UserId { get; set; }
         public DiningHubUser User { get; set; }
         public ICollection<OrderItem> OrderItems { get; set; }
-    }
 
+        public Feedback Feedback { get; set; }
+    }
 }
