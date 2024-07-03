@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DiningHub.Areas.Identity.Data;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace DiningHub.Models
@@ -7,13 +8,21 @@ namespace DiningHub.Models
     {
         public int FeedbackId { get; set; }
 
-        public int CustomerId { get; set; }
-        public Customer Customer { get; set; }
+        public string UserId { get; set; }
+        public DiningHubUser User { get; set; }
 
         [Required]
         [StringLength(1000)]
-        public string Comment { get; set; }
+        public string Comments { get; set; }
 
+        [Required]
+        [Range(1, 5)]
+        public int Rating { get; set; }
+
+        [Required]
         public DateTime Date { get; set; }
+
+        public int OrderId { get; set; } 
+        public Order Order { get; set; }
     }
 }

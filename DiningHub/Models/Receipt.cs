@@ -7,13 +7,16 @@ namespace DiningHub.Models
     {
         public int ReceiptId { get; set; }
 
+        [Required]
         public int OrderId { get; set; }
         public Order Order { get; set; }
 
-        public DateTime ReceiptDate { get; set; }
+        [Required]
+        [DataType(DataType.Currency)]
+        public decimal TotalAmount { get; set; }
 
         [Required]
-        [Range(0, 10000)]
-        public decimal TotalAmount { get; set; }
+        [DataType(DataType.DateTime)]
+        public DateTime DateIssued { get; set; }
     }
 }

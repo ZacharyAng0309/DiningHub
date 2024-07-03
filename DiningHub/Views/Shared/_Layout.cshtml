@@ -29,34 +29,29 @@
                                 <a class="nav-link" asp-area="" asp-controller="Report" asp-action="Index">Reports</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="ManageFeedback" asp-action="Index">Manage Feedback</a>
+                                <a class="nav-link" asp-area="" asp-controller="FeedbackManagement" asp-action="Index">Manage Feedback</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="ManageUser" asp-action="Index">Manage Users</a>
+                                <a class="nav-link" asp-area="" asp-controller="UserManagement" asp-action="Index">Manage Users</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="ManageMenu" asp-action="Index">Manage Menu</a>
+                                <a class="nav-link" asp-area="" asp-controller="MenuManagement" asp-action="Index">Manage Menu</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="ManageInventory" asp-action="Index">Manage Inventory</a>
+                                <a class="nav-link" asp-area="" asp-controller="InventoryManagement" asp-action="Index">Manage Inventory</a>
                             </li>
                         }
                         else if (User.IsInRole("Customer"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Customer" asp-action="Index">Profile</a>
-                            </li>
-                            <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="Menu" asp-action="Index">Menu</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Order" asp-action="Index">Orders</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Feedback" asp-action="Index">Feedback</a>
+                                <a class="nav-link" asp-area="" asp-controller="Order" asp-action="Index">Order History</a>
                             </li>
                         }
                     </ul>
+                    <partial name="_LoginPartial" />
                 </div>
             </div>
         </nav>

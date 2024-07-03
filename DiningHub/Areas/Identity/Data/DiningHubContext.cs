@@ -2,33 +2,54 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using DiningHub.Areas.Identity.Data;
 
-namespace DiningHub.Areas.Identity.Data;
-
-public class DiningHubContext : IdentityDbContext<DiningHubUser>
+namespace DiningHub.Areas.Identity.Data
 {
-    public DiningHubContext(DbContextOptions<DiningHubContext> options)
-        : base(options)
+    public class DiningHubContext : IdentityDbContext<DiningHubUser>
     {
-    }
+        public DiningHubContext(DbContextOptions<DiningHubContext> options)
+            : base(options)
+        {
+        }
 
-    public DbSet<CustomerProfile> CustomerProfiles { get; set; }
-    public DbSet<Customer> Customers { get; set; }
-    public DbSet<Menu> Menus { get; set; }
-    public DbSet<Order> Orders { get; set; }
-    public DbSet<OrderItem> OrderItems { get; set; }
-    public DbSet<Receipt> Receipts { get; set; }
-    public DbSet<Feedback> Feedbacks { get; set; }
-    public DbSet<History> Histories { get; set; }
-    public DbSet<Report> Reports { get; set; }
-    public DbSet<Inventory> Inventories { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<MenuItem> MenuItems { get; set; }
+        public DbSet<Feedback> Feedbacks { get; set; }
+        public DbSet<InventoryItem> InventoryItems { get; set; }
+        public DbSet<ShoppingCartItem> ShoppingCartItems { get; set; }
+        public DbSet<Receipt> Receipts { get; set; }
 
-    protected override void OnModelCreating(ModelBuilder builder)
-    {
-        base.OnModelCreating(builder);
-        // Customize the ASP.NET Identity model and override the defaults if needed.
-        // For example, you can rename the ASP.NET Identity table names and more.
-        // Add your customizations after calling base.OnModelCreating(builder);
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            // Define relationships and additional configurations here if needed
+            builder.Entity<OrderItem>()
+                .HasKey(oi => new { oi.OrderId, oi.MenuItemId });
+
+            builder.Entity<OrderItem>()
+                .HasOne(oi => oi.Order)
+                .WithMany(o => o.OrderItems)
+                .HasForeignKey(oi => oi.OrderId);
+
+            builder.Entity<OrderItem>()
+                .HasOne(oi => oi.MenuItem)
+                .WithMany()
+                .HasForeignKey(oi => oi.MenuItemId);
+
+            builder.Entity<Order>()
+                .HasOne(o => o.Feedback)
+                .WithOne(f => f.Order)
+                .HasForeignKey<Feedback>(f => f.OrderId)
+                .OnDelete(DeleteBehavior.NoAction); // Change cascade delete behavior here
+
+            builder.Entity<Feedback>()
+                .HasOne(f => f.User)
+                .WithMany()
+                .HasForeignKey(f => f.UserId)
+                .OnDelete(DeleteBehavior.Cascade); // Keep cascade delete for User
+        }
     }
 }

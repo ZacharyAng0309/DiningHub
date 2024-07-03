@@ -1,0 +1,34 @@
+﻿@model IEnumerable<DiningHub.Models.Feedback>
+
+@{
+    ViewData["Title"] = "Manage Feedback";
+}
+
+<h2>Manage Feedback</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>User</th>
+            <th>Comments</th>
+            <th>Rating</th>
+            <th>Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var feedback in Model)
+        {
+            <tr>
+                <td>@feedback.User.UserName</td>
+                <td>@feedback.Comments</td>
+                <td>@feedback.Rating</td>
+                <td>@feedback.Date.ToString("g")</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@feedback.FeedbackId" class="btn btn-info">Details</a>
+                    <a asp-action="Delete" asp-route-id="@feedback.FeedbackId" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
