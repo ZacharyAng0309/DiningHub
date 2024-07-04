@@ -52,12 +52,8 @@ namespace DiningHub.Areas.Identity.Pages.Account
         public class InputModel
         {
             [Required]
-            [Display(Name = "First Name")]
-            public string FirstName { get; set; }
-
-            [Required]
-            [Display(Name = "Last Name")]
-            public string LastName { get; set; }
+            [Display(Name = "Username")]
+            public string Username { get; set; }
 
             [Required]
             [EmailAddress]
@@ -97,8 +93,7 @@ namespace DiningHub.Areas.Identity.Pages.Account
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
-                user.FirstName = Input.FirstName;
-                user.LastName = Input.LastName;
+                user.FirstName = Input.Username;
 
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
