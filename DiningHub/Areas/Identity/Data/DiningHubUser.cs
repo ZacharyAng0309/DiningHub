@@ -5,11 +5,18 @@ using System.Linq;
 using System.Threading.Tasks;
 using DiningHub.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace DiningHub.Areas.Identity.Data
 {
     public class DiningHubUser : IdentityUser
     {
+        public DiningHubUser()
+        {
+            Orders = new HashSet<Order>();
+            Feedbacks = new HashSet<Feedback>();
+        }
+
         [PersonalData]
         [Required]
         [StringLength(50)]
@@ -23,7 +30,10 @@ namespace DiningHub.Areas.Identity.Data
         [PersonalData]
         public int Points { get; set; }
 
+        [BindNever]
         public ICollection<Order> Orders { get; set; }
+
+        [BindNever]
         public ICollection<Feedback> Feedbacks { get; set; }
     }
 }

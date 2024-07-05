@@ -2,18 +2,20 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using DiningHub.Areas.Identity.Data;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
+using DiningHub.Data; // Add the correct namespace for SeedData
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DiningHubContextConnection") ?? throw new InvalidOperationException("Connection string 'DiningHubContextConnection' not found.");
 
 // Configure DbContext with SQL Server
 builder.Services.AddDbContext<DiningHubContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DiningHubContextConnection")));
+    options.UseSqlServer(connectionString));
 
 // Configure Identity
 builder.Services.AddDefaultIdentity<DiningHubUser>(options =>
 {
-    options.SignIn.RequireConfirmedAccount = true;
+    options.SignIn.RequireConfirmedAccount = false;
     options.Password.RequireDigit = true;
     options.Password.RequireLowercase = true;
     options.Password.RequireNonAlphanumeric = true;
@@ -23,7 +25,7 @@ builder.Services.AddDefaultIdentity<DiningHubUser>(options =>
     options.Lockout.MaxFailedAccessAttempts = 5;
     options.User.RequireUniqueEmail = true;
 })
-    .AddRoles<IdentityRole>()  // Add roles support
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<DiningHubContext>();
 
 // Secure cookies and authentication
@@ -44,6 +46,9 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("RequireManagerRole", policy => policy.RequireRole("Manager"));
     options.AddPolicy("RequireCustomerRole", policy => policy.RequireRole("Customer"));
+    options.AddPolicy("RequireStaffRole", policy => policy.RequireRole("Staff"));
+    options.AddPolicy("RequireInternalRole", policy => policy.RequireRole("Manager", "Staff"));
+    options.AddPolicy("RequireAnyRole", policy => policy.RequireRole("Manager", "Customer", "Staff"));
 });
 
 builder.Services.AddLogging(loggingBuilder =>
@@ -62,97 +67,7 @@ using (var scope = app.Services.CreateScope())
     var userManager = services.GetRequiredService<UserManager<DiningHubUser>>();
     var logger = services.GetRequiredService<ILogger<Program>>();
 
-    await EnsureRolesAsync(roleManager, logger);
-    await EnsureAdminAsync(userManager, logger);
-}
-
-async Task EnsureRolesAsync(RoleManager<IdentityRole> roleManager, ILogger logger)
-{
-    var roles = new[] { "Manager", "Customer" };
-    foreach (var role in roles)
-    {
-        if (!await roleManager.RoleExistsAsync(role))
-        {
-            var result = await roleManager.CreateAsync(new IdentityRole(role));
-            if (result.Succeeded)
-            {
-                logger.LogInformation($"Role '{role}' created successfully.");
-            }
-            else
-            {
-                logger.LogError($"Error creating role '{role}': {string.Join(", ", result.Errors.Select(e => e.Description))}");
-            }
-        }
-    }
-}
-
-async Task EnsureAdminAsync(UserManager<DiningHubUser> userManager, ILogger logger)
-{
-    var adminEmail = "admin@gmail.com";
-    var adminPassword = "Admin@123";
-
-    var adminUser = await userManager.FindByEmailAsync(adminEmail);
-    if (adminUser == null)
-    {
-        adminUser = new DiningHubUser
-        {
-            UserName = adminEmail,
-            Email = adminEmail,
-            FirstName = "Admin",
-            LastName = "User",
-            EmailConfirmed = true // Ensure email is confirmed at creation
-        };
-
-        var result = await userManager.CreateAsync(adminUser, adminPassword);
-        if (result.Succeeded)
-        {
-            var roleResult = await userManager.AddToRoleAsync(adminUser, "Manager");
-            if (roleResult.Succeeded)
-            {
-                logger.LogInformation("Admin user created and added to Manager role successfully.");
-            }
-            else
-            {
-                logger.LogError($"Error adding admin user to Manager role: {string.Join(", ", roleResult.Errors.Select(e => e.Description))}");
-            }
-        }
-        else
-        {
-            logger.LogError($"Error creating admin user: {string.Join(", ", result.Errors.Select(e => e.Description))}");
-        }
-    }
-    else
-    {
-        logger.LogInformation("Admin user already exists.");
-        /*
-        logger.LogInformation("Resetting password.");
-        var resetToken = await userManager.GeneratePasswordResetTokenAsync(adminUser);
-        var resetResult = await userManager.ResetPasswordAsync(adminUser, resetToken, adminPassword);
-        if (resetResult.Succeeded)
-        {
-            logger.LogInformation("Admin user password reset successfully.");
-        }
-        else
-        {
-            logger.LogError($"Error resetting admin user password: {string.Join(", ", resetResult.Errors.Select(e => e.Description))}");
-        }
-        */
-
-        // Ensure the email is confirmed if not already
-        if (!adminUser.EmailConfirmed)
-        {
-            var confirmationToken = await userManager.GenerateEmailConfirmationTokenAsync(adminUser);
-            var confirmResult = await userManager.ConfirmEmailAsync(adminUser, confirmationToken);
-            if (confirmResult.Succeeded)
-            {
-                logger.LogInformation("Admin user's email confirmed successfully.");
-            }
-            else
-            {
-                logger.LogError($"Error confirming admin user's email: {string.Join(", ", confirmResult.Errors.Select(e => e.Description))}");
-            }
-        }
-    }
+    await SeedData.InitializeAsync(services);
 }
 
 // Configure the HTTP request pipeline.
