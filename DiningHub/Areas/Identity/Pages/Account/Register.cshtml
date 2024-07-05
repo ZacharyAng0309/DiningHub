@@ -4,19 +4,18 @@
     ViewData["Title"] = "Register Page";
 }
 
-<h1>@ViewData["Title"]</h1>
 
 <div class="container-fluid shadow rounded-3 p-4 mb-5 bg-white pt-2">
             <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-                <div class="row">
+                <div class="row pt-2">
                     <div class="col-md-6">
-                        <img src="/Img/registerpageimage.jpg" class="img-fluid" alt="registerpageimage">
+                        <img src="/Img/registerpageimage1.jpg" class="img-fluid rounded" alt="registerpageimage">
                     </div>
                     <div class="col-md-6 p-2">
                         <div class="d-flex justify-content-center">
                             <img src="/Img/dininghublogo.png" class="img-fluid w-50" alt="registerpageimage">
                         </div>
-                        <h2 class="border-bottom mb-4 justify-content-center pb-2">Sign Up.</h2>
+                        <h2 class="border-bottom mb-4 pb-2 text-center">Sign Up.</h2>
 
                     <div class="d-flex flex-column justify-content-between">
                         <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>

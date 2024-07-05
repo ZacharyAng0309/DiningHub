@@ -7,13 +7,14 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/DiningHub.styles.css" asp-append-version="true" />
+
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3 navbar" style="background-color: #E57373;">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                    <img src="/Img/dininghublogo.png" alt="DiningHub" class="img-fluid w-100" style="max-height: 70px;">
+                    <img src="/Img/dininghublogo.png" alt="DiningHub Logo" width="60" height="60" class="d-inline-block align-text-top">
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -51,9 +52,6 @@
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="InventoryManagement" asp-action="Index">Manage Inventory</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="LogOut" asp-action="Index">Log Out</a>
-                            </li>
                         }
                         else if (User.IsInRole("Customer"))
                         {
@@ -66,9 +64,7 @@
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="Feedback" asp-action="Index">Feedback</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="LogOut" asp-action="Index">Log Out</a>
-                            </li>
+
                         }
                     </ul>
                     <partial name="_LoginPartial" />
@@ -82,10 +78,44 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2024 - DiningHub - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
+    <footer class="border-top footer text-muted fixed-bottom" style="background-color: #E57373;">
+        @* <div class="container-fluid">
+            <div class="row  my-1 p-4 pb-2 text-white border-bottom justify-content-around">
+                <div class="col-md-3">
+                    <h3>ABOUT Dine Master</h3>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a href="" class="nav-link text-white my-2">
+                                About Us
+                            </a>
+                            <a href="" class="nav-link text-white my-2">
+                                Mission
+                            </a>
+                            <a href="" class="nav-link text-white my-2">
+                                Vision
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h3>HELP</h3>
+                    <ul class="nav flex-column">
+                        <li class="nav-item my-2">FAQ </li>
+                        <li class="nav-item my-2">Customer Service </li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h3>TERMS & POLICIES</h3>
+                    <ul class="nav flex-column">
+                        <li class="nav-item my-2">Legal Notices </li>
+                        <li class="nav-item my-2">Privacy Policy </li>
+                    </ul>
+                </div>
+
+
+            </div> *@
+                <div class="col text-white">© 2024 Dining Hub. All rights reserved.</div>
+            </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
