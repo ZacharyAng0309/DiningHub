@@ -4,44 +4,52 @@
     ViewData["Title"] = "Create Menu Item";
 }
 
-<h2>Create Menu Item</h2>
+<head>
+    <link rel="stylesheet" href="~/css/editAdmin.css" asp-append-version="true" />
+</head>
 
-<form asp-action="Create">
-    <div class="form-group">
-        <label asp-for="Name" class="control-label"></label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h2>Create Menu Item</h2>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create" method="post">
+                <div class="form-group">
+                    <label asp-for="Name" class="control-label mb-2"></label>
+                    <input asp-for="Name" class="form-control mb-4" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Description" class="control-label mb-2"></label>
+                    <input asp-for="Description" class="form-control mb-4" />
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Price" class="control-label mb-2"></label>
+                    <input asp-for="Price" class="form-control mb-4" />
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Category" class="control-label mb-2"></label>
+                    <input asp-for="Category" class="form-control mb-4" />
+                    <span asp-validation-for="Category" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ImageUrl" class="control-label mb-2"></label>
+                    <input asp-for="ImageUrl" class="form-control mb-4" />
+                    <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="IsAvailable" class="control-label mb-2"></label>
+                    <input asp-for="IsAvailable" class="form-check-input mb-4" type="checkbox" />
+                    <span asp-validation-for="IsAvailable" class="text-danger"></span>
+                </div>
+                <div class="form-group text-center">
+                    <input type="submit" value="Create" class="btn btn-save" />
+                    <a asp-action="Index" class="btn btn-cancel">Back to List</a>
+                </div>
+            </form>
+        </div>
     </div>
-    <div class="form-group">
-        <label asp-for="Description" class="control-label"></label>
-        <input asp-for="Description" class="form-control" />
-        <span asp-validation-for="Description" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Price" class="control-label"></label>
-        <input asp-for="Price" class="form-control" />
-        <span asp-validation-for="Price" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Category" class="control-label"></label>
-        <input asp-for="Category" class="form-control" />
-        <span asp-validation-for="Category" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="ImageUrl" class="control-label"></label>
-        <input asp-for="ImageUrl" class="form-control" />
-        <span asp-validation-for="ImageUrl" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="IsAvailable" class="control-label"></label>
-        <input asp-for="IsAvailable" class="form-control" />
-        <span asp-validation-for="IsAvailable" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <input type="submit" value="Create" class="btn btn-primary" />
-    </div>
-</form>
-
-<div>
-    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
 </div>

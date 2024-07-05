@@ -43,6 +43,32 @@ namespace DiningHub.Controllers
             return View(user);
         }
 
+        // Create a new user (GET)
+        [HttpGet("create")]
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        // Create a new user (POST)
+        [HttpPost("create")]
+        public async Task<IActionResult> Create(DiningHubUser user, string password)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _userManager.CreateAsync(user, password);
+                if (result.Succeeded)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+            }
+            return View(user);
+        }
+
         // Edit a user (GET)
         [HttpGet("edit/{id}")]
         public async Task<IActionResult> Edit(string id)
