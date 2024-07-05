@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DiningHub.Migrations
 {
     [DbContext(typeof(DiningHubContext))]
-    [Migration("20240705044813_database-setup")]
+    [Migration("20240705065713_database-setup")]
     partial class databasesetup
     {
         /// <inheritdoc />
