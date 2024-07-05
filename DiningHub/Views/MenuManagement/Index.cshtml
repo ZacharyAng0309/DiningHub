@@ -4,34 +4,86 @@
     ViewData["Title"] = "Manage Menu Items";
 }
 
-<h2>Manage Menu Items</h2>
+<head>
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+</head>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Price</th>
-            <th>Category</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Name</td>
-                <td>@item.Description</td>
-                <td>@item.Price.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("ms-MY"))</td>
-                <td>@item.Category</td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@item.MenuItemId">Details</a> |
-                    <a asp-action="Edit" asp-route-id="@item.MenuItemId">Edit</a> |
-                    <a asp-action="Delete" asp-route-id="@item.MenuItemId">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<<div class="container">
+    <div class="table-wrapper">
+        <div class="table-title">
+            <div class="row d-flex justify-content-between align-items-center">
+                <div class="col-sm-8">
+                    <h2>Manage Menu Items</h2>
+                </div>
+                <div class="col-sm-4 text-end">
+                    <a asp-action="Create" class="btn btn-success">Create New Menu Item</a>
+                </div>
+            </div>
+        </div>
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th>Category</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Name</td>
+                        <td>@item.Description</td>
+                        <td>@item.Price.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("ms-MY"))</td>
+                        <td>@item.Category</td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@item.MenuItemId" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#detailsModal-@item.MenuItemId">Details</a>
+                            <a asp-action="Edit" asp-route-id="@item.MenuItemId" class="btn btn-primary">Edit</a>
+                            <form method="post" asp-action="Delete" asp-route-id="@item.MenuItemId" class="d-inline">
+                                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this menu item?');">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
 
-<a asp-action="Create" class="btn btn-primary">Create New Menu Item</a>
+<!-- Modal Templates -->
+@foreach (var item in Model)
+{
+    <div class="modal fade" id="detailsModal-@item.MenuItemId" tabindex="-1" aria-labelledby="detailsModalLabel-@item.MenuItemId" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detailsModalLabel-@item.MenuItemId">Details - @item.Name</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h2>Menu Item Details</h2>
+                    <hr />
+                    <div>
+                        
+                        <dl class="row">
+                            <dt class="col-sm-2">Name</dt>
+                            <dd class="col-sm-10">@item.Name</dd>
+                            <dt class="col-sm-2">Description</dt>
+                            <dd class="col-sm-10">@item.Description</dd>
+                            <dt class="col-sm-2">Price</dt>
+                            <dd class="col-sm-10">@item.Price.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("ms-MY"))</dd>
+                            <dt class="col-sm-2">Category</dt>
+                            <dd class="col-sm-10">@item.Category</dd>
+                        </dl>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a asp-action="Edit" asp-route-id="@item.MenuItemId" class="btn btn-primary">Edit</a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
