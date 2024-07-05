@@ -19,7 +19,7 @@ namespace DiningHub.Data
 
                 // Seed initial admin user
                 var userManager = serviceProvider.GetRequiredService<UserManager<DiningHubUser>>();
-                await EnsureAdminAsync(userManager);
+                var adminUser = await EnsureAdminAsync(userManager);
 
                 // Seed initial menu items if not already seeded
                 if (!context.MenuItems.Any())
@@ -32,25 +32,28 @@ namespace DiningHub.Data
                             Price = 12.99m,
                             Category = "Pizza",
                             ImageUrl = "/Img/menu/margherita_pizza.jpg",
-                            IsAvailable = true
+                            IsAvailable = true,
+                            CreatedById = adminUser.Id
                         },
                         new MenuItem
                         {
                             Name = "Pepperoni Pizza",
-                            Description = "Pizza with tomato sauce, mozzarella cheese, and pepperoni slices.",
+                            Description = "Pizza topped with pepperoni, mozzarella cheese, and tomato sauce.",
                             Price = 14.99m,
                             Category = "Pizza",
                             ImageUrl = "/Img/menu/pepperoni_pizza.jpg",
-                            IsAvailable = true
+                            IsAvailable = true,
+                            CreatedById = adminUser.Id
                         },
                         new MenuItem
                         {
                             Name = "BBQ Chicken Pizza",
-                            Description = "Pizza with BBQ sauce, mozzarella cheese, chicken, and red onions.",
+                            Description = "Pizza with BBQ sauce, chicken, red onions, and cilantro.",
                             Price = 15.99m,
                             Category = "Pizza",
                             ImageUrl = "/Img/menu/bbq_chicken_pizza.jpg",
-                            IsAvailable = true
+                            IsAvailable = true,
+                            CreatedById = adminUser.Id
                         },
                         new MenuItem
                         {
@@ -59,7 +62,8 @@ namespace DiningHub.Data
                             Price = 8.99m,
                             Category = "Salad",
                             ImageUrl = "/Img/menu/caesar_salad.jpg",
-                            IsAvailable = true
+                            IsAvailable = true,
+                            CreatedById = adminUser.Id
                         },
                         new MenuItem
                         {
@@ -68,16 +72,18 @@ namespace DiningHub.Data
                             Price = 9.99m,
                             Category = "Salad",
                             ImageUrl = "/Img/menu/greek_salad.jpg",
-                            IsAvailable = true
+                            IsAvailable = true,
+                            CreatedById = adminUser.Id
                         },
                         new MenuItem
                         {
-                            Name = "Garden Salad",
-                            Description = "Salad with mixed greens, cherry tomatoes, cucumbers, and balsamic vinaigrette.",
+                            Name = "House Salad",
+                            Description = "Mixed greens, tomatoes, cucumbers, red onions, and house dressing.",
                             Price = 7.99m,
                             Category = "Salad",
-                            ImageUrl = "/Img/menu/garden_salad.jpg",
-                            IsAvailable = true
+                            ImageUrl = "/Img/menu/house_salad.jpg",
+                            IsAvailable = true,
+                            CreatedById = adminUser.Id
                         },
                         new MenuItem
                         {
@@ -86,7 +92,8 @@ namespace DiningHub.Data
                             Price = 14.99m,
                             Category = "Pasta",
                             ImageUrl = "/Img/menu/spaghetti_carbonara.jpg",
-                            IsAvailable = true
+                            IsAvailable = true,
+                            CreatedById = adminUser.Id
                         },
                         new MenuItem
                         {
@@ -95,16 +102,18 @@ namespace DiningHub.Data
                             Price = 13.99m,
                             Category = "Pasta",
                             ImageUrl = "/Img/menu/fettuccine_alfredo.jpg",
-                            IsAvailable = true
+                            IsAvailable = true,
+                            CreatedById = adminUser.Id
                         },
                         new MenuItem
                         {
                             Name = "Penne Arrabbiata",
-                            Description = "Penne pasta with spicy tomato sauce and garlic.",
+                            Description = "Penne pasta in a spicy tomato sauce.",
                             Price = 12.99m,
                             Category = "Pasta",
                             ImageUrl = "/Img/menu/penne_arrabbiata.jpg",
-                            IsAvailable = true
+                            IsAvailable = true,
+                            CreatedById = adminUser.Id
                         }
                     );
                     context.SaveChanges();
@@ -119,70 +128,56 @@ namespace DiningHub.Data
                             Name = "Tomatoes",
                             Description = "Fresh organic tomatoes.",
                             Quantity = 100,
-                            LastUpdated = DateTime.UtcNow
+                            CreatedById = adminUser.Id
                         },
                         new InventoryItem
                         {
                             Name = "Mozzarella Cheese",
                             Description = "Creamy mozzarella cheese.",
                             Quantity = 50,
-                            LastUpdated = DateTime.UtcNow
+                            CreatedById = adminUser.Id
                         },
                         new InventoryItem
                         {
                             Name = "Pasta",
                             Description = "High-quality durum wheat pasta.",
                             Quantity = 200,
-                            LastUpdated = DateTime.UtcNow
+                            CreatedById = adminUser.Id
                         },
                         new InventoryItem
                         {
-                            Name = "Olives",
-                            Description = "Organic black olives.",
-                            Quantity = 80,
-                            LastUpdated = DateTime.UtcNow
+                            Name = "Olive Oil",
+                            Description = "Extra virgin olive oil.",
+                            Quantity = 30,
+                            CreatedById = adminUser.Id
                         },
                         new InventoryItem
                         {
                             Name = "Basil",
                             Description = "Fresh basil leaves.",
+                            Quantity = 50,
+                            CreatedById = adminUser.Id
+                        },
+                        new InventoryItem
+                        {
+                            Name = "Chicken Breast",
+                            Description = "Boneless, skinless chicken breast.",
+                            Quantity = 25,
+                            CreatedById = adminUser.Id
+                        },
+                        new InventoryItem
+                        {
+                            Name = "Red Onions",
+                            Description = "Fresh red onions.",
                             Quantity = 40,
-                            LastUpdated = DateTime.UtcNow
-                        },
-                        new InventoryItem
-                        {
-                            Name = "Chicken",
-                            Description = "Free-range chicken breast.",
-                            Quantity = 60,
-                            LastUpdated = DateTime.UtcNow
-                        },
-                        new InventoryItem
-                        {
-                            Name = "Pepperoni",
-                            Description = "Spicy pepperoni slices.",
-                            Quantity = 100,
-                            LastUpdated = DateTime.UtcNow
+                            CreatedById = adminUser.Id
                         },
                         new InventoryItem
                         {
                             Name = "Parmesan Cheese",
                             Description = "Grated Parmesan cheese.",
-                            Quantity = 70,
-                            LastUpdated = DateTime.UtcNow
-                        },
-                        new InventoryItem
-                        {
-                            Name = "Red Onions",
-                            Description = "Organic red onions.",
-                            Quantity = 30,
-                            LastUpdated = DateTime.UtcNow
-                        },
-                        new InventoryItem
-                        {
-                            Name = "BBQ Sauce",
-                            Description = "Homemade BBQ sauce.",
-                            Quantity = 25,
-                            LastUpdated = DateTime.UtcNow
+                            Quantity = 60,
+                            CreatedById = adminUser.Id
                         }
                     );
                     context.SaveChanges();
@@ -202,7 +197,7 @@ namespace DiningHub.Data
             }
         }
 
-        private static async Task EnsureAdminAsync(UserManager<DiningHubUser> userManager)
+        private static async Task<DiningHubUser> EnsureAdminAsync(UserManager<DiningHubUser> userManager)
         {
             var adminEmail = "admin@gmail.com";
             var adminPassword = "Admin@123";
@@ -225,6 +220,7 @@ namespace DiningHub.Data
                     await userManager.AddToRoleAsync(adminUser, "Manager");
                 }
             }
+            return adminUser;
         }
     }
 }

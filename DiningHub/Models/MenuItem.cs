@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using DiningHub.Areas.Identity.Data;
+using System.ComponentModel.DataAnnotations;
 
 namespace DiningHub.Models
 {
@@ -24,5 +25,11 @@ namespace DiningHub.Models
         public string ImageUrl { get; set; }
 
         public bool IsAvailable { get; set; }
+
+        public string CreatedById { get; set; }
+        public DiningHubUser CreatedBy { get; set; }
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     }
 }

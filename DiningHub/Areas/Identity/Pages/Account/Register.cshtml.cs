@@ -76,7 +76,6 @@ namespace DiningHub.Areas.Identity.Pages.Account
             public string Role { get; set; } = "Customer";  // Default role
         }
 
-
         public async Task OnGetAsync(string returnUrl = null)
         {
             ReturnUrl = returnUrl;
@@ -96,6 +95,9 @@ namespace DiningHub.Areas.Identity.Pages.Account
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 user.FirstName = Input.Username;
                 user.EmailConfirmed = true;
+                user.CreatedAt = DateTime.UtcNow;
+                user.UpdatedAt = DateTime.UtcNow;
+
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)

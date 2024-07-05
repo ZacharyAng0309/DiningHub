@@ -82,7 +82,6 @@ namespace DiningHub.Controllers
             return View(model);
         }
 
-
         [HttpGet("{id}")]
         public async Task<IActionResult> Details(string id)
         {
@@ -139,6 +138,7 @@ namespace DiningHub.Controllers
             existingUser.LastName = user.LastName;
             existingUser.Points = user.Points;
             existingUser.PhoneNumber = user.PhoneNumber;
+            existingUser.UpdatedAt = DateTime.UtcNow;
 
             var result = await _userManager.UpdateAsync(existingUser);
             if (result.Succeeded)
@@ -258,7 +258,9 @@ namespace DiningHub.Controllers
                     Email = model.Email,
                     FirstName = model.FirstName,
                     LastName = model.LastName,
-                    EmailConfirmed = true // Set to true if email confirmation is not required
+                    EmailConfirmed = true, // Set to true if email confirmation is not required
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
                 };
 
                 var result = await _userManager.CreateAsync(user, model.Password);

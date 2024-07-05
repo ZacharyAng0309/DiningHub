@@ -9,7 +9,7 @@ using DiningHub.Areas.Identity.Data;
 
 namespace DiningHub.Controllers
 {
-    [Authorize]
+    [Authorize(Policy ="RequireCustomerRole")]
     public class ShoppingCartController : Controller
     {
         private readonly DiningHubContext _context;

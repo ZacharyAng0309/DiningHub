@@ -10,7 +10,7 @@ using DiningHub.Areas.Identity.Data;
 
 namespace DiningHub.Controllers
 {
-    [Authorize(Roles = "Customer")]
+    [Authorize(Policy = "RequireAnyRole")]
     [Route("order")]
     public class CustomerOrderController : Controller
     {
@@ -71,18 +71,5 @@ namespace DiningHub.Controllers
 
             return View(model);
         }
-    }
-    public class CustomerOrderViewModel
-    {
-        public Order Order { get; set; }
-        public bool HasFeedback { get; set; }
-        public bool CanProvideFeedback { get; set; }
-    }
-
-    public class CustomerOrderDetailsViewModel
-    {
-        public Order Order { get; set; }
-        public Feedback Feedback { get; set; }
-        public bool CanProvideFeedback { get; set; }
     }
 }

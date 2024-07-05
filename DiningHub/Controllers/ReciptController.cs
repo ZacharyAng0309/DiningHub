@@ -7,7 +7,7 @@ using DiningHub.Areas.Identity.Data;
 
 namespace DiningHub.Controllers
 {
-    [Authorize]
+    [Authorize(Policy ="RequireAnyRole")]
     public class ReceiptController : Controller
     {
         private readonly DiningHubContext _context;

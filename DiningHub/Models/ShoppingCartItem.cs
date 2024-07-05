@@ -15,5 +15,7 @@ namespace DiningHub.Models
         public int Quantity { get; set; }
 
         public string UserId { get; set; }
+
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     }
 }

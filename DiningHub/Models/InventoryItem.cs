@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using DiningHub.Areas.Identity.Data;
 
 namespace DiningHub.Models
 {
@@ -17,7 +19,10 @@ namespace DiningHub.Models
         [Range(0, int.MaxValue)]
         public int Quantity { get; set; }
 
-        [Required]
-        public DateTime LastUpdated { get; set; }
+        public string CreatedById { get; set; }
+        public DiningHubUser CreatedBy { get; set; }
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     }
 }

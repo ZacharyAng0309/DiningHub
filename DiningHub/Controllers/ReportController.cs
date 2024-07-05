@@ -4,9 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using DiningHub.Areas.Identity.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DiningHub.Controllers
 {
+    [Authorize (Policy = "RequireManagerRole")]
     public class ReportController : Controller
     {
         private readonly DiningHubContext _context;

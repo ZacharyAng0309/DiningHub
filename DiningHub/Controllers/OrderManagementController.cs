@@ -7,7 +7,7 @@ using DiningHub.Areas.Identity.Data;
 
 namespace DiningHub.Controllers
 {
-    [Authorize(Policy = "RequireManagerRole")]
+    [Authorize(Policy = "RequireInternalRole")]
     [Route("manage/order")]
     public class OrderManagementController : Controller
     {
