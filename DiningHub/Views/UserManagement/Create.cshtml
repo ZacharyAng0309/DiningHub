@@ -1,7 +1,7 @@
 ﻿@model DiningHub.Areas.Identity.Data.DiningHubUser
 
 @{
-    ViewData["Title"] = $"Edit User - {Model.UserName}";
+    ViewData["Title"] = "Create";
 }
 
 <head>
@@ -11,12 +11,11 @@
 <div class="container">
     <div class="card">
         <div class="card-header">
-            <h2>Edit User</h2>
+            <h2>Add User</h2>
         </div>
         <div class="card-body">
-            <form asp-action="Edit" method="post">
-                <input type="hidden" asp-for="Id" />
-                <div class="form-group">
+            <form asp-action="Create" method="post">
+               <div class="form-group">
                     <label asp-for="UserName" class="control-label mb-2"></label>
                     <input asp-for="UserName" class="form-control mb-4" />
                     <span asp-validation-for="UserName" class="text-danger"></span>
@@ -25,6 +24,11 @@
                     <label asp-for="Email" class="control-label mb-2"></label>
                     <input asp-for="Email" class="form-control mb-4" />
                     <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="EmailConfirmed" class="control-label mb-2"></label>
+                    <input asp-for="EmailConfirmed" class="form-check-input mb-4" type="checkbox" />
+                    <span asp-validation-for="EmailConfirmed" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <label asp-for="FirstName" class="control-label mb-2"></label>
@@ -54,3 +58,4 @@
         </div>
     </div>
 </div>
+

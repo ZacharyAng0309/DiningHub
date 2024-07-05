@@ -22,49 +22,42 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav px-2">
-                        <li class="nav-item mx-5">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item mx-5">
-                            <a class="nav-link" asp-area="" asp-controller="Menu" asp-action="Index">Menu</a>
-                        </li>
-                        <li class="nav-item mx-5">
-                            <a class="nav-link" asp-area="" asp-controller="Cart" asp-action="Index">Cart</a>
-                        </li>
-                        <li class="nav-item mx-5">
-                            <a class="nav-link" asp-area="" asp-controller="Feedback" asp-action="Index">Feedback</a>
-                        </li>
 
                         @if (User.IsInRole("Manager"))
                         {
-                            <li class="nav-item">
+                            <li class="nav-item mx-5">
                                 <a class="nav-link" asp-area="" asp-controller="Report" asp-action="Index">Reports</a>
                             </li>
-                            <li class="nav-item">
+                            <li class="nav-item mx-5">
                                 <a class="nav-link" asp-area="" asp-controller="FeedbackManagement" asp-action="Index">Manage Feedback</a>
                             </li>
-                            <li class="nav-item">
+                            <li class="nav-item mx-5">
                                 <a class="nav-link" asp-area="" asp-controller="UserManagement" asp-action="Index">Manage Users</a>
                             </li>
-                            <li class="nav-item">
+                            <li class="nav-item mx-5">
                                 <a class="nav-link" asp-area="" asp-controller="MenuManagement" asp-action="Index">Manage Menu</a>
                             </li>
-                            <li class="nav-item">
+                            <li class="nav-item mx-5">
                                 <a class="nav-link" asp-area="" asp-controller="InventoryManagement" asp-action="Index">Manage Inventory</a>
                             </li>
                         }
                         else if (User.IsInRole("Customer"))
                         {
-                            <li class="nav-item">
+                            <li class="nav-item mx-5">
                                 <a class="nav-link" asp-area="" asp-controller="Menu" asp-action="Index">Menu</a>
                             </li>
-                            <li class="nav-item">
+                            <li class="nav-item mx-5">
                                 <a class="nav-link" asp-area="" asp-controller="Cart" asp-action="Index">Cart</a>
                             </li>
-                            <li class="nav-item">
+                            <li class="nav-item mx-5">
                                 <a class="nav-link" asp-area="" asp-controller="Feedback" asp-action="Index">Feedback</a>
                             </li>
-
+                        }
+                        else
+                        {
+                            <li class="nav-item mx-5">
+                                <a class="nav-link" asp-area="" asp-controller="Menu" asp-action="Index">Menu</a>
+                            </li>
                         }
                     </ul>
                     <partial name="_LoginPartial" />
@@ -120,6 +113,7 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

@@ -8,7 +8,7 @@ using DiningHub.Areas.Identity.Data;
 
 namespace DiningHub.Controllers
 {
-    [Authorize(Policy = "RequireManagerRole")]
+    [Authorize(Policy = "RequireInternalRole")]
     [Route("manage/feedback")]
     public class FeedbackManagementController : Controller
     {

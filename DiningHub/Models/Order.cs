@@ -21,5 +21,7 @@ namespace DiningHub.Models
         public ICollection<OrderItem> OrderItems { get; set; }
 
         public Feedback Feedback { get; set; }
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

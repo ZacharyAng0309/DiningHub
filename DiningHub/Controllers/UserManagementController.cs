@@ -4,7 +4,12 @@ using DiningHub.Areas.Identity.Data;
 using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using DiningHub.Models;
+using X.PagedList;
 
 namespace DiningHub.Controllers
 {
@@ -14,22 +19,69 @@ namespace DiningHub.Controllers
     {
         private readonly UserManager<DiningHubUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly ILogger<UserManagementController> _logger;
 
-        public UserManagementController(UserManager<DiningHubUser> userManager, RoleManager<IdentityRole> roleManager)
+        public UserManagementController(UserManager<DiningHubUser> userManager, RoleManager<IdentityRole> roleManager, ILogger<UserManagementController> logger)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            _logger = logger;
         }
 
-        // View all users
         [HttpGet("")]
-        public IActionResult Index()
+        public async Task<IActionResult> Index(string searchString, string sortOrder, int? page)
         {
-            var users = _userManager.Users.ToList();
-            return View(users);
+            ViewData["CurrentSort"] = sortOrder;
+            ViewData["NameSortParm"] = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewData["EmailSortParm"] = sortOrder == "Email" ? "email_desc" : "Email";
+            ViewData["CurrentFilter"] = searchString;
+
+            var users = from u in _userManager.Users
+                        select u;
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                users = users.Where(u => u.UserName.Contains(searchString)
+                                       || u.Email.Contains(searchString)
+                                       || u.FirstName.Contains(searchString)
+                                       || u.LastName.Contains(searchString));
+            }
+
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    users = users.OrderByDescending(u => u.UserName);
+                    break;
+                case "Email":
+                    users = users.OrderBy(u => u.Email);
+                    break;
+                case "email_desc":
+                    users = users.OrderByDescending(u => u.Email);
+                    break;
+                default:
+                    users = users.OrderBy(u => u.UserName);
+                    break;
+            }
+
+            var userRoles = new Dictionary<string, IList<string>>();
+            foreach (var user in users)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                userRoles[user.Id] = roles;
+            }
+
+            int pageSize = 10;
+            int pageNumber = (page ?? 1);
+
+            var model = new ManageUsersViewModel
+            {
+                Users = await users.ToPagedListAsync(pageNumber, pageSize),
+                UserRoles = userRoles
+            };
+
+            return View(model);
         }
 
-        // View details of a single user
         [HttpGet("{id}")]
         public async Task<IActionResult> Details(string id)
         {
@@ -43,7 +95,6 @@ namespace DiningHub.Controllers
             return View(user);
         }
 
-        // Edit a user (GET)
         [HttpGet("edit/{id}")]
         public async Task<IActionResult> Edit(string id)
         {
@@ -55,40 +106,54 @@ namespace DiningHub.Controllers
             return View(user);
         }
 
-        // Edit a user (POST)
         [HttpPost("edit/{id}")]
-        public async Task<IActionResult> Edit(DiningHubUser user)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(string id, [Bind("Id,UserName,Email,FirstName,LastName,Points,PhoneNumber")] DiningHubUser user)
         {
-            if (ModelState.IsValid)
+            if (id != user.Id)
             {
-                var existingUser = await _userManager.FindByIdAsync(user.Id);
-                if (existingUser == null)
-                {
-                    return NotFound();
-                }
-
-                existingUser.UserName = user.UserName;
-                existingUser.Email = user.Email;
-                existingUser.EmailConfirmed = user.EmailConfirmed;
-                existingUser.FirstName = user.FirstName;
-                existingUser.LastName = user.LastName;
-                existingUser.Points = user.Points;
-                existingUser.PhoneNumber = user.PhoneNumber;
-
-                var result = await _userManager.UpdateAsync(existingUser);
-                if (result.Succeeded)
-                {
-                    return RedirectToAction(nameof(Index));
-                }
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
+                return BadRequest();
             }
+
+            if (!ModelState.IsValid)
+            {
+                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    _logger.LogError($"ModelState Error: {error.ErrorMessage}");
+                }
+                return View(user);
+            }
+
+            var existingUser = await _userManager.FindByIdAsync(user.Id);
+            if (existingUser == null)
+            {
+                return NotFound();
+            }
+
+            _logger.LogInformation($"Updating user: {user.UserName}");
+
+            existingUser.UserName = user.UserName;
+            existingUser.Email = user.Email;
+            existingUser.FirstName = user.FirstName;
+            existingUser.LastName = user.LastName;
+            existingUser.Points = user.Points;
+            existingUser.PhoneNumber = user.PhoneNumber;
+            existingUser.UpdatedAt = DateTime.UtcNow;
+
+            var result = await _userManager.UpdateAsync(existingUser);
+            if (result.Succeeded)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+                _logger.LogError($"Update Error: {error.Description}");
+            }
+
             return View(user);
         }
 
-        // Delete a user (GET)
         [HttpGet("delete/{id}")]
         public async Task<IActionResult> Delete(string id)
         {
@@ -100,9 +165,9 @@ namespace DiningHub.Controllers
             return View(user);
         }
 
-        // Delete a user (POST)
         [HttpPost("delete/{id}")]
         [ActionName("Delete")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
@@ -124,7 +189,6 @@ namespace DiningHub.Controllers
             return View(user);
         }
 
-        // Assign roles to a user (GET)
         [HttpGet("manage-roles/{id}")]
         public async Task<IActionResult> ManageRoles(string id)
         {
@@ -146,8 +210,8 @@ namespace DiningHub.Controllers
             return View(model);
         }
 
-        // Assign roles to a user (POST)
         [HttpPost("manage-roles/{id}")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ManageRoles(ManageRolesViewModel model)
         {
             var user = await _userManager.FindByIdAsync(model.UserId);
@@ -175,13 +239,48 @@ namespace DiningHub.Controllers
 
             return RedirectToAction(nameof(Details), new { id = user.Id });
         }
-    }
 
-    public class ManageRolesViewModel
-    {
-        public string UserId { get; set; }
-        public IList<IdentityRole> AvailableRoles { get; set; }
-        public IList<string> UserRoles { get; set; }
-        public string[] SelectedRoles { get; set; }
+        [HttpGet("add-staff")]
+        public IActionResult AddStaff()
+        {
+            return View();
+        }
+
+        [HttpPost("add-staff")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddStaff(AddStaffViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = new DiningHubUser
+                {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    EmailConfirmed = true, // Set to true if email confirmation is not required
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
+                };
+
+                var result = await _userManager.CreateAsync(user, model.Password);
+                if (result.Succeeded)
+                {
+                    result = await _userManager.AddToRoleAsync(user, "Staff");
+                    if (result.Succeeded)
+                    {
+                        _logger.LogInformation($"Staff user {model.Email} created successfully.");
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+            }
+
+            return View(model);
+        }
     }
 }

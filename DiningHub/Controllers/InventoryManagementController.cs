@@ -4,25 +4,32 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using DiningHub.Areas.Identity.Data;
+using Microsoft.AspNetCore.Identity;
+using System;
+using System.Linq;
 
 namespace DiningHub.Controllers
 {
-    [Authorize(Policy = "RequireManagerRole")]
+    [Authorize(Policy = "RequireInternalRole")]
     [Route("manage/inventory")]
     public class InventoryManagementController : Controller
     {
         private readonly DiningHubContext _context;
+        private readonly UserManager<DiningHubUser> _userManager;
 
-        public InventoryManagementController(DiningHubContext context)
+        public InventoryManagementController(DiningHubContext context, UserManager<DiningHubUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // View all inventory items
         [HttpGet("")]
         public async Task<IActionResult> Index()
         {
-            var inventoryItems = await _context.InventoryItems.ToListAsync();
+            var inventoryItems = await _context.InventoryItems
+                .Include(i => i.CreatedBy)
+                .ToListAsync();
             return View(inventoryItems);
         }
 
@@ -30,7 +37,9 @@ namespace DiningHub.Controllers
         [HttpGet("details/{id}")]
         public async Task<IActionResult> Details(int id)
         {
-            var inventoryItem = await _context.InventoryItems.FirstOrDefaultAsync(i => i.InventoryItemId == id);
+            var inventoryItem = await _context.InventoryItems
+                .Include(i => i.CreatedBy)
+                .FirstOrDefaultAsync(i => i.InventoryItemId == id);
             if (inventoryItem == null)
             {
                 return NotFound();
@@ -51,6 +60,11 @@ namespace DiningHub.Controllers
         {
             if (ModelState.IsValid)
             {
+                var user = await _userManager.GetUserAsync(User);
+                inventoryItem.CreatedById = user.Id;
+                inventoryItem.CreatedAt = DateTime.UtcNow;
+                inventoryItem.UpdatedAt = DateTime.UtcNow;
+
                 _context.Add(inventoryItem);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -83,6 +97,7 @@ namespace DiningHub.Controllers
             {
                 try
                 {
+                    inventoryItem.UpdatedAt = DateTime.UtcNow;
                     _context.Update(inventoryItem);
                     await _context.SaveChangesAsync();
                 }
@@ -106,7 +121,9 @@ namespace DiningHub.Controllers
         [HttpGet("delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var inventoryItem = await _context.InventoryItems.FirstOrDefaultAsync(i => i.InventoryItemId == id);
+            var inventoryItem = await _context.InventoryItems
+                .Include(i => i.CreatedBy)
+                .FirstOrDefaultAsync(i => i.InventoryItemId == id);
             if (inventoryItem == null)
             {
                 return NotFound();

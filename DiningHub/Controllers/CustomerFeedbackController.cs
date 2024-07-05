@@ -9,7 +9,7 @@ using System;
 
 namespace DiningHub.Controllers
 {
-    [Authorize(Roles = "Customer")]
+    [Authorize(Policy = "RequireAnyRole")]
     [Route("feedback")]
     public class CustomerFeedbackController : Controller
     {

@@ -1,0 +1,55 @@
+﻿.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 30px;
+}
+
+.card {
+    border-radius: 3rem;
+    width: 1200px;
+    background-color: #f8f9fa;
+}
+
+.card-header {
+    background-color: #dc3545;
+    color: white;
+    text-align: center;
+}
+
+
+.form-control {
+    border-radius: 20px;
+    height: 50px;
+}
+
+.btn-save {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    width: 110px;
+    border-radius: 20px;
+    padding: 0.5rem;
+}
+
+.btn-save:hover {
+    background-color: #c82333;
+}
+
+.btn-cancel {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    width: 110px;
+    border-radius: 20px;
+    padding: 0.5rem;
+}
+
+.btn-cancel:hover {
+    background-color: #5a6268;
+}
+
+.control-label {
+    font-weight: bold;
+    font-size: 14px;
+}

@@ -101,39 +101,30 @@ namespace DiningHub.Areas.Identity.Pages.Account
                     {
                         _logger.LogInformation("Password validation succeeded for user: {Email}", normalizedEmail);
 
-                        // Check if the user is confirmed if required
-                        if (!_userManager.Options.SignIn.RequireConfirmedAccount || await _userManager.IsEmailConfirmedAsync(user))
+                        // Sign the user in
+                        var result = await _signInManager.PasswordSignInAsync(user, Input.Password, Input.RememberMe, lockoutOnFailure: true);
+
+                        LogSignInResult(result);
+
+                        if (result.Succeeded)
                         {
-                            var result = await _signInManager.PasswordSignInAsync(user, Input.Password, Input.RememberMe, lockoutOnFailure: true);
-
-                            LogSignInResult(result);
-
-                            if (result.Succeeded)
-                            {
-                                _logger.LogInformation("User logged in.");
-                                return LocalRedirect(returnUrl);
-                            }
-                            if (result.RequiresTwoFactor)
-                            {
-                                _logger.LogInformation("User requires two-factor authentication.");
-                                return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
-                            }
-                            if (result.IsLockedOut)
-                            {
-                                _logger.LogWarning("User account locked out.");
-                                return RedirectToPage("./Lockout");
-                            }
-                            else
-                            {
-                                _logger.LogWarning("Invalid login attempt.");
-                                ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                                return Page();
-                            }
+                            _logger.LogInformation("User logged in.");
+                            return LocalRedirect(returnUrl);
+                        }
+                        if (result.RequiresTwoFactor)
+                        {
+                            _logger.LogInformation("User requires two-factor authentication.");
+                            return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
+                        }
+                        if (result.IsLockedOut)
+                        {
+                            _logger.LogWarning("User account locked out.");
+                            return RedirectToPage("./Lockout");
                         }
                         else
                         {
-                            _logger.LogWarning("User email not confirmed: {Email}", normalizedEmail);
-                            ModelState.AddModelError(string.Empty, "Email not confirmed. Please confirm your email to log in.");
+                            _logger.LogWarning("Invalid login attempt.");
+                            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                             return Page();
                         }
                     }
@@ -155,6 +146,7 @@ namespace DiningHub.Areas.Identity.Pages.Account
             // If we got this far, something failed, redisplay form
             return Page();
         }
+
 
         private void LogSignInResult(Microsoft.AspNetCore.Identity.SignInResult result)
         {
