@@ -21,18 +21,6 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav px-2">
-                        <li class="nav-item mx-5">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item mx-5">
-                            <a class="nav-link" asp-area="" asp-controller="Menu" asp-action="Index">Menu</a>
-                        </li>
-                        <li class="nav-item mx-5">
-                            <a class="nav-link" asp-area="" asp-controller="Cart" asp-action="Index">Cart</a>
-                        </li>
-                        <li class="nav-item mx-5">
-                            <a class="nav-link" asp-area="" asp-controller="Feedback" asp-action="Index">Feedback</a>
-                        </li>
 
                         @if (User.IsInRole("Manager"))
                         {
@@ -51,9 +39,6 @@
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="InventoryManagement" asp-action="Index">Manage Inventory</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="LogOut" asp-action="Index">Log Out</a>
-                            </li>
                         }
                         else if (User.IsInRole("Customer"))
                         {
@@ -61,13 +46,10 @@
                                 <a class="nav-link" asp-area="" asp-controller="Menu" asp-action="Index">Menu</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Cart" asp-action="Index">Cart</a>
+                                <a class="nav-link" asp-area="" asp-controller="ShoppingCart" asp-action="Index">Cart</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Feedback" asp-action="Index">Feedback</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="LogOut" asp-action="Index">Log Out</a>
+                            <li>
+
                             </li>
                         }
                     </ul>
@@ -90,6 +72,7 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
