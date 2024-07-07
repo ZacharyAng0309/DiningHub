@@ -1,0 +1,100 @@
+﻿@model dynamic
+
+@{
+    ViewData["Title"] = "Inventory Report";
+    var inventoryItems = ViewBag.InventoryItems as IEnumerable<dynamic>;
+    var lowStockItems = ViewBag.LowStockItems as IEnumerable<dynamic>;
+}
+
+<h2>Inventory Report</h2>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <canvas id="inventoryQuantityByItemChart" style="width: 100%; height: 500px;"></canvas>
+    </div>
+    <div class="col-md-6">
+        <canvas id="lowStockItemsChart" style="width: 100%; height: 500px;"></canvas>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            drawCharts();
+        });
+
+        function drawCharts() {
+            drawInventoryQuantityByItemChart();
+            drawLowStockItemsChart();
+        }
+
+        function drawInventoryQuantityByItemChart() {
+            var labels = [];
+            var data = [];
+        @foreach (var item in inventoryItems)
+        {
+            <text>
+                    labels.push('@item.Name');
+                data.push(@item.Quantity);
+            </text>
+        }
+
+                    var ctx = document.getElementById('inventoryQuantityByItemChart').getContext('2d');
+            var inventoryQuantityByItemChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Inventory Quantity by Item',
+                        data: data,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function drawLowStockItemsChart() {
+            var labels = [];
+            var data = [];
+        @foreach (var item in lowStockItems)
+        {
+            <text>
+                    labels.push('@item.Name');
+                data.push(@item.Quantity);
+            </text>
+        }
+
+                    var ctx = document.getElementById('lowStockItemsChart').getContext('2d');
+            var lowStockItemsChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Low Stock Items',
+                        data: data,
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+}

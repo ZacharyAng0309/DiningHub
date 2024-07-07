@@ -1,5 +1,10 @@
 {
   "version": "1.0",
   "defaultProvider": "cdnjs",
-  "libraries": []
+  "libraries": [{
+  "provider": "unpkg",
+  "library": "chart.js@4.4.3",
+  "destination": "wwwroot/lib/chart.js"
+}
+]
 }

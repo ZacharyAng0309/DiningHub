@@ -1,0 +1,221 @@
+﻿@model dynamic
+
+@{
+    ViewData["Title"] = "Order Report";
+    var filter = ViewBag.Filter as string;
+    var popularProducts = ViewBag.PopularProducts as IEnumerable<dynamic> ?? Enumerable.Empty<dynamic>();
+    var popularCategories = ViewBag.PopularCategories as IEnumerable<dynamic> ?? Enumerable.Empty<dynamic>();
+    var monthlySales = ViewBag.MonthlySales as IEnumerable<dynamic> ?? Enumerable.Empty<dynamic>();
+    var categoryOrderQuantities = ViewBag.CategoryOrderQuantities as IEnumerable<dynamic> ?? Enumerable.Empty<dynamic>();
+}
+
+<h2>Order Report</h2>
+
+<form method="get" action="">
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label for="startDate" class="form-label">Start Date:</label>
+            <input type="date" id="startDate" name="startDate" class="form-control" value="@ViewBag.StartDate.ToString("yyyy-MM-dd")" />
+        </div>
+        <div class="col-md-6">
+            <label for="endDate" class="form-label">End Date:</label>
+            <input type="date" id="endDate" name="endDate" class="form-control" value="@ViewBag.EndDate.ToString("yyyy-MM-dd")" />
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Filter</button>
+</form>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <canvas id="popularProductsChart" style="width: 100%; height: 500px;"></canvas>
+    </div>
+    <div class="col-md-6">
+        <canvas id="popularCategoriesChart" style="width: 100%; height: 500px;"></canvas>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <canvas id="monthlySalesChart" style="width: 100%; height: 500px;"></canvas>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <canvas id="categoryOrderQuantitiesChart" style="width: 100%; height: 500px;"></canvas>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            drawCharts();
+        });
+
+        function drawCharts() {
+            drawPopularProductsChart();
+            drawPopularCategoriesChart();
+            drawMonthlySalesChart();
+            drawCategoryOrderQuantitiesChart();
+        }
+
+        function drawPopularProductsChart() {
+            var productLabels = [];
+            var productData = [];
+        @foreach (var item in popularProducts)
+        {
+            <text>
+                    productLabels.push('@item.Name');
+                productData.push(@item.Count);
+            </text>
+        }
+
+                    var ctx = document.getElementById('popularProductsChart').getContext('2d');
+            var popularProductsChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: productLabels,
+                    datasets: [{
+                        label: 'Popular Products',
+                        data: productData,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function drawPopularCategoriesChart() {
+            var categoryLabels = [];
+            var categoryData = [];
+        @foreach (var item in popularCategories)
+        {
+            <text>
+                    categoryLabels.push('@item.Category');
+                categoryData.push(@item.Count);
+            </text>
+        }
+
+                    var ctx = document.getElementById('popularCategoriesChart').getContext('2d');
+            var popularCategoriesChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: categoryLabels,
+                    datasets: [{
+                        label: 'Popular Categories',
+                        data: categoryData,
+                        backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                        borderColor: 'rgba(153, 102, 255, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function drawMonthlySalesChart() {
+            var monthLabels = [];
+            var salesData = [];
+        @foreach (var item in monthlySales)
+        {
+            <text>
+                    monthLabels.push('@item.Month');
+                salesData.push(@item.TotalSales);
+            </text>
+        }
+
+                    var ctx = document.getElementById('monthlySalesChart').getContext('2d');
+            var monthlySalesChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: monthLabels,
+                    datasets: [{
+                        label: 'Monthly Sales',
+                        data: salesData,
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function drawCategoryOrderQuantitiesChart() {
+            var categoryLabels = [];
+            var categoryData = [];
+        @foreach (var item in categoryOrderQuantities)
+        {
+            <text>
+                    categoryLabels.push('@item.Category');
+                categoryData.push(@item.Quantity);
+            </text>
+        }
+
+                    var ctx = document.getElementById('categoryOrderQuantitiesChart').getContext('2d');
+            var categoryOrderQuantitiesChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: categoryLabels,
+                    datasets: [{
+                        label: 'Order Quantity by Category',
+                        data: categoryData,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (tooltipItem) {
+                                    return tooltipItem.label + ': ' + tooltipItem.raw;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+}
