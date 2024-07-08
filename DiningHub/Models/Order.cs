@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using DiningHub.Helper;
 
 namespace DiningHub.Models
 {
@@ -17,6 +18,7 @@ namespace DiningHub.Models
         public decimal TotalAmount { get; set; }
 
         public string UserId { get; set; }
+        public string UserName { get; set; }
         public DiningHubUser User { get; set; }
         public ICollection<OrderItem> OrderItems { get; set; }
 
@@ -25,6 +27,6 @@ namespace DiningHub.Models
         public string PaymentMethod { get; set; }
         public DateTime? PaymentDate { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; } = DateTimeHelper.GetMalaysiaTime();
     }
 }

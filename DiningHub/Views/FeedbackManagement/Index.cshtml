@@ -1,37 +1,9 @@
-﻿@model IEnumerable<DiningHub.Models.Feedback>
+﻿@using DiningHub.Helpers
+@model PaginatedList<DiningHub.Models.Feedback>
 
 @{
     ViewData["Title"] = "Manage Feedback";
 }
-
-@* <h2>Manage Feedback</h2>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>User</th>
-            <th>Comments</th>
-            <th>Rating</th>
-            <th>Date</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var feedback in Model)
-        {
-            <tr>
-                <td>@feedback.User.UserName</td>
-                <td>@feedback.Comments</td>
-                <td>@feedback.Rating</td>
-                <td>@feedback.Date.ToString("g")</td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@feedback.FeedbackId" class="btn btn-info">Details</a>
-                    <a asp-action="Delete" asp-route-id="@feedback.FeedbackId" class="btn btn-danger">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table> *@
 
 <head>
     <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
@@ -44,15 +16,27 @@
                 <div class="col-sm-8">
                     <h2>Manage Feedback</h2>
                 </div>
+                <div class="col-sm-4">
+                    <form method="get" action="">
+                        <div class="input-group">
+                            <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" class="form-control" placeholder="Search feedback..." />
+                            <button type="submit" class="btn btn-primary">Search</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
         <table class="table table-striped table-hover">
             <thead>
                 <tr>
+                    <th>
+                        <a asp-action="Index" asp-route-sortOrder="@ViewData["DateSortParm"]">Date</a>
+                    </th>
                     <th>User</th>
                     <th>Comments</th>
-                    <th>Rating</th>
-                    <th>Date</th>
+                    <th>
+                        <a asp-action="Index" asp-route-sortOrder="@ViewData["RatingSortParm"]">Rating</a>
+                    </th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -60,10 +44,10 @@
                 @foreach (var feedback in Model)
                 {
                     <tr>
+                        <td>@feedback.Date.ToString("g")</td>
                         <td>@feedback.User.UserName</td>
                         <td>@feedback.Comments</td>
                         <td>@feedback.Rating</td>
-                        <td>@feedback.Date.ToString("g")</td>
                         <td>
                             <a asp-action="Details" asp-route-id="@feedback.FeedbackId" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#detailsModal-@feedback.FeedbackId">Details</a>
                             <form method="post" asp-action="Delete" asp-route-id="@feedback.FeedbackId" class="d-inline">
@@ -74,6 +58,32 @@
                 }
             </tbody>
         </table>
+    </div>
+
+    <!-- Pagination Controls -->
+    <div class="d-flex justify-content-center">
+        <nav>
+            <ul class="pagination">
+                @if (Model.HasPreviousPage)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="?page=@(Model.PageIndex - 1)&sortOrder=@ViewData["CurrentSort"]&searchString=@ViewData["CurrentFilter"]">Previous</a>
+                    </li>
+                }
+                @for (var i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                        <a class="page-link" href="?page=@i&sortOrder=@ViewData["CurrentSort"]&searchString=@ViewData["CurrentFilter"]">@i</a>
+                    </li>
+                }
+                @if (Model.HasNextPage)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="?page=@(Model.PageIndex + 1)&sortOrder=@ViewData["CurrentSort"]&searchString=@ViewData["CurrentFilter"]">Next</a>
+                    </li>
+                }
+            </ul>
+        </nav>
     </div>
 </div>
 
@@ -103,7 +113,7 @@
                         </dl>
                     </div>
                 </div>
-                <div class="modal-footer"> 
+                <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using DiningHub.Helper;
 
 namespace DiningHub.Models
 {
@@ -16,6 +17,6 @@ namespace DiningHub.Models
 
         public string UserId { get; set; }
 
-        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; } = DateTimeHelper.GetMalaysiaTime();
     }
 }

@@ -1,4 +1,5 @@
-﻿@model IEnumerable<DiningHub.Models.MenuItem>
+﻿@model DiningHub.Models.MenuManagementViewModel
+@using DiningHub.Helpers
 
 @{
     ViewData["Title"] = "Manage Menu Items";
@@ -16,18 +17,64 @@
                 </div>
             </div>
         </div>
+
+        <form method="get">
+            <div class="row mb-3">
+                <div class="col-sm-4">
+                    <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" class="form-control" placeholder="Search by name or description" />
+                </div>
+                <div class="col-sm-4">
+                    <select name="categoryId" class="form-select">
+                        <option value="">All Categories</option>
+                        @foreach (var category in ViewBag.Categories)
+                        {
+                            bool selected = category.CategoryId == (int?)ViewData["CurrentCategory"];
+                            <option value="@category.CategoryId" selected="@(selected ? "selected" : "")">@category.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-sm-4 text-end">
+                    <button type="submit" class="btn btn-primary">Filter</button>
+                </div>
+            </div>
+        </form>
+
         <table class="table table-striped table-hover">
             <thead>
                 <tr>
-                    <th>Name</th>
+                    <th>
+                        <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]">
+                            Name
+                            @if (ViewData["CurrentSort"]?.ToString() == "name_desc")
+                            {
+                                <i class="bi bi-arrow-down"></i>
+                            }
+                            else
+                            {
+                                <i class="bi bi-arrow-up"></i>
+                            }
+                        </a>
+                    </th>
                     <th>Description</th>
-                    <th>Price</th>
+                    <th>
+                        <a asp-action="Index" asp-route-sortOrder="@ViewData["PriceSortParm"]">
+                            Price
+                            @if (ViewData["CurrentSort"]?.ToString() == "price_desc")
+                            {
+                                <i class="bi bi-arrow-down"></i>
+                            }
+                            else
+                            {
+                                <i class="bi bi-arrow-up"></i>
+                            }
+                        </a>
+                    </th>
                     <th>Category</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model)
+                @foreach (var item in Model.MenuItems)
                 {
                     <tr>
                         <td>@item.Name</td>
@@ -45,11 +92,37 @@
                 }
             </tbody>
         </table>
+
+        <div class="d-flex justify-content-center">
+            <nav>
+                <ul class="pagination">
+                    @if (Model.MenuItems.HasPreviousPage)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="/manage/menu?page=@(Model.CurrentPage - 1)@(string.IsNullOrEmpty(ViewData["CurrentSort"]?.ToString()) ? "" : $"&sortOrder={ViewData["CurrentSort"]}")@(string.IsNullOrEmpty(ViewData["CurrentFilter"]?.ToString()) ? "" : $"&searchString={ViewData["CurrentFilter"]}")@(ViewData["CurrentCategory"] == null ? "" : $"&categoryId={ViewData["CurrentCategory"]}")">Previous</a>
+                        </li>
+                    }
+                    @for (var i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                            <a class="page-link" href="/manage/menu?page=@i@(string.IsNullOrEmpty(ViewData["CurrentSort"]?.ToString()) ? "" : $"&sortOrder={ViewData["CurrentSort"]}")@(string.IsNullOrEmpty(ViewData["CurrentFilter"]?.ToString()) ? "" : $"&searchString={ViewData["CurrentFilter"]}")@(ViewData["CurrentCategory"] == null ? "" : $"&categoryId={ViewData["CurrentCategory"]}")">@i</a>
+                        </li>
+                    }
+                    @if (Model.MenuItems.HasNextPage)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="/manage/menu?page=@(Model.CurrentPage + 1)@(string.IsNullOrEmpty(ViewData["CurrentSort"]?.ToString()) ? "" : $"&sortOrder={ViewData["CurrentSort"]}")@(string.IsNullOrEmpty(ViewData["CurrentFilter"]?.ToString()) ? "" : $"&searchString={ViewData["CurrentFilter"]}")@(ViewData["CurrentCategory"] == null ? "" : $"&categoryId={ViewData["CurrentCategory"]}")">Next</a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        </div>
+
     </div>
 </div>
 
 <!-- Modal Templates -->
-@foreach (var item in Model)
+@foreach (var item in Model.MenuItems)
 {
     <div class="modal fade" id="detailsModal-@item.MenuItemId" tabindex="-1" aria-labelledby="detailsModalLabel-@item.MenuItemId" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">

@@ -25,13 +25,13 @@ namespace DiningHub.Models
         [ForeignKey("Category")]
         public int CategoryId { get; set; }
 
-        public string CreatedById { get; set; }
-        public string LastUpdatedById { get; set; }
+        public string? CreatedById { get; set; }
+        public string? LastUpdatedById { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
 
         public virtual Category Category { get; set; }
-        public virtual DiningHubUser CreatedBy { get; set; }
-        public virtual DiningHubUser LastUpdatedBy { get; set; }
+        public virtual DiningHubUser? CreatedBy { get; set; }
+        public virtual DiningHubUser? LastUpdatedBy { get; set; }
     }
 }

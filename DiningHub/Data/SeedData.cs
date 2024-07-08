@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using DiningHub.Helper;
 
 namespace DiningHub.Data
 {
@@ -255,7 +256,7 @@ namespace DiningHub.Data
                     Email = adminEmail,
                     FirstName = "Admin",
                     LastName = "User",
-                    DateOfBirth = DateTime.UtcNow.AddYears(-30), // Optional DateOfBirth
+                    DateOfBirth = DateTimeHelper.GetMalaysiaTime().AddYears(-30), // Optional DateOfBirth
                     EmailConfirmed = true // Ensure email is confirmed at creation
                 };
 

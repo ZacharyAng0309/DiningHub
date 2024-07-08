@@ -38,6 +38,8 @@ namespace DiningHub.Models
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
 
+        public bool IsDeleted { get; set; }
+
         public virtual Category Category { get; set; }
         public virtual DiningHubUser CreatedBy { get; set; }
         public virtual DiningHubUser LastUpdatedBy { get; set; }

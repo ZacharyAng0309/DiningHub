@@ -3,8 +3,9 @@ using DiningHub.Models;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
-using System;
+using System.Linq;
 using DiningHub.Areas.Identity.Data;
+using DiningHub.Helpers;
 
 namespace DiningHub.Controllers
 {
@@ -19,12 +20,44 @@ namespace DiningHub.Controllers
             _context = context;
         }
 
-        // View all feedback (for managers)
+        // View all feedback (for managers) with search, sort, filter, and pagination
         [HttpGet("")]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString, string sortOrder, int? page)
         {
-            var feedbacks = await _context.Feedbacks.Include(f => f.User).ToListAsync();
-            return View(feedbacks);
+            ViewData["CurrentSort"] = sortOrder;
+            ViewData["DateSortParm"] = string.IsNullOrEmpty(sortOrder) ? "date_desc" : "";
+            ViewData["RatingSortParm"] = sortOrder == "Rating" ? "rating_desc" : "Rating";
+            ViewData["CurrentFilter"] = searchString;
+
+            var feedbacks = from f in _context.Feedbacks.Include(f => f.User).Include(f => f.Order)
+                            select f;
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                feedbacks = feedbacks.Where(f => f.Comments.Contains(searchString) || f.User.UserName.Contains(searchString));
+            }
+
+            switch (sortOrder)
+            {
+                case "date_desc":
+                    feedbacks = feedbacks.OrderByDescending(f => f.Date);
+                    break;
+                case "Rating":
+                    feedbacks = feedbacks.OrderBy(f => f.Rating);
+                    break;
+                case "rating_desc":
+                    feedbacks = feedbacks.OrderByDescending(f => f.Rating);
+                    break;
+                default:
+                    feedbacks = feedbacks.OrderBy(f => f.Date);
+                    break;
+            }
+
+            int pageSize = 10;
+            int pageNumber = (page ?? 1);
+            var paginatedFeedbacks = await PaginatedList<Feedback>.CreateAsync(feedbacks.AsNoTracking(), pageNumber, pageSize);
+
+            return View(paginatedFeedbacks);
         }
 
         // View details of a single feedback item (for managers)

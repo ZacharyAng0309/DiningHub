@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using DiningHub.Areas.Identity.Data;
+using DiningHub.Helpers;
 
 namespace DiningHub.Controllers
 {
@@ -19,14 +20,46 @@ namespace DiningHub.Controllers
         }
 
         [HttpGet("")]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString, string sortOrder, int? page)
         {
-            var orders = await _context.Orders
-                .Include(o => o.User)
-                .Include(o => o.OrderItems)
-                .ThenInclude(oi => oi.MenuItem)
-                .ToListAsync();
-            return View(orders);
+            ViewData["CurrentSort"] = sortOrder;
+            ViewData["OrderDateSortParm"] = string.IsNullOrEmpty(sortOrder) ? "date_desc" : "";
+            ViewData["TotalAmountSortParm"] = sortOrder == "TotalAmount" ? "amount_desc" : "TotalAmount";
+            ViewData["CurrentFilter"] = searchString;
+
+            var orders = from o in _context.Orders
+                         .Include(o => o.User)
+                         .Include(o => o.OrderItems)
+                         .ThenInclude(oi => oi.MenuItem)
+                         select o;
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                orders = orders.Where(o => o.User.UserName.Contains(searchString)
+                                         || o.OrderItems.Any(oi => oi.MenuItem.Name.Contains(searchString)));
+            }
+
+            switch (sortOrder)
+            {
+                case "date_desc":
+                    orders = orders.OrderByDescending(o => o.OrderDate);
+                    break;
+                case "TotalAmount":
+                    orders = orders.OrderBy(o => o.TotalAmount);
+                    break;
+                case "amount_desc":
+                    orders = orders.OrderByDescending(o => o.TotalAmount);
+                    break;
+                default:
+                    orders = orders.OrderBy(o => o.OrderDate);
+                    break;
+            }
+
+            int pageSize = 10;
+            int pageNumber = (page ?? 1);
+            var pagedOrders = await PaginatedList<Order>.CreateAsync(orders.AsNoTracking(), pageNumber, pageSize);
+
+            return View(pagedOrders);
         }
 
         [HttpGet("{id}")]

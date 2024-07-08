@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using DiningHub.Models;
+using DiningHub.Helper;
 using X.PagedList;
 
 namespace DiningHub.Controllers
@@ -36,8 +37,7 @@ namespace DiningHub.Controllers
             ViewData["EmailSortParm"] = sortOrder == "Email" ? "email_desc" : "Email";
             ViewData["CurrentFilter"] = searchString;
 
-            var users = from u in _userManager.Users
-                        select u;
+            var users = _userManager.Users.Where(u => !u.IsDeleted);
 
             if (!string.IsNullOrEmpty(searchString))
             {
@@ -143,7 +143,7 @@ namespace DiningHub.Controllers
                 existingUser.Points = user.Points;
             }
             existingUser.PhoneNumber = user.PhoneNumber;
-            existingUser.UpdatedAt = DateTime.UtcNow;
+            existingUser.UpdatedAt = DateTimeHelper.GetMalaysiaTime();
 
             var result = await _userManager.UpdateAsync(existingUser);
             if (result.Succeeded)
@@ -181,7 +181,9 @@ namespace DiningHub.Controllers
                 return NotFound();
             }
 
-            var result = await _userManager.DeleteAsync(user);
+            // Soft delete by setting IsDeleted to true
+            user.IsDeleted = true;
+            var result = await _userManager.UpdateAsync(user);
             if (result.Succeeded)
             {
                 return RedirectToAction(nameof(Index));
@@ -264,8 +266,8 @@ namespace DiningHub.Controllers
                     FirstName = model.FirstName,
                     LastName = model.LastName,
                     EmailConfirmed = true, // Set to true if email confirmation is not required
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
+                    CreatedAt = DateTimeHelper.GetMalaysiaTime(),
+                    UpdatedAt = DateTimeHelper.GetMalaysiaTime()
                 };
 
                 var result = await _userManager.CreateAsync(user, model.Password);

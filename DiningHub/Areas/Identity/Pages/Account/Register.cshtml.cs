@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using DiningHub.Helper;
 
 namespace DiningHub.Areas.Identity.Pages.Account
 {
@@ -95,8 +96,8 @@ namespace DiningHub.Areas.Identity.Pages.Account
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 user.FirstName = Input.Username;
                 user.EmailConfirmed = true;
-                user.CreatedAt = DateTime.UtcNow;
-                user.UpdatedAt = DateTime.UtcNow;
+                user.CreatedAt = DateTimeHelper.GetMalaysiaTime();
+                user.UpdatedAt = DateTimeHelper.GetMalaysiaTime();
 
                 var result = await _userManager.CreateAsync(user, Input.Password);
 

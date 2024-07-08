@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using DiningHub.Areas.Identity.Data;
 using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
+using DiningHub.Helper;
 
 namespace DiningHub.Controllers
 {
@@ -23,8 +24,8 @@ namespace DiningHub.Controllers
         [HttpGet("")]
         public async Task<IActionResult> Index(DateTime? startDate, DateTime? endDate)
         {
-            startDate ??= DateTime.UtcNow.AddMonths(-1);
-            endDate ??= DateTime.UtcNow;
+            startDate ??= DateTimeHelper.GetMalaysiaTime().AddMonths(-1);
+            endDate ??= DateTimeHelper.GetMalaysiaTime();
 
             var stats = new
             {
@@ -44,8 +45,8 @@ namespace DiningHub.Controllers
         [HttpGet("order")]
         public async Task<IActionResult> OrderReport(DateTime? startDate, DateTime? endDate)
         {
-            startDate ??= DateTime.UtcNow.AddMonths(-1);
-            endDate ??= DateTime.UtcNow;
+            startDate ??= DateTimeHelper.GetMalaysiaTime().AddMonths(-1);
+            endDate ??= DateTimeHelper.GetMalaysiaTime();
 
             var popularProducts = await GetPopularProductsAsync((DateTime)startDate, (DateTime)endDate);
             var popularCategories = await GetPopularCategoriesAsync((DateTime)startDate, (DateTime)endDate);
@@ -65,8 +66,8 @@ namespace DiningHub.Controllers
         [HttpGet("user")]
         public async Task<IActionResult> UserReport(DateTime? startDate, DateTime? endDate)
         {
-            startDate ??= DateTime.UtcNow.AddMonths(-1);
-            endDate ??= DateTime.UtcNow;
+            startDate ??= DateTimeHelper.GetMalaysiaTime().AddMonths(-1);
+            endDate ??= DateTimeHelper.GetMalaysiaTime();
 
             var userActivity = await GetUserActivityAsync((DateTime)startDate, (DateTime)endDate);
 
@@ -105,15 +106,24 @@ namespace DiningHub.Controllers
 
         private async Task<IEnumerable<dynamic>> GetPopularCategoriesAsync(DateTime startDate, DateTime endDate)
         {
-            var query = _context.OrderItems
+            var orderItems = await _context.OrderItems
+                .Include(oi => oi.Order)
                 .Include(oi => oi.MenuItem)
-                .Where(oi => oi.Order.OrderDate >= startDate && oi.Order.OrderDate <= endDate);
-
-            return await query
-                .GroupBy(oi => new { oi.MenuItem.Category })
-                .Select(g => new { g.Key.Category, Count = g.Sum(oi => oi.Quantity) })
-                .OrderByDescending(x => x.Count)
+                .ThenInclude(mi => mi.Category)
+                .Where(oi => oi.Order.OrderDate >= startDate && oi.Order.OrderDate <= endDate && !oi.MenuItem.IsDeleted)
                 .ToListAsync();
+
+            var groupedResult = orderItems
+                .GroupBy(oi => oi.MenuItem.Category)
+                .Select(g => new
+                {
+                    Category = g.Key.Name,
+                    Count = g.Sum(oi => oi.Quantity)
+                })
+                .OrderByDescending(x => x.Count)
+                .ToList();
+
+            return groupedResult;
         }
 
         private async Task<IEnumerable<dynamic>> GetMonthlySalesAsync(DateTime startDate, DateTime endDate)
@@ -130,16 +140,26 @@ namespace DiningHub.Controllers
 
         private async Task<IEnumerable<dynamic>> GetCategoryOrderQuantitiesAsync(DateTime startDate, DateTime endDate)
         {
-            var query = _context.OrderItems
+            var orderItems = await _context.OrderItems
+                .Include(oi => oi.Order)
                 .Include(oi => oi.MenuItem)
-                .Where(oi => oi.Order.OrderDate >= startDate && oi.Order.OrderDate <= endDate);
-
-            return await query
-                .GroupBy(oi => new { oi.MenuItem.Category })
-                .Select(g => new { g.Key.Category, Quantity = g.Sum(oi => oi.Quantity) })
-                .OrderByDescending(x => x.Quantity)
+                .ThenInclude(mi => mi.Category)
+                .Where(oi => oi.Order.OrderDate >= startDate && oi.Order.OrderDate <= endDate && !oi.MenuItem.IsDeleted)
                 .ToListAsync();
+
+            var groupedResult = orderItems
+                .GroupBy(oi => oi.MenuItem.Category)
+                .Select(g => new
+                {
+                    Category = g.Key.Name,
+                    Quantity = g.Sum(oi => oi.Quantity)
+                })
+                .OrderByDescending(x => x.Quantity)
+                .ToList();
+
+            return groupedResult;
         }
+
 
         private async Task<IEnumerable<dynamic>> GetUserActivityAsync(DateTime startDate, DateTime endDate)
         {

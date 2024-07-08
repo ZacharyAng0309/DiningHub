@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using DiningHub.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using DiningHub.Helper;
 
 namespace DiningHub.Areas.Identity.Data
 {
@@ -34,13 +35,15 @@ namespace DiningHub.Areas.Identity.Data
         [DataType(DataType.Date)]
         public DateTime? DateOfBirth { get; set; }
 
+        public bool IsDeleted { get; set; }
+
         [BindNever]
         public ICollection<Order> Orders { get; set; }
 
         [BindNever]
         public ICollection<Feedback> Feedbacks { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; } = DateTimeHelper.GetMalaysiaTime();
+        public DateTime UpdatedAt { get; set; } = DateTimeHelper.GetMalaysiaTime();
     }
 }

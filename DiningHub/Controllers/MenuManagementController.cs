@@ -1,15 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using DiningHub.Models;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
-using DiningHub.Areas.Identity.Data;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Linq;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
-using System.IO;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
+using System.Linq;
+using System;
+using System.Collections.Generic;
+using DiningHub.Models;
+using DiningHub.Areas.Identity.Data;
+using DiningHub.Helper;
+using DiningHub.Helpers;
 // Uncomment the following lines if using AWS S3
 // using Amazon.S3;
 // using Amazon.S3.Transfer;
@@ -28,7 +30,7 @@ namespace DiningHub.Controllers
         // Uncomment the following line if using AWS S3
         // private readonly IAmazonS3 _s3Client;
 
-        public MenuManagementController(DiningHubContext context, UserManager<DiningHubUser> userManager, IConfiguration configuration, ILogger<MenuManagementController> logger /*, IAmazonS3 s3Client*/)
+        public MenuManagementController(DiningHubContext context, UserManager<DiningHubUser> userManager, IConfiguration configuration, ILogger<MenuManagementController> logger)
         {
             _context = context;
             _userManager = userManager;
@@ -38,19 +40,70 @@ namespace DiningHub.Controllers
             // _s3Client = s3Client;
         }
 
-        // View all menu items
         [HttpGet("")]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString, int? categoryId, string sortOrder, int? page)
         {
-            var menuItems = await _context.MenuItems.Include(m => m.Category).ToListAsync();
-            return View(menuItems);
+            ViewData["CurrentSort"] = sortOrder;
+            ViewData["NameSortParm"] = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewData["PriceSortParm"] = sortOrder == "Price" ? "price_desc" : "Price";
+            ViewData["CurrentFilter"] = searchString;
+            ViewData["CurrentCategory"] = categoryId;
+
+            ViewBag.Categories = await _context.Categories.ToListAsync();
+
+            var menuItems = from m in _context.MenuItems.Include(m => m.Category).Include(m => m.CreatedBy).Include(m => m.LastUpdatedBy)
+                            where !m.IsDeleted
+                            select m;
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                menuItems = menuItems.Where(m => m.Name.Contains(searchString) || m.Description.Contains(searchString));
+            }
+
+            if (categoryId.HasValue)
+            {
+                menuItems = menuItems.Where(m => m.CategoryId == categoryId.Value);
+            }
+
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    menuItems = menuItems.OrderByDescending(m => m.Name);
+                    break;
+                case "Price":
+                    menuItems = menuItems.OrderBy(m => m.Price);
+                    break;
+                case "price_desc":
+                    menuItems = menuItems.OrderByDescending(m => m.Price);
+                    break;
+                default:
+                    menuItems = menuItems.OrderBy(m => m.Name);
+                    break;
+            }
+
+            int pageSize = 10;
+            int pageNumber = (page ?? 1);
+            var pagedMenuItems = await PaginatedList<MenuItem>.CreateAsync(menuItems.AsNoTracking(), pageNumber, pageSize);
+
+            var viewModel = new MenuManagementViewModel
+            {
+                MenuItems = pagedMenuItems,
+                CurrentPage = pageNumber,
+                TotalPages = pagedMenuItems.TotalPages
+            };
+
+            return View(viewModel);
         }
+
 
         // View details of a single menu item
         [HttpGet("details/{id}")]
         public async Task<IActionResult> Details(int id)
         {
-            var menuItem = await _context.MenuItems.Include(m => m.Category).Include(m => m.CreatedBy).FirstOrDefaultAsync(m => m.MenuItemId == id);
+            var menuItem = await _context.MenuItems.Include(m => m.Category)
+                                                   .Include(m => m.CreatedBy)
+                                                   .Include(m => m.LastUpdatedBy)
+                                                   .FirstOrDefaultAsync(m => m.MenuItemId == id);
             if (menuItem == null)
             {
                 return NotFound();
@@ -112,8 +165,8 @@ namespace DiningHub.Controllers
 
             menuItem.CreatedById = user.Id;
             menuItem.LastUpdatedById = user.Id;
-            menuItem.CreatedAt = DateTime.UtcNow;
-            menuItem.UpdatedAt = DateTime.UtcNow;
+            menuItem.CreatedAt = DateTimeHelper.GetMalaysiaTime();
+            menuItem.UpdatedAt = DateTimeHelper.GetMalaysiaTime();
             menuItem.Category = category;
             menuItem.CreatedBy = user;
             menuItem.LastUpdatedBy = user;
@@ -197,7 +250,7 @@ namespace DiningHub.Controllers
             menuItem.CreatedAt = existingMenuItem.CreatedAt;
             menuItem.LastUpdatedById = user.Id;
             menuItem.LastUpdatedBy = user;
-            menuItem.UpdatedAt = DateTime.UtcNow;
+            menuItem.UpdatedAt = DateTimeHelper.GetMalaysiaTime();
             menuItem.Category = category;
 
             // Handle ImageUrl update if needed
@@ -256,7 +309,6 @@ namespace DiningHub.Controllers
             }
         }
 
-
         [HttpGet("delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -273,11 +325,19 @@ namespace DiningHub.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var menuItem = await _context.MenuItems.FindAsync(id);
-            _context.MenuItems.Remove(menuItem);
+            if (menuItem == null)
+            {
+                return NotFound();
+            }
+
+            menuItem.IsDeleted = true;
+            _context.MenuItems.Update(menuItem);
             await _context.SaveChangesAsync();
-            _logger.LogInformation($"Menu item '{menuItem.Name}' deleted successfully.");
+
+            _logger.LogInformation($"Menu item '{menuItem.Name}' soft-deleted successfully.");
             return RedirectToAction(nameof(Index));
         }
+
 
         private bool MenuItemExists(int id)
         {

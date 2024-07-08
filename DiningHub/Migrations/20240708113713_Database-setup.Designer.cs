@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DiningHub.Migrations
 {
     [DbContext(typeof(DiningHubContext))]
-    [Migration("20240707183919_Database-Setup")]
-    partial class DatabaseSetup
+    [Migration("20240708113713_Database-setup")]
+    partial class Databasesetup
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,6 +54,9 @@ namespace DiningHub.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -185,10 +188,9 @@ namespace DiningHub.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<string>("CreatedById")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Description")
@@ -197,7 +199,6 @@ namespace DiningHub.Migrations
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("LastUpdatedById")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
@@ -211,7 +212,7 @@ namespace DiningHub.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.HasKey("InventoryItemId");
 
@@ -238,7 +239,7 @@ namespace DiningHub.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<string>("CreatedById")
                         .IsRequired()
@@ -256,6 +257,9 @@ namespace DiningHub.Migrations
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("LastUpdatedById")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -271,7 +275,7 @@ namespace DiningHub.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.HasKey("MenuItemId");
 
@@ -312,6 +316,10 @@ namespace DiningHub.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("OrderId");
 
                     b.HasIndex("UserId");
@@ -326,6 +334,10 @@ namespace DiningHub.Migrations
 
                     b.Property<int>("MenuItemId")
                         .HasColumnType("int");
+
+                    b.Property<string>("MenuItemName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("OrderItemId")
                         .HasColumnType("int");
@@ -566,14 +578,12 @@ namespace DiningHub.Migrations
                     b.HasOne("DiningHub.Areas.Identity.Data.DiningHubUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("DiningHub.Areas.Identity.Data.DiningHubUser", "LastUpdatedBy")
                         .WithMany()
                         .HasForeignKey("LastUpdatedById")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Category");
 
@@ -593,7 +603,7 @@ namespace DiningHub.Migrations
                     b.HasOne("DiningHub.Areas.Identity.Data.DiningHubUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("DiningHub.Areas.Identity.Data.DiningHubUser", "LastUpdatedBy")

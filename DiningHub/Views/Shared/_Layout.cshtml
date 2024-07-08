@@ -22,7 +22,6 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav px-2">
-
                         @if (User.IsInRole("Manager"))
                         {
                             <li class="nav-item mx-5">
@@ -38,7 +37,22 @@
                                 <a class="nav-link" asp-area="" asp-controller="MenuManagement" asp-action="Index">Manage Menu</a>
                             </li>
                             <li class="nav-item mx-5">
+                                <a class="nav-link" asp-area="" asp-controller="OrderManagement" asp-action="Index">Manage Order</a>
+                            </li>
+                            <li class="nav-item mx-5">
                                 <a class="nav-link" asp-area="" asp-controller="InventoryManagement" asp-action="Index">Manage Inventory</a>
+                            </li>
+                        }
+                        else if (User.IsInRole("Staff"))
+                        {
+                            <li class="nav-item mx-5">
+                                <a class="nav-link" asp-area="" asp-controller="InventoryManagement" asp-action="Index">Manage Inventory</a>
+                            </li>
+                            <li class="nav-item mx-5">
+                                <a class="nav-link" asp-area="" asp-controller="OrderManagement" asp-action="Index">View Orders</a>
+                            </li>
+                            <li class="nav-item mx-5">
+                                <a class="nav-link" asp-area="" asp-controller="FeedbackManagement" asp-action="Index">View Feedback</a>
                             </li>
                         }
                         else if (User.IsInRole("Customer"))
@@ -50,6 +64,9 @@
                                 <a class="nav-link" asp-area="" asp-controller="Cart" asp-action="Index">Cart</a>
                             </li>
                             <li class="nav-item mx-5">
+                                <a class="nav-link" asp-area="" asp-controller="Order" asp-action="Index">Order History</a>
+                            </li>
+                            <li class="nav-item mx-5">
                                 <a class="nav-link" asp-area="" asp-controller="Feedback" asp-action="Index">Feedback</a>
                             </li>
                         }
@@ -59,6 +76,7 @@
                                 <a class="nav-link" asp-area="" asp-controller="Menu" asp-action="Index">Menu</a>
                             </li>
                         }
+
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
