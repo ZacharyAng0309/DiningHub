@@ -6,14 +6,20 @@
 
 <h2>Shopping Cart</h2>
 
-<form method="post" asp-action="UpdateQuantity">
+@if (ViewBag.Message != null)
+{
+    <p>@ViewBag.Message</p>
+}
+else
+{
     <table class="table">
         <thead>
             <tr>
-                <th>Item Name</th>
-                <th>Quantity</th>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Description</th>
                 <th>Price</th>
-                <th>Total</th>
+                <th>Quantity</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -21,23 +27,29 @@
             @foreach (var item in Model)
             {
                 <tr>
+                    <td><img src="@item.MenuItem.ImageUrl" alt="@item.MenuItem.Name" class="img-thumbnail" width="50" /></td>
                     <td>@item.MenuItem.Name</td>
+                    <td>@item.MenuItem.Description</td>
+                    <td>@item.MenuItem.Price.ToString("C")</td>
                     <td>
-                        <input type="number" name="quantity" value="@item.Quantity" min="1" class="form-control" />
-                        <input type="hidden" name="cartItemId" value="@item.ShoppingCartItemId" />
+                        <form asp-action="UpdateQuantity" method="post" class="d-inline">
+                            <input type="hidden" name="cartItemId" value="@item.ShoppingCartItemId" />
+                            <input type="number" name="quantity" value="@item.Quantity" min="1" class="form-control d-inline w-auto" />
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </form>
                     </td>
-                    <td>@item.MenuItem.Price.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("ms-MY"))</td>
-                    <td>@(item.Quantity * item.MenuItem.Price).ToString("C", System.Globalization.CultureInfo.GetCultureInfo("ms-MY"))</td>
                     <td>
-                        <button type="submit" formaction="@Url.Action("UpdateQuantity", new { cartItemId = item.ShoppingCartItemId })" class="btn btn-primary">Update</button>
-                        <a asp-action="RemoveFromCart" asp-route-cartItemId="@item.ShoppingCartItemId" class="btn btn-danger">Remove</a>
+                        <form asp-action="RemoveFromCart" method="post" class="d-inline">
+                            <input type="hidden" name="cartItemId" value="@item.ShoppingCartItemId" />
+                            <button type="submit" class="btn btn-danger">Remove</button>
+                        </form>
                     </td>
                 </tr>
             }
         </tbody>
     </table>
-</form>
 
-<div>
-    <a asp-action="Checkout" class="btn btn-primary">Checkout</a>
-</div>
+    <div class="text-end">
+        <a asp-action="Checkout" class="btn btn-success">Proceed to Checkout</a>
+    </div>
+}

@@ -26,7 +26,7 @@
                     <a asp-action="Details" asp-route-id="@item.Order.OrderId" class="btn btn-info">Details</a>
                     @if (item.HasFeedback)
                     {
-                        <a asp-action="Details" asp-route-id="@item.Order.OrderId" class="btn btn-secondary">View Feedback</a>
+                        <a asp-action="Edit" asp-controller="CustomerFeedback" asp-route-id="@item.FeedbackId" class="btn btn-secondary">Edit Feedback</a>
                     }
                     else if (item.CanProvideFeedback)
                     {

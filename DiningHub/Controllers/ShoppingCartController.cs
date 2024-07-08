@@ -6,32 +6,66 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using System.Linq;
 using DiningHub.Areas.Identity.Data;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 
 namespace DiningHub.Controllers
 {
-    [Authorize(Policy ="RequireCustomerRole")]
+    [Authorize(Policy = "RequireCustomerRole")]
     public class ShoppingCartController : Controller
     {
         private readonly DiningHubContext _context;
+        private readonly UserManager<DiningHubUser> _userManager;
+        private readonly ILogger<ShoppingCartController> _logger;
 
-        public ShoppingCartController(DiningHubContext context)
+        public ShoppingCartController(DiningHubContext context, UserManager<DiningHubUser> userManager, ILogger<ShoppingCartController> logger)
         {
             _context = context;
+            _userManager = userManager;
+            _logger = logger;
         }
 
         // View the shopping cart
         public async Task<IActionResult> Index()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var cartItems = await _context.ShoppingCartItems.Include(c => c.MenuItem).Where(c => c.UserId == userId).ToListAsync();
+            var cartItems = await _context.ShoppingCartItems
+                .Include(c => c.MenuItem)
+                .Where(c => c.UserId == userId)
+                .ToListAsync();
+
+            // Check for soft-deleted menu items and remove them from the cart
+            var itemsToRemove = cartItems.Where(c => c.MenuItem.IsDeleted).ToList();
+            if (itemsToRemove.Any())
+            {
+                _context.ShoppingCartItems.RemoveRange(itemsToRemove);
+                await _context.SaveChangesAsync();
+            }
+
+            // Reload the cart items after removal
+            cartItems = await _context.ShoppingCartItems
+                .Include(c => c.MenuItem)
+                .Where(c => c.UserId == userId)
+                .ToListAsync();
+
+            if (!cartItems.Any())
+            {
+                ViewBag.Message = "No items in your cart.";
+                return View(cartItems);
+            }
+
             return View(cartItems);
         }
 
-        // Add item to the cart (GET)
+        // Add item to the cart (POST)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddToCart(int menuItemId)
         {
             var menuItem = await _context.MenuItems.FindAsync(menuItemId);
-            if (menuItem == null)
+            if (menuItem == null || menuItem.IsDeleted)
             {
                 return NotFound();
             }
@@ -74,6 +108,7 @@ namespace DiningHub.Controllers
 
         // Update the quantity of an item in the cart (POST)
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateQuantity(int cartItemId, int quantity)
         {
             var cartItem = await _context.ShoppingCartItems.FindAsync(cartItemId);
@@ -100,41 +135,115 @@ namespace DiningHub.Controllers
         public async Task<IActionResult> Checkout()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var cartItems = await _context.ShoppingCartItems.Include(c => c.MenuItem).Where(c => c.UserId == userId).ToListAsync();
+            var cartItems = await _context.ShoppingCartItems
+                .Include(c => c.MenuItem)
+                .Where(c => c.UserId == userId)
+                .ToListAsync();
 
             if (!cartItems.Any())
             {
                 return RedirectToAction(nameof(Index));
             }
 
-            var order = new Order
+            var checkoutViewModel = new CheckoutViewModel
             {
-                UserId = userId,
-                OrderDate = DateTime.Now,
-                TotalAmount = cartItems.Sum(c => c.MenuItem.Price * c.Quantity),
-                OrderItems = cartItems.Select(c => new OrderItem
-                {
-                    MenuItemId = c.MenuItemId,
-                    Quantity = c.Quantity,
-                    Price = c.MenuItem.Price
-                }).ToList()
+                CartItems = cartItems,
+                TotalAmount = cartItems.Sum(c => c.MenuItem.Price * c.Quantity)
             };
 
-            _context.Orders.Add(order);
-            await _context.SaveChangesAsync();
-
-            var receipt = new Receipt
+            ViewBag.PaymentMethods = new SelectList(new List<SelectListItem>
             {
-                OrderId = order.OrderId,
-                TotalAmount = order.TotalAmount,
-                DateIssued = DateTime.Now
-            };
+                new SelectListItem { Text = "Credit/Debit Card", Value = "CreditCard" },
+                new SelectListItem { Text = "Online Banking", Value = "OnlineBanking" },
+                new SelectListItem { Text = "Other", Value = "Other" }
+            }, "Value", "Text");
 
-            _context.Receipts.Add(receipt);
-            _context.ShoppingCartItems.RemoveRange(cartItems);
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction("Details", "Receipt", new { id = receipt.ReceiptId });
+            return View(checkoutViewModel);
         }
+
+        // Confirm Checkout (POST)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ConfirmCheckout(CheckoutViewModel model)
+        {
+            _logger.LogInformation("ConfirmCheckout POST request received.");
+
+            // Additional server-side validation can be added here if needed
+
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user == null)
+            {
+                _logger.LogError("User is null.");
+                return RedirectToAction("Index");
+            }
+
+            var cartItems = await _context.ShoppingCartItems
+                .Include(c => c.MenuItem)
+                .Where(c => c.UserId == user.Id)
+                .ToListAsync();
+
+            if (!cartItems.Any())
+            {
+                _logger.LogWarning("No items in cart.");
+                return RedirectToAction(nameof(Index));
+            }
+
+            using (IDbContextTransaction transaction = await _context.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    var order = new Order
+                    {
+                        UserId = user.Id,
+                        UserName = user.UserName,
+                        OrderDate = DateTime.Now,
+                        TotalAmount = cartItems.Sum(c => c.MenuItem.Price * c.Quantity),
+                        OrderItems = cartItems.Select(c => new OrderItem
+                        {
+                            MenuItemId = c.MenuItemId,
+                            MenuItemName = c.MenuItem.Name,
+                            Quantity = c.Quantity,
+                            Price = c.MenuItem.Price
+                        }).ToList(),
+                        PaymentMethod = model.PaymentMethod,
+                        PaymentDate = DateTime.Now
+                    };
+
+                    _context.Orders.Add(order);
+                    await _context.SaveChangesAsync();
+
+                    var receipt = new Receipt
+                    {
+                        OrderId = order.OrderId,
+                        TotalAmount = order.TotalAmount,
+                        DateIssued = DateTime.Now
+                    };
+
+                    _context.Receipts.Add(receipt);
+                    _context.ShoppingCartItems.RemoveRange(cartItems);
+                    await _context.SaveChangesAsync();
+
+                    await transaction.CommitAsync();
+
+                    _logger.LogInformation("Order and receipt created successfully.");
+                    return RedirectToAction("Details", "Receipt", new { id = receipt.ReceiptId });
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error during checkout process.");
+                    await transaction.RollbackAsync();
+                    ModelState.AddModelError(string.Empty, "An error occurred while processing your order. Please try again.");
+                    ViewBag.PaymentMethods = new SelectList(new List<SelectListItem>
+            {
+                new SelectListItem { Text = "Credit/Debit Card", Value = "CreditCard" },
+                new SelectListItem { Text = "Online Banking", Value = "OnlineBanking" },
+                new SelectListItem { Text = "Other", Value = "Other" }
+            }, "Value", "Text");
+                    return View("Checkout", model);
+                }
+            }
+        }
+
     }
 }

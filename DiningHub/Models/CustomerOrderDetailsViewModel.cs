@@ -1,4 +1,6 @@
-﻿namespace DiningHub.Models
+﻿using DiningHub.Models;
+
+namespace DiningHub.Models
 {
     public class CustomerOrderDetailsViewModel
     {

@@ -25,6 +25,10 @@ namespace DiningHub.Data
                 var userManager = serviceProvider.GetRequiredService<UserManager<DiningHubUser>>();
                 var adminUser = await EnsureAdminAsync(userManager);
 
+                // Seed staff and customer users
+                var staffUser = await EnsureStaffAsync(userManager);
+                var customerUser = await EnsureCustomerAsync(userManager);
+
                 // Seed initial categories if not already seeded
                 if (!context.Categories.Any())
                 {
@@ -267,6 +271,60 @@ namespace DiningHub.Data
                 }
             }
             return adminUser;
+        }
+
+        private static async Task<DiningHubUser> EnsureStaffAsync(UserManager<DiningHubUser> userManager)
+        {
+            var staffEmail = "staff@gmail.com";
+            var staffPassword = "Staff@123";
+
+            var staffUser = await userManager.FindByEmailAsync(staffEmail);
+            if (staffUser == null)
+            {
+                staffUser = new DiningHubUser
+                {
+                    UserName = staffEmail,
+                    Email = staffEmail,
+                    FirstName = "Staff",
+                    LastName = "Member",
+                    DateOfBirth = DateTimeHelper.GetMalaysiaTime().AddYears(-25), // Optional DateOfBirth
+                    EmailConfirmed = true // Ensure email is confirmed at creation
+                };
+
+                var result = await userManager.CreateAsync(staffUser, staffPassword);
+                if (result.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(staffUser, "Staff");
+                }
+            }
+            return staffUser;
+        }
+
+        private static async Task<DiningHubUser> EnsureCustomerAsync(UserManager<DiningHubUser> userManager)
+        {
+            var customerEmail = "customer@gmail.com";
+            var customerPassword = "Customer@123";
+
+            var customerUser = await userManager.FindByEmailAsync(customerEmail);
+            if (customerUser == null)
+            {
+                customerUser = new DiningHubUser
+                {
+                    UserName = customerEmail,
+                    Email = customerEmail,
+                    FirstName = "Customer",
+                    LastName = "User",
+                    DateOfBirth = DateTimeHelper.GetMalaysiaTime().AddYears(-20), // Optional DateOfBirth
+                    EmailConfirmed = true // Ensure email is confirmed at creation
+                };
+
+                var result = await userManager.CreateAsync(customerUser, customerPassword);
+                if (result.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(customerUser, "Customer");
+                }
+            }
+            return customerUser;
         }
     }
 }
