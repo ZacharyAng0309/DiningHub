@@ -67,19 +67,19 @@
                 @if (Model.HasPreviousPage)
                 {
                     <li class="page-item">
-                        <a class="page-link" href="?page=@(Model.PageIndex - 1)&sortOrder=@ViewData["CurrentSort"]&searchString=@ViewData["CurrentFilter"]">Previous</a>
+                        <a class="page-link" href="?page=@(Model.PageIndex - 1)@(string.IsNullOrEmpty(ViewData["CurrentSort"]?.ToString()) ? "" : "&sortOrder=" + ViewData["CurrentSort"])@(string.IsNullOrEmpty(ViewData["CurrentFilter"]?.ToString()) ? "" : "&searchString=" + ViewData["CurrentFilter"])">Previous</a>
                     </li>
                 }
                 @for (var i = 1; i <= Model.TotalPages; i++)
                 {
                     <li class="page-item @(i == Model.PageIndex ? "active" : "")">
-                        <a class="page-link" href="?page=@i&sortOrder=@ViewData["CurrentSort"]&searchString=@ViewData["CurrentFilter"]">@i</a>
+                        <a class="page-link" href="?page=@i@(string.IsNullOrEmpty(ViewData["CurrentSort"]?.ToString()) ? "" : "&sortOrder=" + ViewData["CurrentSort"])@(string.IsNullOrEmpty(ViewData["CurrentFilter"]?.ToString()) ? "" : "&searchString=" + ViewData["CurrentFilter"])">@i</a>
                     </li>
                 }
                 @if (Model.HasNextPage)
                 {
                     <li class="page-item">
-                        <a class="page-link" href="?page=@(Model.PageIndex + 1)&sortOrder=@ViewData["CurrentSort"]&searchString=@ViewData["CurrentFilter"]">Next</a>
+                        <a class="page-link" href="?page=@(Model.PageIndex + 1)@(string.IsNullOrEmpty(ViewData["CurrentSort"]?.ToString()) ? "" : "&sortOrder=" + ViewData["CurrentSort"])@(string.IsNullOrEmpty(ViewData["CurrentFilter"]?.ToString()) ? "" : "&searchString=" + ViewData["CurrentFilter"])">Next</a>
                     </li>
                 }
             </ul>

@@ -58,19 +58,19 @@
             @if (Model.MenuItems.HasPreviousPage)
             {
                 <li class="page-item">
-                    <a class="page-link" href="?page=@(Model.MenuItems.PageNumber - 1)&sortOrder=@ViewData["CurrentSort"]&searchString=@Model.SearchString&categoryId=@Model.CategoryId">Previous</a>
+                    <a class="page-link" href="?page=@(Model.MenuItems.PageNumber - 1)@(string.IsNullOrEmpty(ViewData["CurrentSort"]?.ToString()) ? "" : $"&sortOrder={ViewData["CurrentSort"]}")@(string.IsNullOrEmpty(Model.SearchString) ? "" : $"&searchString={Model.SearchString}")@(Model.CategoryId == null ? "" : $"&categoryId={Model.CategoryId}")">Previous</a>
                 </li>
             }
             @for (var i = 1; i <= Model.MenuItems.PageCount; i++)
             {
                 <li class="page-item @(i == Model.MenuItems.PageNumber ? "active" : "")">
-                    <a class="page-link" href="?page=@i&sortOrder=@ViewData["CurrentSort"]&searchString=@Model.SearchString&categoryId=@Model.CategoryId">@i</a>
+                    <a class="page-link" href="?page=@i@(string.IsNullOrEmpty(ViewData["CurrentSort"]?.ToString()) ? "" : $"&sortOrder={ViewData["CurrentSort"]}")@(string.IsNullOrEmpty(Model.SearchString) ? "" : $"&searchString={Model.SearchString}")@(Model.CategoryId == null ? "" : $"&categoryId={Model.CategoryId}")">@i</a>
                 </li>
             }
             @if (Model.MenuItems.HasNextPage)
             {
                 <li class="page-item">
-                    <a class="page-link" href="?page=@(Model.MenuItems.PageNumber + 1)&sortOrder=@ViewData["CurrentSort"]&searchString=@Model.SearchString&categoryId=@Model.CategoryId">Next</a>
+                    <a class="page-link" href="?page=@(Model.MenuItems.PageNumber + 1)@(string.IsNullOrEmpty(ViewData["CurrentSort"]?.ToString()) ? "" : $"&sortOrder={ViewData["CurrentSort"]}")@(string.IsNullOrEmpty(Model.SearchString) ? "" : $"&searchString={Model.SearchString}")@(Model.CategoryId == null ? "" : $"&categoryId={Model.CategoryId}")">Next</a>
                 </li>
             }
         </ul>
