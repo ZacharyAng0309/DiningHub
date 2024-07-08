@@ -1,5 +1,6 @@
 ﻿#nullable disable
 
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using DiningHub.Areas.Identity.Data;
@@ -30,14 +31,25 @@ namespace DiningHub.Areas.Identity.Pages.Account.Manage
 
         public class InputModel
         {
+            [Display(Name = "First name")]
             public string FirstName { get; set; }
+
+            [Display(Name = "Last name")]
             public string LastName { get; set; }
+
+            [EmailAddress]
             public string Email { get; set; }
+
+            [Display(Name = "Reward points")]
             public int RewardPoints { get; set; }
 
             [Phone]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
+
+            [DataType(DataType.Date)]
+            [Display(Name = "Date of Birth")]
+            public DateTime? DateOfBirth { get; set; }
         }
 
         private async Task LoadAsync(DiningHubUser user)
@@ -53,7 +65,8 @@ namespace DiningHub.Areas.Identity.Pages.Account.Manage
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
-                RewardPoints = user.Points
+                RewardPoints = user.Points,
+                DateOfBirth = user.DateOfBirth
             };
         }
 
@@ -92,6 +105,17 @@ namespace DiningHub.Areas.Identity.Pages.Account.Manage
                     StatusMessage = "Unexpected error when trying to set phone number.";
                     return RedirectToPage();
                 }
+            }
+
+            user.FirstName = Input.FirstName;
+            user.LastName = Input.LastName;
+            user.DateOfBirth = Input.DateOfBirth;
+
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                StatusMessage = "Unexpected error when trying to update profile.";
+                return RedirectToPage();
             }
 
             await _signInManager.RefreshSignInAsync(user);

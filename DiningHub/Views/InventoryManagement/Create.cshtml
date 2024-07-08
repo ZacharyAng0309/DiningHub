@@ -30,6 +30,17 @@
                     <input asp-for="Quantity" class="form-control mb-4" />
                     <span asp-validation-for="Quantity" class="text-danger"></span>
                 </div>
+                <div class="form-group">
+                    <label asp-for="CategoryId" class="control-label mb-2"></label>
+                    <select asp-for="CategoryId" class="form-control mb-4">
+                        <option value="">Select Category</option>
+                        @foreach (var category in ViewBag.Categories as List<DiningHub.Models.Category>)
+                        {
+                            <option value="@category.CategoryId">@category.Name</option>
+                        }
+                    </select>
+                    <span asp-validation-for="CategoryId" class="text-danger"></span>
+                </div>
                 <div class="form-group text-center">
                     <input type="submit" value="Create" class="btn btn-save" />
                     <a asp-action="Index" class="btn btn-cancel">Cancel</a>
@@ -38,3 +49,7 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

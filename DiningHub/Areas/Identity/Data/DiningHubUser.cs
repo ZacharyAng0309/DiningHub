@@ -30,6 +30,10 @@ namespace DiningHub.Areas.Identity.Data
         [PersonalData]
         public int Points { get; set; }
 
+        [PersonalData]
+        [DataType(DataType.Date)]
+        public DateTime? DateOfBirth { get; set; }
+
         [BindNever]
         public ICollection<Order> Orders { get; set; }
 

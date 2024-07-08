@@ -103,6 +103,8 @@ namespace DiningHub.Controllers
             {
                 return NotFound();
             }
+            var roles = await _userManager.GetRolesAsync(user);
+            ViewData["Roles"] = roles;
             return View(user);
         }
 
@@ -136,7 +138,10 @@ namespace DiningHub.Controllers
             existingUser.Email = user.Email;
             existingUser.FirstName = user.FirstName;
             existingUser.LastName = user.LastName;
-            existingUser.Points = user.Points;
+            if (!await _userManager.IsInRoleAsync(existingUser, "Manager") && !await _userManager.IsInRoleAsync(existingUser, "Staff"))
+            {
+                existingUser.Points = user.Points;
+            }
             existingUser.PhoneNumber = user.PhoneNumber;
             existingUser.UpdatedAt = DateTime.UtcNow;
 

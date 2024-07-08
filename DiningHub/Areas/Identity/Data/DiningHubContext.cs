@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using DiningHub.Areas.Identity.Data;
+using System.Reflection.Emit;
 
 namespace DiningHub.Areas.Identity.Data
 {
@@ -19,6 +20,7 @@ namespace DiningHub.Areas.Identity.Data
         public DbSet<Feedback> Feedbacks { get; set; }
         public DbSet<InventoryItem> InventoryItems { get; set; }
         public DbSet<ShoppingCartItem> ShoppingCartItems { get; set; }
+        public DbSet<Category> Categories { get; set; }
         public DbSet<Receipt> Receipts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -68,6 +70,47 @@ namespace DiningHub.Areas.Identity.Data
             builder.Entity<InventoryItem>()
                 .Property(i => i.UpdatedAt)
                 .HasDefaultValueSql("GETUTCDATE()");
+
+            // Configure foreign key constraints
+            builder.Entity<InventoryItem>()
+                .HasOne(i => i.CreatedBy)
+                .WithMany()
+                .HasForeignKey(i => i.CreatedById)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<InventoryItem>()
+                .HasOne(i => i.LastUpdatedBy)
+                .WithMany()
+                .HasForeignKey(i => i.LastUpdatedById)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<MenuItem>()
+                .HasOne(m => m.CreatedBy)
+                .WithMany()
+                .HasForeignKey(m => m.CreatedById)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<MenuItem>()
+                .HasOne(m => m.LastUpdatedBy)
+                .WithMany()
+                .HasForeignKey(m => m.LastUpdatedById)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<MenuItem>()
+                .Property(m => m.Price)
+                .HasColumnType("decimal(18,2)");
+
+            builder.Entity<Order>()
+                .Property(o => o.TotalAmount)
+                .HasColumnType("decimal(18,2)");
+
+            builder.Entity<OrderItem>()
+                .Property(oi => oi.Price)
+                .HasColumnType("decimal(18,2)");
+
+            builder.Entity<Receipt>()
+                .Property(r => r.TotalAmount)
+                .HasColumnType("decimal(18,2)");
         }
     }
 }

@@ -22,6 +22,9 @@ namespace DiningHub.Models
 
         public Feedback Feedback { get; set; }
 
+        public string PaymentMethod { get; set; }
+        public DateTime? PaymentDate { get; set; }
+
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

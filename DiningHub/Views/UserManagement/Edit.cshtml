@@ -36,11 +36,14 @@
                     <input asp-for="LastName" class="form-control mb-4" />
                     <span asp-validation-for="LastName" class="text-danger"></span>
                 </div>
-                <div class="form-group">
-                    <label asp-for="Points" class="control-label mb-2"></label>
-                    <input asp-for="Points" class="form-control mb-4" />
-                    <span asp-validation-for="Points" class="text-danger"></span>
-                </div>
+                @if (!(ViewData["Roles"] as IList<string>).Contains("Manager") && !(ViewData["Roles"] as IList<string>).Contains("Staff"))
+                {
+                    <div class="form-group">
+                        <label asp-for="Points" class="control-label mb-2"></label>
+                        <input asp-for="Points" class="form-control mb-4" />
+                        <span asp-validation-for="Points" class="text-danger"></span>
+                    </div>
+                }
                 <div class="form-group">
                     <label asp-for="PhoneNumber" class="control-label mb-2"></label>
                     <input asp-for="PhoneNumber" class="form-control mb-4" />

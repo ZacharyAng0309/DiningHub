@@ -6,6 +6,7 @@
 
 <head>
     <link rel="stylesheet" href="~/css/editAdmin.css" asp-append-version="true" />
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.5.1.min.js"></script>
 </head>
 
 <div class="container">
@@ -14,7 +15,9 @@
             <h2>Edit Menu Item</h2>
         </div>
         <div class="card-body">
-            <form asp-action="Edit" method="post">
+            <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                <input type="hidden" asp-for="MenuItemId" />
+                <input type="hidden" asp-for="ImageUrl" id="ImageUrl" value="@Model.ImageUrl" />
                 <div class="form-group">
                     <label asp-for="Name" class="control-label mb-2"></label>
                     <input asp-for="Name" class="form-control mb-4" />
@@ -27,18 +30,25 @@
                 </div>
                 <div class="form-group">
                     <label asp-for="Price" class="control-label mb-2"></label>
-                    <input asp-for="Price" class="form-control mb-4" />
+                    <input asp-for="Price" type="number" class="form-control mb-4" />
                     <span asp-validation-for="Price" class="text-danger"></span>
                 </div>
                 <div class="form-group">
-                    <label asp-for="Category" class="control-label mb-2"></label>
-                    <input asp-for="Category" class="form-control mb-4" />
-                    <span asp-validation-for="Category" class="text-danger"></span>
+                    <label asp-for="CategoryId" class="control-label mb-2">Category</label>
+                    <select asp-for="CategoryId" class="form-control mb-4">
+                        @foreach (var category in ViewBag.Categories)
+                        {
+                            bool selected = category.CategoryId == Model.CategoryId;
+                            <option value="@category.CategoryId" selected="@selected">@category.Name</option>
+                        }
+                    </select>
+                    <span asp-validation-for="CategoryId" class="text-danger"></span>
                 </div>
                 <div class="form-group">
-                    <label asp-for="ImageUrl" class="control-label mb-2"></label>
-                    <input asp-for="ImageUrl" class="form-control mb-4" />
+                    <label class="control-label mb-2" for="imageUpload">Image</label>
+                    <input type="file" class="form-control mb-4" accept="image/*" onchange="uploadImage(event)" id="imageUpload" />
                     <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                    <img id="imagePreview" src="@Model.ImageUrl" alt="Image Preview" class="img-thumbnail mt-2" />
                 </div>
                 <div class="form-group">
                     <label asp-for="IsAvailable" class="control-label mb-2"></label>
@@ -53,3 +63,36 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function uploadImage(event) {
+            var file = event.target.files[0];
+            var fileTypes = ['image/jpeg', 'image/png', 'image/gif'];
+            if (file && fileTypes.includes(file.type)) {
+                var formData = new FormData();
+                formData.append('file', file);
+
+                $.ajax({
+                    url: '@Url.Action("UploadImage", "MenuManagement")',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {
+                        $('#ImageUrl').val(data.imageUrl);
+                        $('#imagePreview').attr('src', data.imageUrl).show();
+                    },
+                    error: function () {
+                        alert('Error uploading image. Please try again.');
+                    }
+                });
+            } else {
+                alert('Please select a valid image file (jpg, png, gif).');
+                event.target.value = ''; // Clear the input
+                $('#imagePreview').hide();
+            }
+        }
+    </script>
+}

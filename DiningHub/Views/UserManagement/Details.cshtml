@@ -17,7 +17,7 @@
         <dd class="col-sm-10">@Model.UserName</dd>
 
         <dt class="col-sm-2">Email</dt>
-        <dd class="col-sm-10">@Model.Email</dd> 
+        <dd class="col-sm-10">@Model.Email</dd>
 
         <dt class="col-sm-2">Email Confirmed</dt>
         <dd class="col-sm-10">@Model.EmailConfirmed</dd>
@@ -28,8 +28,11 @@
         <dt class="col-sm-2">Last Name</dt>
         <dd class="col-sm-10">@Model.LastName</dd>
 
-        <dt class="col-sm-2">Points</dt>
-        <dd class="col-sm-10">@Model.Points</dd>
+        @if (!(ViewData["Roles"] as IList<string>).Contains("Manager") && !(ViewData["Roles"] as IList<string>).Contains("Staff"))
+        {
+            <dt class="col-sm-2">Points</dt>
+            <dd class="col-sm-10">@Model.Points</dd>
+        }
 
         <dt class="col-sm-2">Phone Number</dt>
         <dd class="col-sm-10">@Model.PhoneNumber</dd>
