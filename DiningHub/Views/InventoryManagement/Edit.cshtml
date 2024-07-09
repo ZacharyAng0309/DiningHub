@@ -30,8 +30,8 @@
             <select asp-for="CategoryId" class="form-control mb-4">
                 @foreach (var category in ViewBag.Categories)
                 {
-                    bool selected = category.CategoryId == Model.CategoryId;
-                    <option value="@category.CategoryId" selected="@selected">@category.Name</option>
+                    bool selected = category.Value == Model.CategoryId.ToString();
+                    <option value="@category.Value" selected="@selected">@category.Text</option>
                 }
             </select>
             <span asp-validation-for="CategoryId" class="text-danger"></span>
