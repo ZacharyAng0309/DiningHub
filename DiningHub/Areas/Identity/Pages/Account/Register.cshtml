@@ -5,24 +5,29 @@
 }
 
 
-<div class="container-fluid shadow rounded-3 mb-5 bg-white pt-2">
+<div class="container-fluid shadow rounded-3 mb-5 bg-white">
             <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
                 <div class="row">
                     <div class="col-md-6 p-0">
                         <img src="/Img/registerpageimage1.jpg" class="img-fluid rounded" alt="registerpageimage">
                     </div>
-                    <div class="col-md-6 p-5">
+                    <div class="col-md-6 pb-3 px-5">
                         <div class="d-flex justify-content-center">
-                            <img src="/Img/dininghublogo.png" class="img-fluid w-50" alt="registerpageimage">
+                            <img src="/Img/dininghublogo.png" class="img-fluid w-50" alt="diningmasterlogo">
                         </div>
                         <h2 class="border-bottom mb-4 pb-2 text-center">Sign Up.</h2>
 
                     <div class="d-flex flex-column justify-content-between">
                         <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
                         <div class="form-floating my-3">
-                            <input asp-for="Input.Username" class="form-control" aria-required="true" placeholder="First Name" />
-                            <label asp-for="Input.Username">Username</label>
-                            <span asp-validation-for="Input.Username" class="text-danger"></span>
+                            <input asp-for="Input.FirstName" class="form-control" aria-required="true" placeholder="First Name" />
+                            <label asp-for="Input.FirstName">First Name</label>
+                            <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating my-3">
+                            <input asp-for="Input.LastName" class="form-control" aria-required="true" placeholder="Last Name" />
+                        <label asp-for="Input.LastName">Last Name</label>
+                        <span asp-validation-for="Input.LastName" class="text-danger"></span>
                         </div>
                         <div class="form-floating my-3">
                             <input asp-for="Input.Email" class="form-control" autocomplete="email" aria-required="true" placeholder="name@example.com" />
