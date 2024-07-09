@@ -90,11 +90,15 @@ namespace DiningHub.Controllers
             {
                 MenuItems = pagedMenuItems,
                 CurrentPage = pageNumber,
-                TotalPages = pagedMenuItems.TotalPages
+                TotalPages = pagedMenuItems.TotalPages,
+                CurrentSort = sortOrder,
+                CurrentFilter = searchString,
+                CurrentCategory = categoryId
             };
 
             return View(viewModel);
         }
+
 
 
         // View details of a single menu item

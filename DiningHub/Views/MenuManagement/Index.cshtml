@@ -94,30 +94,30 @@
         </table>
 
         <div class="d-flex justify-content-center">
-            <nav>
-                <ul class="pagination">
-                    @if (Model.MenuItems.HasPreviousPage)
-                    {
-                        <li class="page-item">
-                            <a class="page-link" href="/manage/menu?page=@(Model.CurrentPage - 1)@(string.IsNullOrEmpty(ViewData["CurrentSort"]?.ToString()) ? "" : $"&sortOrder={ViewData["CurrentSort"]}")@(string.IsNullOrEmpty(ViewData["CurrentFilter"]?.ToString()) ? "" : $"&searchString={ViewData["CurrentFilter"]}")@(ViewData["CurrentCategory"] == null ? "" : $"&categoryId={ViewData["CurrentCategory"]}")">Previous</a>
-                        </li>
-                    }
-                    @for (var i = 1; i <= Model.TotalPages; i++)
-                    {
-                        <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
-                            <a class="page-link" href="/manage/menu?page=@i@(string.IsNullOrEmpty(ViewData["CurrentSort"]?.ToString()) ? "" : $"&sortOrder={ViewData["CurrentSort"]}")@(string.IsNullOrEmpty(ViewData["CurrentFilter"]?.ToString()) ? "" : $"&searchString={ViewData["CurrentFilter"]}")@(ViewData["CurrentCategory"] == null ? "" : $"&categoryId={ViewData["CurrentCategory"]}")">@i</a>
-                        </li>
-                    }
-                    @if (Model.MenuItems.HasNextPage)
-                    {
-                        <li class="page-item">
-                            <a class="page-link" href="/manage/menu?page=@(Model.CurrentPage + 1)@(string.IsNullOrEmpty(ViewData["CurrentSort"]?.ToString()) ? "" : $"&sortOrder={ViewData["CurrentSort"]}")@(string.IsNullOrEmpty(ViewData["CurrentFilter"]?.ToString()) ? "" : $"&searchString={ViewData["CurrentFilter"]}")@(ViewData["CurrentCategory"] == null ? "" : $"&categoryId={ViewData["CurrentCategory"]}")">Next</a>
-                        </li>
-                    }
-                </ul>
-            </nav>
-        </div>
-
+            <div class="d-flex justify-content-center">
+                <nav>
+                    <ul class="pagination">
+                        @if (Model.MenuItems.HasPreviousPage)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="/manage/menu?page=@(Model.CurrentPage - 1)@(string.IsNullOrEmpty(ViewData["CurrentSort"]?.ToString()) ? "" : $"&sortOrder={ViewData["CurrentSort"]}")@(string.IsNullOrEmpty(ViewData["CurrentFilter"]?.ToString()) ? "" : $"&searchString={ViewData["CurrentFilter"]}")@(ViewData["CurrentCategory"] == null ? "" : $"&categoryId={ViewData["CurrentCategory"]}")">Previous</a>
+                            </li>
+                        }
+                        @for (var i = 1; i <= Model.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                                <a class="page-link" href="/manage/menu?page=@i@(string.IsNullOrEmpty(ViewData["CurrentSort"]?.ToString()) ? "" : $"&sortOrder={ViewData["CurrentSort"]}")@(string.IsNullOrEmpty(ViewData["CurrentFilter"]?.ToString()) ? "" : $"&searchString={ViewData["CurrentFilter"]}")@(ViewData["CurrentCategory"] == null ? "" : $"&categoryId={ViewData["CurrentCategory"]}")">@i</a>
+                            </li>
+                        }
+                        @if (Model.MenuItems.HasNextPage)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="/manage/menu?page=@(Model.CurrentPage + 1)@(string.IsNullOrEmpty(ViewData["CurrentSort"]?.ToString()) ? "" : $"&sortOrder={ViewData["CurrentSort"]}")@(string.IsNullOrEmpty(ViewData["CurrentFilter"]?.ToString()) ? "" : $"&searchString={ViewData["CurrentFilter"]}")@(ViewData["CurrentCategory"] == null ? "" : $"&categoryId={ViewData["CurrentCategory"]}")">Next</a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            </div>
     </div>
 </div>
 
