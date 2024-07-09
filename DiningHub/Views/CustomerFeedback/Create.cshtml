@@ -4,7 +4,7 @@
     ViewData["Title"] = "Create Feedback";
     var order = ViewData["OrderDetails"] as DiningHub.Models.Order;
 }
-
+<div class="container-fluid shadow rounded-3 mb-5 bg-white pt-2">
 <h2>Create Feedback</h2>
 
 <h4>Order Details</h4>
@@ -50,9 +50,12 @@
     </div>
     <input type="hidden" asp-for="OrderId" />
     <input type="hidden" asp-for="UserId" />
-    <button type="submit" class="btn btn-primary">Submit</button>
+        <div class="d-grid gap-2 col-6 mx-auto pb-4">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    
 </form>
-
+</div>
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>

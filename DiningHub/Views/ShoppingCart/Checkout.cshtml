@@ -4,10 +4,11 @@
     ViewData["Title"] = "Checkout";
 }
 
-<h2>Checkout</h2>
 
+<h2>Order Summary</h2>
+<div class="container-fluid shadow rounded-3 mb-5 bg-white pt-4">
 <h3>Your Items</h3>
-<table class="table table-striped">
+<table class="table table-hover">
     <thead>
         <tr>
             <th>Item</th>
@@ -37,17 +38,17 @@
         </tr>
     </tfoot>
 </table>
-
+      
 <form id="checkoutForm" asp-action="ConfirmCheckout" method="post" onsubmit="return validateForm()">
     <div class="form-group">
-        <label for="PaymentMethod">Payment Method</label>
-        <select asp-for="PaymentMethod" class="form-control" id="PaymentMethod">
+            <label for="PaymentMethod" class="pb-3"><h2>Payment Method</h2></label>
+        <select asp-for="PaymentMethod" class="form-control py-3" id="PaymentMethod">
             <option value="">Select a payment method</option>
             <option value="CreditCard">Credit/Debit Card</option>
             <option value="OnlineBanking">Online Banking</option>
             <option value="Other">Other</option>
         </select>
-        <span id="PaymentMethodError" class="text-danger"></span>
+        <span id="PaymentMethodError" class="text-danger py-3"></span>
     </div>
 
     <div id="CreditCardInfo" style="display:none;">
@@ -80,9 +81,16 @@
             <span id="AccountNumberError" class="text-danger"></span>
         </div>
     </div>
-
-    <button type="submit" class="btn btn-primary">Confirm Checkout</button>
+        <div class="row pt-5">
+            <div class="col-6 d-grid gap-2 py-4">
+                <a asp-action="Index" class="btn btn-secondary">Back to Cart</a>
+            </div>
+            <div class="col-6 d-grid gap-2 py-4">
+                <button type="submit" class="btn btn-primary">Confirm Checkout</button>
+            </div>  
+        </div>
 </form>
+</div>
 
 @section Scripts {
     <script>

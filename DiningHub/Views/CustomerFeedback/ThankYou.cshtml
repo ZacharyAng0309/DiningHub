@@ -1,9 +1,13 @@
 ﻿@{
     ViewData["Title"] = "Thank You";
 }
+<div class="container-fluid shadow rounded-3 mb-5 bg-white pt-2">
+    <h2>Thank You for Your Feedback!</h2>
 
-<h2>Thank You for Your Feedback!</h2>
+    <p>Your feedback has been submitted successfully.</p>
 
-<p>Your feedback has been submitted successfully.</p>
 
-<a asp-action="Index" asp-controller="Order" class="btn btn-secondary">Back to Order History</a>
+    <div class="d-grid gap-2 col-6 mx-auto pb-4">
+        <a asp-action="Index" asp-controller="Order" class="btn btn-secondary">Back to Order History</a>
+    </div>
+</div>

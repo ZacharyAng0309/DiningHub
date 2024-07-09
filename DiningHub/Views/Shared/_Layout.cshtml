@@ -49,10 +49,10 @@
                                 <a class="nav-link" asp-area="" asp-controller="InventoryManagement" asp-action="Index">Manage Inventory</a>
                             </li>
                             <li class="nav-item mx-5">
-                                <a class="nav-link" asp-area="" asp-controller="OrderManagement" asp-action="Index">View Orders</a>
+                                <a class="nav-link" asp-area="" asp-controller="OrderManagement" asp-action="Index">Manage Orders</a>
                             </li>
                             <li class="nav-item mx-5">
-                                <a class="nav-link" asp-area="" asp-controller="FeedbackManagement" asp-action="Index">View Feedback</a>
+                                <a class="nav-link" asp-area="" asp-controller="FeedbackManagement" asp-action="Index">Manage Feedback</a>
                             </li>
                         }
                         else if (User.IsInRole("Customer"))
@@ -65,9 +65,6 @@
                             </li>
                             <li class="nav-item mx-5">
                                 <a class="nav-link" asp-area="" asp-controller="Order" asp-action="Index">Order History</a>
-                            </li>
-                            <li class="nav-item mx-5">
-                                <a class="nav-link" asp-area="" asp-controller="Feedback" asp-action="Index">Feedback</a>
                             </li>
                         }
                         else

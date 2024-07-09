@@ -4,6 +4,7 @@
     ViewData["Title"] = $"Receipt - Order ID: {Model.OrderId}";
 }
 
+<div class="container-fluid shadow rounded-3 mb-5 bg-white pt-2">
 <h2>Receipt</h2>
 
 <div>
@@ -89,7 +90,13 @@
     </table>
 </div>
 
-<div>
-    <a asp-action="" asp-controller="Order" class="btn btn-secondary">Back to Order History</a>
-    <a asp-action="Create" asp-controller="CustomerFeedback" asp-route-orderId="@Model.OrderId" class="btn btn-primary">Leave Feedback</a>
+    <div class="row pt-5">
+        <div class="col-6 d-grid gap-2 py-4">
+            <a asp-action="" asp-controller="Order" class="btn btn-secondary">Back to Order History</a>
+        </div>
+        <div class="col-6 d-grid gap-2 py-4">
+            <a asp-action="Create" asp-controller="CustomerFeedback" asp-route-orderId="@Model.OrderId" class="btn btn-primary">Leave Feedback</a>
+        </div>
+    </div>
+
 </div>
