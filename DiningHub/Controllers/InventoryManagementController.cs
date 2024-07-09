@@ -1,17 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using DiningHub.Models;
+﻿using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using DiningHub.Models;
 using Microsoft.AspNetCore.Authorization;
-using DiningHub.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Linq;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using DiningHub.Helper;
 using DiningHub.Helpers;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using DiningHub.Areas.Identity.Data;
+using DiningHub.Helper;
 
 namespace DiningHub.Controllers
 {
@@ -105,7 +103,7 @@ namespace DiningHub.Controllers
         [HttpGet("create")]
         public IActionResult Create()
         {
-            ViewBag.Categories = _context.Categories.ToList();
+            ViewBag.Categories = new SelectList(_context.Categories, "CategoryId", "Name");
             return View();
         }
 
@@ -120,7 +118,7 @@ namespace DiningHub.Controllers
             if (user == null)
             {
                 ModelState.AddModelError("", "User not found.");
-                ViewBag.Categories = _context.Categories.ToList();
+                ViewBag.Categories = new SelectList(_context.Categories, "CategoryId", "Name");
                 return View(inventoryItem);
             }
 
@@ -129,7 +127,7 @@ namespace DiningHub.Controllers
             if (category == null)
             {
                 ModelState.AddModelError("CategoryId", "Invalid category selected.");
-                ViewBag.Categories = _context.Categories.ToList();
+                ViewBag.Categories = new SelectList(_context.Categories, "CategoryId", "Name");
                 return View(inventoryItem);
             }
 
@@ -164,7 +162,7 @@ namespace DiningHub.Controllers
             }
 
             _logger.LogWarning("Invalid model state for creating inventory item.");
-            ViewBag.Categories = _context.Categories.ToList();
+            ViewBag.Categories = new SelectList(_context.Categories, "CategoryId", "Name");
             return View(inventoryItem);
         }
 
@@ -178,14 +176,7 @@ namespace DiningHub.Controllers
                 return NotFound();
             }
 
-            ViewBag.Categories = _context.Categories
-                .Select(c => new SelectListItem
-                {
-                    Value = c.CategoryId.ToString(),
-                    Text = c.Name
-                })
-                .ToList();
-
+            ViewBag.Categories = new SelectList(_context.Categories, "CategoryId", "Name", inventoryItem.CategoryId);
             return View(inventoryItem);
         }
 
@@ -207,7 +198,7 @@ namespace DiningHub.Controllers
             {
                 ModelState.AddModelError("", "User not found.");
                 _logger.LogWarning("User not found.");
-                ViewBag.Categories = _context.Categories.ToList();
+                ViewBag.Categories = new SelectList(_context.Categories, "CategoryId", "Name", inventoryItem.CategoryId);
                 return View(inventoryItem);
             }
 
@@ -216,7 +207,7 @@ namespace DiningHub.Controllers
             {
                 ModelState.AddModelError("CategoryId", "Invalid category selected.");
                 _logger.LogWarning("Invalid category selected.");
-                ViewBag.Categories = _context.Categories.ToList();
+                ViewBag.Categories = new SelectList(_context.Categories, "CategoryId", "Name", inventoryItem.CategoryId);
                 return View(inventoryItem);
             }
 
@@ -252,7 +243,7 @@ namespace DiningHub.Controllers
                     }
                 }
 
-                ViewBag.Categories = _context.Categories.ToList();
+                ViewBag.Categories = new SelectList(_context.Categories, "CategoryId", "Name", inventoryItem.CategoryId);
                 return View(inventoryItem);
             }
 

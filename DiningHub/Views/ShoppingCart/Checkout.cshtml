@@ -1,0 +1,156 @@
+﻿@model DiningHub.Models.CheckoutViewModel
+
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+<h2>Checkout</h2>
+
+<h3>Your Items</h3>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Item</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.CartItems)
+        {
+            <tr>
+                <td>
+                    <img src="@item.MenuItem.ImageUrl" alt="@item.MenuItem.Name" class="img-thumbnail" style="width: 50px; height: 50px;" />
+                    @item.MenuItem.Name
+                </td>
+                <td>@item.Quantity</td>
+                <td>@item.MenuItem.Price.ToString("C", new System.Globalization.CultureInfo("ms-MY"))</td>
+                <td>RM @(item.MenuItem.Price * item.Quantity)</td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="3" class="text-end">Total Amount</td>
+            <td>@Model.TotalAmount.ToString("C", new System.Globalization.CultureInfo("ms-MY"))</td>
+        </tr>
+    </tfoot>
+</table>
+
+<form id="checkoutForm" asp-action="ConfirmCheckout" method="post" onsubmit="return validateForm()">
+    <div class="form-group">
+        <label for="PaymentMethod">Payment Method</label>
+        <select asp-for="PaymentMethod" class="form-control" id="PaymentMethod">
+            <option value="">Select a payment method</option>
+            <option value="CreditCard">Credit/Debit Card</option>
+            <option value="OnlineBanking">Online Banking</option>
+            <option value="Other">Other</option>
+        </select>
+        <span id="PaymentMethodError" class="text-danger"></span>
+    </div>
+
+    <div id="CreditCardInfo" style="display:none;">
+        <div class="form-group">
+            <label for="CreditCardNumber">Credit Card Number</label>
+            <input id="CreditCardNumber" name="CreditCardNumber" class="form-control" />
+            <span id="CreditCardNumberError" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label for="ExpirationDate">Expiration Date (MM/YY)</label>
+            <input id="ExpirationDate" name="ExpirationDate" class="form-control" />
+            <span id="ExpirationDateError" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label for="CVV">CVV</label>
+            <input id="CVV" name="CVV" class="form-control" />
+            <span id="CVVError" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div id="OnlineBankingInfo" style="display:none;">
+        <div class="form-group">
+            <label for="BankName">Bank Name</label>
+            <input id="BankName" name="BankName" class="form-control" />
+            <span id="BankNameError" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label for="AccountNumber">Account Number</label>
+            <input id="AccountNumber" name="AccountNumber" class="form-control" />
+            <span id="AccountNumberError" class="text-danger"></span>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Confirm Checkout</button>
+</form>
+
+@section Scripts {
+    <script>
+        document.getElementById("PaymentMethod").addEventListener("change", function () {
+            var paymentMethod = this.value;
+            document.getElementById("CreditCardInfo").style.display = paymentMethod === "CreditCard" ? "block" : "none";
+            document.getElementById("OnlineBankingInfo").style.display = paymentMethod === "OnlineBanking" ? "block" : "none";
+        });
+
+        function validateForm() {
+            var isValid = true;
+            var paymentMethod = document.getElementById("PaymentMethod").value;
+            var paymentMethodError = document.getElementById("PaymentMethodError");
+            paymentMethodError.textContent = "";
+
+            if (!paymentMethod) {
+                paymentMethodError.textContent = "Please select a payment method.";
+                isValid = false;
+            }
+
+            if (paymentMethod === "CreditCard") {
+                var creditCardNumber = document.getElementById("CreditCardNumber").value;
+                var expirationDate = document.getElementById("ExpirationDate").value;
+                var cvv = document.getElementById("CVV").value;
+                document.getElementById("CreditCardNumberError").textContent = "";
+                document.getElementById("ExpirationDateError").textContent = "";
+                document.getElementById("CVVError").textContent = "";
+
+                if (!creditCardNumber) {
+                    document.getElementById("CreditCardNumberError").textContent = "Credit card number is required.";
+                    isValid = false;
+                }
+
+                if (!expirationDate) {
+                    document.getElementById("ExpirationDateError").textContent = "Expiration date is required.";
+                    isValid = false;
+                } else if (!/^\d{2}\/\d{2}$/.test(expirationDate)) {
+                    document.getElementById("ExpirationDateError").textContent = "Expiration date must be in the format MM/YY.";
+                    isValid = false;
+                }
+
+                if (!cvv) {
+                    document.getElementById("CVVError").textContent = "CVV is required.";
+                    isValid = false;
+                } else if (!/^\d{3,4}$/.test(cvv)) {
+                    document.getElementById("CVVError").textContent = "CVV must be a 3 or 4 digit number.";
+                    isValid = false;
+                }
+            }
+
+            if (paymentMethod === "OnlineBanking") {
+                var bankName = document.getElementById("BankName").value;
+                var accountNumber = document.getElementById("AccountNumber").value;
+                document.getElementById("BankNameError").textContent = "";
+                document.getElementById("AccountNumberError").textContent = "";
+
+                if (!bankName) {
+                    document.getElementById("BankNameError").textContent = "Bank name is required.";
+                    isValid = false;
+                }
+
+                if (!accountNumber) {
+                    document.getElementById("AccountNumberError").textContent = "Account number is required.";
+                    isValid = false;
+                }
+            }
+
+            return isValid;
+        }
+    </script>
+}

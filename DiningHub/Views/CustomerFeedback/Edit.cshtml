@@ -1,36 +1,12 @@
 ﻿@model DiningHub.Models.FeedbackViewModel
 
 @{
-    ViewData["Title"] = "Create Feedback";
-    var order = ViewData["OrderDetails"] as DiningHub.Models.Order;
+    ViewData["Title"] = "Edit Feedback";
 }
 
-<h2>Create Feedback</h2>
+<h2>Edit Feedback</h2>
 
-<h4>Order Details</h4>
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Item</th>
-            <th>Quantity</th>
-            <th>Price</th>
-            <th>Total</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in order.OrderItems)
-        {
-            <tr>
-                <td>@item.MenuItem.Name</td>
-                <td>@item.Quantity</td>
-                <td>@item.Price.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("ms-MY"))</td>
-                <td>RM @(item.Quantity * item.Price)</td>
-            </tr>
-        }
-    </tbody>
-</table>
-
-<form asp-action="Create" method="post">
+<form asp-action="Edit" method="post">
     <div class="form-group">
         <label for="Comments">Comments</label>
         <textarea asp-for="Comments" class="form-control"></textarea>
@@ -48,9 +24,10 @@
         </select>
         <span asp-validation-for="Rating" class="text-danger"></span>
     </div>
-    <input type="hidden" asp-for="OrderId" />
+    <input type="hidden" asp-for="FeedbackId" />
     <input type="hidden" asp-for="UserId" />
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <input type="hidden" asp-for="OrderId" />
+    <button type="submit" class="btn btn-primary">Save</button>
 </form>
 
 @section Scripts {

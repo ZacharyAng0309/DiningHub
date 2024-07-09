@@ -1,16 +1,14 @@
-﻿using DiningHub.Areas.Identity.Data;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace DiningHub.Models
 {
-    public class Feedback
+    public class FeedbackViewModel
     {
         public int FeedbackId { get; set; }
 
         [Required]
         public string UserId { get; set; }
-        public virtual DiningHubUser User { get; set; }
 
         [Required]
         [StringLength(1000)]
@@ -21,10 +19,9 @@ namespace DiningHub.Models
         public int Rating { get; set; }
 
         [Required]
-        public DateTime Date { get; set; } 
+        public DateTime Date { get; set; }
 
         [Required]
         public int OrderId { get; set; }
-        public virtual Order Order { get; set; }
     }
 }

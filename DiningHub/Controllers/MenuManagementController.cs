@@ -12,6 +12,7 @@ using DiningHub.Models;
 using DiningHub.Areas.Identity.Data;
 using DiningHub.Helper;
 using DiningHub.Helpers;
+using Microsoft.AspNetCore.Mvc.Rendering;
 // Uncomment the following lines if using AWS S3
 // using Amazon.S3;
 // using Amazon.S3.Transfer;
@@ -195,17 +196,20 @@ namespace DiningHub.Controllers
             return View(menuItem);
         }
 
+        // Edit action
         [HttpGet("edit/{id}")]
         public async Task<IActionResult> Edit(int id)
         {
-            var menuItem = await _context.MenuItems.Include(m => m.Category).FirstOrDefaultAsync(m => m.MenuItemId == id);
+            var menuItem = await _context.MenuItems.FindAsync(id);
             if (menuItem == null)
             {
                 return NotFound();
             }
-            ViewBag.Categories = _context.Categories.ToList();
+
+            ViewBag.Categories = new SelectList(_context.Categories, "CategoryId", "Name", menuItem.CategoryId);
             return View(menuItem);
         }
+
 
         [HttpPost("edit/{id}")]
         [ValidateAntiForgeryToken]
