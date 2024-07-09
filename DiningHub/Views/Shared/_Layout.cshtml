@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="~/DiningHub.styles.css" asp-append-version="true" />
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 </head>
-<body>
+<body style="display: flex; flex-direction: column; min-height: 100vh; margin: 0;">
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3 navbar" style="background-color: #E57373;">
             <div class="container-fluid">
@@ -80,52 +80,68 @@
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
+    <div class="container" style="flex: 1;">
+        <main role="main" class="p-2">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted fixed-bottom" style="background-color: #E57373;">
-        @* <div class="container-fluid">
-        <div class="row  my-1 p-4 pb-2 text-white border-bottom justify-content-around">
-        <div class="col-md-3">
-        <h3>ABOUT Dine Master</h3>
-        <ul class="nav flex-column">
-        <li class="nav-item">
-        <a href="" class="nav-link text-white my-2">
-        About Us
-        </a>
-        <a href="" class="nav-link text-white my-2">
-        Mission
-        </a>
-        <a href="" class="nav-link text-white my-2">
-        Vision
-        </a>
-        </li>
-        </ul>
+    <footer id="footer" style="background-color: #E57373;">
+        <div class="container-fluid pt-2">
+            <div class="row my-1 p-2 text-white border-bottom justify-content-around">
+                <div class="col-md-3">
+                    <h3>ABOUT Dine Master</h3>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a href="" class="nav-link text-white my-1">About Us</a>
+                            <a href="" class="nav-link text-white my-1">Mission</a>
+                            <a href="" class="nav-link text-white my-1">Vision</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h3>HELP</h3>
+                    <ul class="nav flex-column">
+                        <li class="nav-item my-1">FAQ</li>
+                        <li class="nav-item my-1">Customer Service</li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h3>TERMS & POLICIES</h3>
+                    <ul class="nav flex-column">
+                        <li class="nav-item my-1">Legal Notices</li>
+                        <li class="nav-item my-1">Privacy Policy</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col text-white">© 2024 Dining Hub. All rights reserved.</div>
         </div>
-        <div class="col-md-3">
-        <h3>HELP</h3>
-        <ul class="nav flex-column">
-        <li class="nav-item my-2">FAQ </li>
-        <li class="nav-item my-2">Customer Service </li>
-        </ul>
-        </div>
-        <div class="col-md-3">
-        <h3>TERMS & POLICIES</h3>
-        <ul class="nav flex-column">
-        <li class="nav-item my-2">Legal Notices </li>
-        <li class="nav-item my-2">Privacy Policy </li>
-        </ul>
-        </div>
-        </div> *@
-        <div class="col text-white">© 2024 Dining Hub. All rights reserved.</div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        //force footer to be at the bottom
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const windowHeight = window.innerHeight;
+            const footer = document.getElementById("footer");
+            const footerHeight = footer.offsetHeight;
+            const documentHeight = document.body.scrollHeight; // Get the total height of the document
+
+            if (documentHeight < windowHeight) {
+                if ((windowHeight - documentHeight) > footerHeight) {
+                    footer.style.position = "absolute";
+                    footer.style.width = "100%";
+                    footer.style.bottom = "0";
+                }
+            }
+
+        });
+
+        </script>
     @await RenderSectionAsync("Scripts", required: false)
+    
 </body>
 </html>

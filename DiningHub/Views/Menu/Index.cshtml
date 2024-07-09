@@ -1,78 +1,82 @@
 ﻿@model DiningHub.Models.MenuViewModel
 
-<h2>Menu</h2>
+<div class="container-fluid shadow rounded-3 mb-5 bg-white pt-2">
 
-<form method="get" action="">
-    <div class="row mb-3">
-        <div class="col-md-4">
-            <input type="text" name="searchString" value="@Model.SearchString" class="form-control" placeholder="Search for menu items..." />
-        </div>
-        <div class="col-md-4">
-            <select name="categoryId" class="form-control">
-                @foreach (var category in ViewBag.Categories)
-                {
-                    bool selected = category.CategoryId == Model.CategoryId;
-                    <option value="@category.CategoryId" selected="@selected">@category.Name</option>
-                }
-            </select>
-        </div>
-        <div class="col-md-4 text-end">
-            <button type="submit" class="btn btn-primary">Filter</button>
-        </div>
-    </div>
-</form>
+    <h2>Menu</h2>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]">Name</a>
-            </th>
-            <th>Description</th>
-            <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["PriceSortParm"]">Price</a>
-            </th>
-            <th>Category</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.MenuItems)
-        {
+    <form method="get" action="">
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <input type="text" name="searchString" value="@Model.SearchString" class="form-control" placeholder="Search for menu items..." />
+            </div>
+            <div class="col-md-4">
+                <select name="categoryId" class="form-control">
+                    @foreach (var category in ViewBag.Categories)
+                    {
+                        bool selected = category.CategoryId == Model.CategoryId;
+                        <option value="@category.CategoryId" selected="@selected">@category.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-4 text-end">
+                <button type="submit" class="btn btn-primary">Filter</button>
+            </div>
+        </div>
+    </form>
+
+    <table class="table">
+        <thead>
             <tr>
-                <td>@item.Name</td>
-                <td>@item.Description</td>
-                <td>@item.Price</td>
-                <td>@item.Category.Name</td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@item.MenuItemId">View Details</a>
-                </td>
+                <th>
+                    <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]">Name</a>
+                </th>
+                <th>Description</th>
+                <th>
+                    <a asp-action="Index" asp-route-sortOrder="@ViewData["PriceSortParm"]">Price</a>
+                </th>
+                <th>Category</th>
+                <th>Actions</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.MenuItems)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.Description</td>
+                    <td>@item.Price</td>
+                    <td>@item.Category.Name</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.MenuItemId">View Details</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 
-<div class="d-flex justify-content-center">
-    <nav>
-        <ul class="pagination">
-            @if (Model.MenuItems.HasPreviousPage)
-            {
-                <li class="page-item">
-                    <a class="page-link" href="?page=@(Model.MenuItems.PageNumber - 1)@(string.IsNullOrEmpty(ViewData["CurrentSort"]?.ToString()) ? "" : $"&sortOrder={ViewData["CurrentSort"]}")@(string.IsNullOrEmpty(Model.SearchString) ? "" : $"&searchString={Model.SearchString}")@(Model.CategoryId == null ? "" : $"&categoryId={Model.CategoryId}")">Previous</a>
-                </li>
-            }
-            @for (var i = 1; i <= Model.MenuItems.PageCount; i++)
-            {
-                <li class="page-item @(i == Model.MenuItems.PageNumber ? "active" : "")">
-                    <a class="page-link" href="?page=@i@(string.IsNullOrEmpty(ViewData["CurrentSort"]?.ToString()) ? "" : $"&sortOrder={ViewData["CurrentSort"]}")@(string.IsNullOrEmpty(Model.SearchString) ? "" : $"&searchString={Model.SearchString}")@(Model.CategoryId == null ? "" : $"&categoryId={Model.CategoryId}")">@i</a>
-                </li>
-            }
-            @if (Model.MenuItems.HasNextPage)
-            {
-                <li class="page-item">
-                    <a class="page-link" href="?page=@(Model.MenuItems.PageNumber + 1)@(string.IsNullOrEmpty(ViewData["CurrentSort"]?.ToString()) ? "" : $"&sortOrder={ViewData["CurrentSort"]}")@(string.IsNullOrEmpty(Model.SearchString) ? "" : $"&searchString={Model.SearchString}")@(Model.CategoryId == null ? "" : $"&categoryId={Model.CategoryId}")">Next</a>
-                </li>
-            }
-        </ul>
-    </nav>
+
+    <div class="d-flex justify-content-center">
+        <nav>
+            <ul class="pagination">
+                @if (Model.MenuItems.HasPreviousPage)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="?page=@(Model.MenuItems.PageNumber - 1)@(string.IsNullOrEmpty(ViewData["CurrentSort"]?.ToString()) ? "" : $"&sortOrder={ViewData["CurrentSort"]}")@(string.IsNullOrEmpty(Model.SearchString) ? "" : $"&searchString={Model.SearchString}")@(Model.CategoryId == null ? "" : $"&categoryId={Model.CategoryId}")">Previous</a>
+                    </li>
+                }
+                @for (var i = 1; i <= Model.MenuItems.PageCount; i++)
+                {
+                    <li class="page-item @(i == Model.MenuItems.PageNumber ? "active" : "")">
+                        <a class="page-link" href="?page=@i@(string.IsNullOrEmpty(ViewData["CurrentSort"]?.ToString()) ? "" : $"&sortOrder={ViewData["CurrentSort"]}")@(string.IsNullOrEmpty(Model.SearchString) ? "" : $"&searchString={Model.SearchString}")@(Model.CategoryId == null ? "" : $"&categoryId={Model.CategoryId}")">@i</a>
+                    </li>
+                }
+                @if (Model.MenuItems.HasNextPage)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="?page=@(Model.MenuItems.PageNumber + 1)@(string.IsNullOrEmpty(ViewData["CurrentSort"]?.ToString()) ? "" : $"&sortOrder={ViewData["CurrentSort"]}")@(string.IsNullOrEmpty(Model.SearchString) ? "" : $"&searchString={Model.SearchString}")@(Model.CategoryId == null ? "" : $"&categoryId={Model.CategoryId}")">Next</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    </div>
 </div>
