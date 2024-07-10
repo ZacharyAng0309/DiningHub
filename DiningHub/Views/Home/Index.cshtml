@@ -1,16 +1,281 @@
-﻿@{
+﻿<!-- Icon Font Stylesheet -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+@{
     ViewData["Title"] = "Home Page";
 }
+
 @using DiningHub.Areas.Identity.Data
     @using Microsoft.AspNetCore.Identity
     @inject UserManager<DiningHubUser> UserManager
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<style>
+    /*** Section Title ***/
+    .section-title {
+        position: relative;
+        display: inline-block;
+    }
+
+        .section-title::before {
+            position: absolute;
+            content: "";
+            width: 45px;
+            height: 2px;
+            top: 50%;
+            left: -55px;
+            margin-top: -1px;
+            background: var(--primary);
+        }
+
+        .section-title::after {
+            position: absolute;
+            content: "";
+            width: 45px;
+            height: 2px;
+            top: 50%;
+            right: -55px;
+            margin-top: -1px;
+            background: var(--primary);
+        }
+
+        .section-title.text-start::before,
+        .section-title.text-end::after {
+            display: none;
+        }
+    /*** Service ***/
+    .service-item {
+        box-shadow: 0 0 45px rgba(0, 0, 0, .08);
+        transition: .5s;
+    }
+
+        .service-item:hover {
+            background: var(--primary);
+        }
+
+        .service-item * {
+            transition: .5s;
+        }
+
+        .service-item:hover * {
+            color: var(--light) !important;
+        }
+    /*** Team ***/
+    .team-item {
+        box-shadow: 0 0 45px rgba(0, 0, 0, .08);
+        height: calc(100% - 38px);
+        transition: .5s;
+    }
+
+        .team-item img {
+            transition: .5s;
+        }
+
+        .team-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .team-item:hover {
+            height: 100%;
+        }
+
+        .team-item .btn {
+            border-radius: 38px 38px 0 0;
+        }
+    /*** First Section ***/
+    .bg-image {
+        background: url('Img/homepage/homepage.jpg') no-repeat center center;
+        background-size: cover;
+        position: relative;
+    }
+
+        .bg-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Adds a dark overlay for better text visibility */
+            z-index: 1;
+        }
+
+        .bg-image .container {
+            position: relative;
+            z-index: 2;
+        }
+</style>
+
+<div class="container-fluid shadow rounded-3 mb-5 bg-white pt-4">
+    <div class="container-xxl py-5 bg-dark mb-5 bg-image">
+        <div class="container my-5 py-5">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-6 text-center text-lg-start">
+                    <h1 class="display-3 text-white">Welcome To DiningHub</h1>
+                    <p class="text-white mb-4 pb-2">"Experience the finest French cuisine, crafted with passion and tradition, right at your table." </p>
+
+                    <a asp-area="" asp-action="Index" asp-controller="Menu" class="btn btn-danger py-sm-3 px-sm-5 me-3 col-6">View Our Menu</a>
+                </div>
+                <div class="col-lg-6 text-center text-lg-end overflow-hidden">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Service Start -->
+    <div class="container-xxl py-5">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="service-item rounded pt-3">
+                        <div class="p-4">
+                            <i class="fa fa-3x fa-user-tie text-danger mb-4"></i>
+                            <h5>Master Chefs</h5>
+                            <p>Our master chefs bring years of experience and culinary expertise to every dish, ensuring a memorable dining experience.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.3s">
+                    <div class="service-item rounded pt-3">
+                        <div class="p-4">
+                            <i class="fa fa-3x fa-utensils text-danger mb-4"></i>
+                            <h5>Quality Food</h5>
+                            <p>We use only the freshest ingredients to prepare our dishes, delivering high-quality food that delights the senses.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.5s">
+                    <div class="service-item rounded pt-3">
+                        <div class="p-4">
+                            <i class="fa fa-3x fa-cart-plus text-danger mb-4"></i>
+                            <h5>Online Order</h5>
+                            <p>Enjoy our delicious meals from the comfort of your home with our easy and convenient online ordering system.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.7s">
+                    <div class="service-item rounded pt-3">
+                        <div class="p-4">
+                            <i class="fa fa-3x fa-headset text-danger mb-4"></i>
+                            <h5>24/7 Service</h5>
+                            <p>
+                                Our team is here 24/7 to provide assistance with any questions or special requests you may have. We are always ready to help.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Service End -->
+    <!-- About Start -->
+    <div class="container-xxl py-5">
+        <div class="container">
+            <div class="row g-5 align-items-center">
+                <div class="col-lg-6">
+                    <div class="row g-3">
+                        <div class="col-6 text-start">
+                            <img class="img-fluid rounded w-100" data-wow-delay="0.1s" src="Img/homepage/about1.jpg">
+                        </div>
+                        <div class="col-6 text-start">
+                            <img class="img-fluid rounded w-75" data-wow-delay="0.3s" src="img/homepage/about2.jpg" style="margin-top: 25%;">
+                        </div>
+                        <div class="col-6 text-end">
+                            <img class="img-fluid rounded w-75" data-wow-delay="0.5s" src="img/homepage/about3.jpg">
+                        </div>
+                        <div class="col-6 text-end">
+                            <img class="img-fluid rounded w-100" data-wow-delay="0.7s" src="img/homepage/about4.jpg">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <h1 class="mb-4">Welcome to <i class="fa fa-utensils text-danger me-2"></i>Dining Master</h1>
+                    <p class="mb-4">Experience the finest French cuisine, crafted with passion and tradition. Enjoy our delightful dishes made from the freshest ingredients.</p>
+                    <p class="mb-4">At Dining Master, we bring the essence of France to your table, offering a range of exquisite dishes that will tantalize your taste buds and leave you wanting more.</p>
+                    <div class="row g-4 mb-4">
+                        <div class="col-sm-6">
+                            <div class="d-flex align-items-center border-start border-5 border-danger px-3">
+                                <h1 class="flex-shrink-0 display-5 text-danger mb-0" data-toggle="counter-up">10</h1>
+                                <div class="ps-4">
+                                    <p class="mb-0">Years of</p>
+                                    <h6 class="text-uppercase mb-0">Experience</h6>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="d-flex align-items-center border-start border-5 border-danger px-3">
+                                <h1 class="flex-shrink-0 display-5 text-danger mb-0" data-toggle="counter-up">40</h1>
+                                <div class="ps-4">
+                                    <p class="mb-0">Popular</p>
+                                    <h6 class="text-uppercase mb-0">Master Chefs</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <a class="btn btn-danger py-3 px-5 mt-2 col-12" href="">Read More</a>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
-    @if (User.IsInRole("Manager"))
+
+    <!-- About End -->
+    <!-- Team Start -->
+    <div class="container-xxl pt-5 pb-3">
+        <div class="container">
+            <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+                <h1 class="mb-5">Our Master Chefs</h1>
+            </div>
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="team-item text-center rounded overflow-hidden">
+                        <div class="rounded-circle overflow-hidden m-4">
+                            <img class="img-fluid" src="Img/homepage/chef1.jpg" alt="">
+                        </div>
+                        <h5 class="mb-0">Fox</h5>
+                        <small>Executive Chef (Chef de Cuisine)</small>
+                        <div class="d-flex justify-content-center mt-3">
+                            <a class="btn btn-square btn-danger mx-1" href=""><i class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-square btn-danger mx-1" href=""><i class="fab fa-twitter"></i></a>
+                            <a class="btn btn-square btn-danger mx-1" href=""><i class="fab fa-instagram"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
+                    <div class="team-item text-center rounded overflow-hidden">
+                        <div class="rounded-circle overflow-hidden m-4">
+                            <img class="img-fluid" src="Img/homepage/chef2.jpg" alt="">
+                        </div>
+                        <h5 class="mb-0">Cat</h5>
+                        <small>Sous Chef</small>
+                        <div class="d-flex justify-content-center mt-3">
+                            <a class="btn btn-square btn-danger mx-1" href=""><i class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-square btn-danger mx-1" href=""><i class="fab fa-twitter"></i></a>
+                            <a class="btn btn-square btn-danger mx-1" href=""><i class="fab fa-instagram"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
+                    <div class="team-item text-center rounded overflow-hidden">
+                        <div class="rounded-circle overflow-hidden m-4">
+                            <img class="img-fluid" src="Img/homepage/chef3.jpg" alt="">
+                        </div>
+                        <h5 class="mb-0">Cat 2</h5>
+                        <small>Chef de Partie (Station Chef or Line Cook)</small>
+                        <div class="d-flex justify-content-center mt-3">
+                            <a class="btn btn-square btn-danger mx-1" href=""><i class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-square btn-danger mx-1" href=""><i class="fab fa-twitter"></i></a>
+                            <a class="btn btn-square btn-danger mx-1" href=""><i class="fab fa-instagram"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- Team End -->
+</div>
+@* @if (User.IsInRole("Manager"))
     {
         <p>Manager</p>
     }
@@ -18,5 +283,4 @@
     @if (User.IsInRole("Customer"))
     {
        <p>Customer</p>
-    }
-</div>
+    } *@
