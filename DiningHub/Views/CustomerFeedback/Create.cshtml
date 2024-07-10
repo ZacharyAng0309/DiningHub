@@ -4,57 +4,62 @@
     ViewData["Title"] = "Create Feedback";
     var order = ViewData["OrderDetails"] as DiningHub.Models.Order;
 }
-<div class="container-fluid shadow rounded-3 mb-5 bg-white pt-2">
-<h2>Create Feedback</h2>
+<div class="container-fluid shadow rounded-3 mb-5 bg-white pt-4">
+    <h2>Create Feedback</h2>
 
-<h4>Order Details</h4>
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Item</th>
-            <th>Quantity</th>
-            <th>Price</th>
-            <th>Total</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in order.OrderItems)
-        {
+    <h4>Order Details</h4>
+    <table class="table table-striped">
+        <thead>
             <tr>
-                <td>@item.MenuItem.Name</td>
-                <td>@item.Quantity</td>
-                <td>@item.Price.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("ms-MY"))</td>
-                <td>RM @(item.Quantity * item.Price)</td>
+                <th>Item</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in order.OrderItems)
+            {
+                <tr>
+                    <td>@item.MenuItem.Name</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.Price.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("ms-MY"))</td>
+                    <td>RM @(item.Quantity * item.Price)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 
-<form asp-action="Create" method="post">
-    <div class="form-group">
-        <label for="Comments">Comments</label>
-        <textarea asp-for="Comments" class="form-control"></textarea>
-        <span asp-validation-for="Comments" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label for="Rating">Rating</label>
-        <select asp-for="Rating" class="form-control">
-            <option value="">Select a rating</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-        </select>
-        <span asp-validation-for="Rating" class="text-danger"></span>
-    </div>
-    <input type="hidden" asp-for="OrderId" />
-    <input type="hidden" asp-for="UserId" />
-        <div class="d-grid gap-2 col-6 mx-auto pb-4">
-            <button type="submit" class="btn btn-primary">Submit</button>
+    <form asp-action="Create" method="post">
+        <div class="form-group">
+            <label for="Comments">Comments</label>
+            <textarea asp-for="Comments" class="form-control"></textarea>
+            <span asp-validation-for="Comments" class="text-danger"></span>
         </div>
-    
-</form>
+        <div class="form-group">
+            <label for="Rating">Rating</label>
+            <select asp-for="Rating" class="form-control">
+                <option value="">Select a rating</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+            <span asp-validation-for="Rating" class="text-danger"></span>
+        </div>
+        <input type="hidden" asp-for="OrderId" />
+        <input type="hidden" asp-for="UserId" />
+        <div class="row justify-content-center py-4">
+            <div class="col-6 d-grid gap-2 py-2">
+                <a asp-action="Index" asp-controller="Order" class="btn btn-secondary">Back to Order History</a>
+            </div>
+            <div class="col-6 d-grid gap-2 py-2">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+
+    </form>
 </div>
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

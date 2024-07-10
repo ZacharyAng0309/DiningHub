@@ -4,56 +4,62 @@
     ViewData["Title"] = "Shopping Cart";
 }
 
-<div class="container-fluid shadow rounded-3 mb-5 bg-white pt-2">
-<h2>Shopping Cart</h2>
+<div class="container-fluid shadow rounded-3 mb-5 bg-white pt-4">
+    <h2>Shopping Cart</h2>
 
-@if (ViewBag.Message != null)
-{
-    <p>@ViewBag.Message</p>
-}
-else
-{
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <th>Image</th>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Price</th>
-                <th>Quantity</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
+    @if (ViewBag.Message != null)
+    {
+        <p>@ViewBag.Message</p>
+    }
+    else
+    {
+        <table class="table table-hover">
+            <thead>
                 <tr>
-                    <td><img src="@item.MenuItem.ImageUrl" alt="@item.MenuItem.Name" class="img-thumbnail" width="50" /></td>
-                    <td>@item.MenuItem.Name</td>
-                    <td>@item.MenuItem.Description</td>
-                    <td>@item.MenuItem.Price.ToString("C")</td>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td><img src="@item.MenuItem.ImageUrl" alt="@item.MenuItem.Name" class="img-thumbnail" width="50" /></td>
+                        <td>@item.MenuItem.Name</td>
+                        <td>@item.MenuItem.Description</td>
+                        <td>@item.MenuItem.Price.ToString("C")</td>
                         <td>
                             <form asp-action="UpdateQuantity" method="post" class="d-inline">
                                 <input type="hidden" name="cartItemId" value="@item.ShoppingCartItemId" />
-                                <input type="number" name="quantity" value="@item.Quantity" min="1" class="form-control d-inline w-auto" />
-                                <button type="submit" class="btn btn-primary">Update</button>
+                                <div class="row">
+                                    <div class="col-6 d-grid gap-2">
+                                        <input type="number" name="quantity" value="@item.Quantity" min="1" class="form-control" />
+                                    </div>
+                                    <div class="col-6 d-grid gap-2">
+                                        <button type="submit" class="btn btn-primary">Update</button>
+                                    </div>
+                                </div>
                             </form>
                         </td>
                         <td>
-                           
+
                             <form asp-action="RemoveFromCart" method="post" class="d-inline">
                                 <input type="hidden" name="cartItemId" value="@item.ShoppingCartItemId" />
-                                <button type="submit" class="btn btn-danger">Remove</button>
+                                <button type="submit" class="btn btn-danger col-12">Remove</button>
                             </form>
                         </td>
-                       
-                </tr>
-            }
-        </tbody>
-    </table>
 
-  <div class="d-grid gap-2 col-6 mx-auto pb-4">
-        <a asp-action="Checkout" class="btn btn-success">Proceed to Checkout</a>
-    </div>
-}
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="d-grid gap-2 col-6 mx-auto pb-4">
+            <a asp-action="Checkout" class="btn btn-success">Proceed to Checkout</a>
+        </div>
+    }
 </div>

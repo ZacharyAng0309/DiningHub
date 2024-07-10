@@ -4,36 +4,47 @@
     ViewData["Title"] = "Order History";
 }
 
-<h2>Order History</h2>
+<div class="container-fluid shadow rounded-3 mb-5 bg-white pt-4">
+    <h2>Order History</h2>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Order ID</th>
-            <th>Order Date</th>
-            <th>Total Amount</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+    <table class="table">
+        <thead>
             <tr>
-                <td>@item.Order.OrderId</td>
-                <td>@item.Order.OrderDate.ToString("g")</td>
-                <td>@item.Order.TotalAmount.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("ms-MY"))</td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@item.Order.OrderId" class="btn btn-info">Details</a>
-                    @if (item.HasFeedback)
-                    {
-                        <a asp-action="Edit" asp-controller="CustomerFeedback" asp-route-id="@item.FeedbackId" class="btn btn-secondary">Edit Feedback</a>
-                    }
-                    else if (item.CanProvideFeedback)
-                    {
-                        <a asp-action="Create" asp-controller="CustomerFeedback" asp-route-orderId="@item.Order.OrderId" class="btn btn-primary">Create Feedback</a>
-                    }
-                </td>
+                <th>Order ID</th>
+                <th>Order Date</th>
+                <th>Total Amount</th>
+                <th>Actions</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Order.OrderId</td>
+                    <td>@item.Order.OrderDate.ToString("g")</td>
+                    <td>@item.Order.TotalAmount.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("ms-MY"))</td>
+                    <td>
+                        <div class="row">
+                            <div class="col-6 d-grid gap-2 py-2">
+                                @if (item.HasFeedback)
+                                {
+                                    <a asp-action="Edit" asp-controller="CustomerFeedback" asp-route-id="@item.FeedbackId" class="btn btn-secondary">Edit Feedback</a>
+                                }
+                                else if (item.CanProvideFeedback)
+                                {
+                                    <a asp-action="Create" asp-controller="CustomerFeedback" asp-route-orderId="@item.Order.OrderId" class="btn btn-primary">Create Feedback</a>
+                                }
+                                
+                            </div>
+                            <div class="col-6 d-grid gap-2 py-2">
+                                <a asp-action="Details" asp-route-id="@item.Order.OrderId" class="btn btn-success">Details</a>
+                            </div>
+                        </div>
+                       
+                      
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

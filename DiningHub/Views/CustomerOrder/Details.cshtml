@@ -3,58 +3,70 @@
 @{
     ViewData["Title"] = $"Order Details - {Model.Order.OrderId}";
 }
+<div class="container-fluid shadow rounded-3 mb-5 bg-white pt-4">
 
-<h2>Order Details</h2>
+    <h2>Order Details</h2>
 
-<div>
-    <h4>Order Information</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">Order ID</dt>
-        <dd class="col-sm-10">@Model.Order.OrderId</dd>
-        <dt class="col-sm-2">Order Date</dt>
-        <dd class="col-sm-10">@Model.Order.OrderDate.ToString("g")</dd>
-        <dt class="col-sm-2">Total Amount</dt>
-        <dd class="col-sm-10">@Model.Order.TotalAmount.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("ms-MY"))</dd>
-    </dl>
+    <div>
+        <h4>Order Information</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">Order ID</dt>
+            <dd class="col-sm-10">@Model.Order.OrderId</dd>
+            <dt class="col-sm-2">Order Date</dt>
+            <dd class="col-sm-10">@Model.Order.OrderDate.ToString("g")</dd>
+            <dt class="col-sm-2">Total Amount</dt>
+            <dd class="col-sm-10">@Model.Order.TotalAmount.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("ms-MY"))</dd>
+        </dl>
 
-    <h4>Order Items</h4>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Item Name</th>
-                <th>Quantity</th>
-                <th>Price</th>
-                <th>Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.Order.OrderItems)
-            {
+        <h4>Order Items</h4>
+        <table class="table table-hover">
+            <thead>
                 <tr>
-                    <td>@item.MenuItem.Name</td>
-                    <td>@item.Quantity</td>
-                    <td>@item.Price.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("ms-MY"))</td>
-                    <td>RM @(item.Quantity * item.Price)</td>
+                    <th>Item Name</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total</th>
                 </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Order.OrderItems)
+                {
+                    <tr>
+                        <td>@item.MenuItem.Name</td>
+                        <td>@item.Quantity</td>
+                        <td>@item.Price.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("ms-MY"))</td>
+                        <td>RM @(item.Quantity * item.Price)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="row justify-content-center pb-4">
+        <div class="col-3 d-grid gap-2 py-2">
+            <a asp-action="Index" class="btn btn-secondary">Back to Order History</a>
+        </div>
+        <div class="col-3 d-grid gap-2 py-2">
+            @if (Model.CanProvideFeedback)
+            {
+                <div>
+                    <a asp-action="Create" asp-controller="CustomerFeedback" asp-route-orderId="@Model.Order.OrderId" class="btn btn-primary col-12">Create Feedback</a>
+                </div>
             }
-        </tbody>
-    </table>
-</div>
-
-<div>
-    <a asp-action="Details" asp-controller="Receipt" asp-route-id="@Model.Order.OrderId" class="btn btn-info">View Receipt</a>
-</div>
-
-@if (Model.CanProvideFeedback)
-{
-    <div>
-        <a asp-action="Create" asp-controller="CustomerFeedback" asp-route-orderId="@Model.Order.OrderId" class="btn btn-primary">Create Feedback</a>
+            else if (Model.Feedback != null)
+            {
+                <div>
+                    <a asp-action="Edit" asp-controller="CustomerFeedback" asp-route-id="@Model.Feedback.FeedbackId" class="btn btn-primary col-12">Edit Feedback</a>
+                </div>
+            }
+        </div>
+        <div class="col-3 d-grid gap-2 py-2">
+            <a asp-action="Details" asp-controller="Receipt" asp-route-id="@Model.Order.OrderId" class="btn btn-success">View Receipt</a>
+        </div>
+       
     </div>
-}
-else if (Model.Feedback != null)
-{
-    <div>
-        <a asp-action="Edit" asp-controller="CustomerFeedback" asp-route-id="@Model.Feedback.FeedbackId" class="btn btn-secondary">Edit Feedback</a>
-    </div>
-}
+
+
+   
+</div>

@@ -4,50 +4,65 @@
     ViewData["Title"] = "Menu Item Details";
 }
 
-<h2>Menu Item Details</h2>
 
-<div>
-    <h4>@Model.Name</h4>
-    <hr />
-    <div class="row">
-        <div class="col-md-4">
-            <img src="@Model.ImageUrl" alt="@Model.Name" class="img-fluid" />
-        </div>
-        <div class="col-md-8">
-            <dl class="row">
-                <dt class="col-sm-3">Description</dt>
-                <dd class="col-sm-9">@Model.Description</dd>
+<div class="container-fluid shadow rounded-3 mb-5 bg-white pt-4">
+    <h2>Menu Item Details</h2>
 
-                <dt class="col-sm-3">Price</dt>
-                <dd class="col-sm-9">@Model.Price.ToString("C")</dd>
+    <div>
+        <h4>@Model.Name</h4>
+        <hr />
+        <div class="row">
+            <div class="col-md-4">
+                <img src="@Model.ImageUrl" alt="@Model.Name" class="img-fluid" />
+            </div>
+            <div class="col-md-8">
+                <dl class="row">
+                    <dt class="col-sm-3">Description</dt>
+                    <dd class="col-sm-9">@Model.Description</dd>
 
-                <dt class="col-sm-3">Category</dt>
-                <dd class="col-sm-9">@Model.Category.Name</dd>
+                    <dt class="col-sm-3">Price</dt>
+                    <dd class="col-sm-9">@Model.Price.ToString("C")</dd>
 
-                <dt class="col-sm-3">Available</dt>
-                <dd class="col-sm-9">@Model.IsAvailable ? "Yes" : "No"</dd>
+                    <dt class="col-sm-3">Category</dt>
+                    <dd class="col-sm-9">@Model.Category.Name</dd>
 
-                <dt class="col-sm-3">Created At</dt>
-                <dd class="col-sm-9">@Model.CreatedAt.ToString("g")</dd>
+                    <dt class="col-sm-3">Availability</dt>
+                    <dd class="col-sm-9"><td>@(Model.IsAvailable ? "Available" : "Out of Stock")</td></dd>
 
-                <dt class="col-sm-3">Last Updated At</dt>
-                <dd class="col-sm-9">@Model.UpdatedAt.ToString("g")</dd>
-            </dl>
+                    <dt class="col-sm-3">Created At</dt>
+                    <dd class="col-sm-9">@Model.CreatedAt.ToString("g")</dd>
+
+                    <dt class="col-sm-3">Last Updated At</dt>
+                    <dd class="col-sm-9">@Model.UpdatedAt.ToString("g")</dd>
+                </dl>
+            </div>
         </div>
     </div>
-</div>
-<div>
-    <a asp-action="Index" class="btn btn-secondary">Back to Menu</a>
+    <div class="row justify-content-center py-4">
+        <div class="col-6 d-grid gap-2 py-2">
+            <a asp-action="Index" class="btn btn-secondary">Back to Menu</a>
+        </div>
+        <div class="col-6 d-grid gap-2 py-2">
+            @if (User.Identity.IsAuthenticated)
+            {
+                <form asp-controller="ShoppingCart" asp-action="AddToCart" method="post" class="d-inline">
+                    <input type="hidden" name="menuItemId" value="@Model.MenuItemId" />
+                    @if (Model.IsAvailable)
+                    {
+                        <button type="submit" class="btn btn-primary col-12">Add to Cart</button>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-secondary col-12" disabled>Item Unavailable</button>
+                    }
+                </form>
+            }
+            else
+            {
+                <button type="button" class="btn btn-danger col-12" onclick="window.location.href='@Url.Page("/Account/Login", new { area = "Identity" })'">Login to Add Items</button>
+            }
+        </div>
 
-    @if (User.Identity.IsAuthenticated)
-    {
-        <form asp-controller="ShoppingCart" asp-action="AddToCart" method="post" class="d-inline">
-            <input type="hidden" name="menuItemId" value="@Model.MenuItemId" />
-            <button type="submit" class="btn btn-primary">Add to Cart</button>
-        </form>
-    }
-    else
-    {
-        <button class="btn btn-primary" onclick="window.location.href='@Url.Action("Login", "Account")'">Add to Cart</button>
-    }
+    </div>
+
 </div>

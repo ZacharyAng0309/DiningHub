@@ -1,6 +1,6 @@
 ﻿@model DiningHub.Models.MenuViewModel
 
-<div class="container-fluid shadow rounded-3 mb-5 bg-white pt-2">
+<div class="container-fluid shadow rounded-3 mb-5 bg-white pt-4">
 
     <h2>Menu</h2>
 
@@ -18,9 +18,10 @@
                     }
                 </select>
             </div>
-            <div class="col-md-4 text-end">
+            <div class="col-md-4 d-grid gap-2 py-2 justify-content-md-end">
                 <button type="submit" class="btn btn-primary">Filter</button>
             </div>
+
         </div>
     </form>
 
@@ -47,7 +48,10 @@
                     <td>@item.Price</td>
                     <td>@item.Category.Name</td>
                     <td>
-                        <a asp-action="Details" asp-route-id="@item.MenuItemId">View Details</a>
+                        <div class="col-12 d-grid gap-2 py-2">
+                            <a asp-action="Details" asp-route-id="@item.MenuItemId" class="btn btn-success">View Details</a>
+                        </div>
+                        
                     </td>
                 </tr>
             }
