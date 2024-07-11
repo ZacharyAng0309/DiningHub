@@ -4,52 +4,66 @@
     ViewData["Title"] = $"Edit Menu Item - {Model.Name}";
 }
 
-<h2>Edit Menu Item</h2>
+<div class="edit-container">
+    <div class="card">
+        <div class="card-header">
+            <h2>Edit Menu Item</h2>
+        </div>
+        <div class="card-body">
+            <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                <input type="hidden" asp-for="MenuItemId" />
+                <input type="hidden" asp-for="ImageUrl" id="ImageUrl" value="@Model.ImageUrl" />
 
-<form asp-action="Edit" method="post" enctype="multipart/form-data">
-    <input type="hidden" asp-for="MenuItemId" />
-    <input type="hidden" asp-for="ImageUrl" id="ImageUrl" value="@Model.ImageUrl" />
-    <div class="form-group">
-        <label asp-for="Name" class="control-label mb-2"></label>
-        <input asp-for="Name" class="form-control mb-4" />
-        <span asp-validation-for="Name" class="text-danger"></span>
+                <div class="form-group">
+                    <label asp-for="Name" class="control-label mb-2"></label>
+                    <input asp-for="Name" class="form-control mb-4" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Description" class="control-label mb-2"></label>
+                    <input asp-for="Description" class="form-control mb-4" />
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Price" class="control-label mb-2"></label>
+                    <input asp-for="Price" type="number" class="form-control mb-4" />
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="CategoryId" class="control-label mb-2">Category</label>
+                    <select asp-for="CategoryId" class="form-control mb-4">
+                        @foreach (var category in ViewBag.Categories)
+                        {
+                            <option value="@category.Value" selected="@(category.Value == Model.CategoryId.ToString())">@category.Text</option>
+                        }
+                    </select>
+                    <span asp-validation-for="CategoryId" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label mb-2" for="imageUpload">Image</label>
+                    <input type="file" class="form-control mb-4" accept="image/*" onchange="uploadImage(event)" id="imageUpload" />
+                    <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                    <img id="imagePreview" src="@Model.ImageUrl" alt="Image Preview" class="img-thumbnail mt-2" />
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="IsAvailable" class="control-label mb-2"></label>
+                    <input asp-for="IsAvailable" class="form-check-input mb-4" type="checkbox" />
+                    <span asp-validation-for="IsAvailable" class="text-danger"></span>
+                </div>
+
+                <div class="form-group text-center">
+                    <input type="submit" value="Save" class="btn btn-save" />
+                    <a asp-action="Index" class="btn btn-cancel">Cancel</a>
+                </div>
+            </form>
+        </div>
     </div>
-    <div class="form-group">
-        <label asp-for="Description" class="control-label mb-2"></label>
-        <input asp-for="Description" class="form-control mb-4" />
-        <span asp-validation-for="Description" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Price" class="control-label mb-2"></label>
-        <input asp-for="Price" type="number" class="form-control mb-4" />
-        <span asp-validation-for="Price" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="CategoryId" class="control-label mb-2">Category</label>
-        <select asp-for="CategoryId" class="form-control mb-4">
-            @foreach (var category in ViewBag.Categories)
-            {
-                <option value="@category.Value" selected="@(category.Value == Model.CategoryId.ToString())">@category.Text</option>
-            }
-        </select>
-        <span asp-validation-for="CategoryId" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label class="control-label mb-2" for="imageUpload">Image</label>
-        <input type="file" class="form-control mb-4" accept="image/*" onchange="uploadImage(event)" id="imageUpload" />
-        <span asp-validation-for="ImageUrl" class="text-danger"></span>
-        <img id="imagePreview" src="@Model.ImageUrl" alt="Image Preview" class="img-thumbnail mt-2" />
-    </div>
-    <div class="form-group">
-        <label asp-for="IsAvailable" class="control-label mb-2"></label>
-        <input asp-for="IsAvailable" class="form-check-input mb-4" type="checkbox" />
-        <span asp-validation-for="IsAvailable" class="text-danger"></span>
-    </div>
-    <div class="form-group text-center">
-        <input type="submit" value="Save" class="btn btn-save" />
-        <a asp-action="Index" class="btn btn-cancel">Cancel</a>
-    </div>
-</form>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

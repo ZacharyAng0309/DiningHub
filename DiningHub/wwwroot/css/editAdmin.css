@@ -1,4 +1,4 @@
-﻿.container {
+﻿.edit-container {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -53,3 +53,14 @@
     font-weight: bold;
     font-size: 14px;
 }
+
+
+.report-title {
+    border: 2px solid #B03535;
+    background-color: #B03535;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top:20px;
+}
+

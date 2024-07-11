@@ -18,7 +18,7 @@
     </div>
 </div>
 
-<div class="row">
+@* <div class="row">
     <div class="col-md-6">
         <canvas id="totalOrdersChart" style="width: 100%; height: 500px;"></canvas>
     </div>
@@ -150,6 +150,241 @@
                     }]
                 },
                 options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+}
+ *@
+<div class="row">
+    <div class="col-md-6">
+        <canvas id="totalOrdersChart" style="width: 100%; height: 500px;"></canvas>
+    </div>
+    <div class="col-md-6">
+        <canvas id="totalUsersChart" style="width: 100%; height: 500px;"></canvas>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <canvas id="totalRevenueChart" style="width: 100%; height: 500px;"></canvas>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <canvas id="topSellingItemsChart" style="width: 100%; height: 500px;"></canvas>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            drawCharts();
+        });
+
+        function drawCharts() {
+            drawTotalOrdersChart();
+            drawTotalUsersChart();
+            drawTotalRevenueChart();
+            drawTopSellingItemsChart();
+        }
+
+        function drawTotalOrdersChart() {
+            var ctx = document.getElementById('totalOrdersChart').getContext('2d');
+            var totalOrdersChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Total Orders'],
+                    datasets: [{
+                        label: 'Orders',
+                        data: [@ViewBag.Stats.TotalOrders],
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Total Orders',
+                            color: '#000',
+                            font: {
+                                size: 24,
+                                weight: 'bold',
+                                family: 'Arial'
+                            },
+                            padding: {
+                                top: 10,
+                                bottom: 30
+                            },
+                            border: {
+                                color: '#000',
+                                width: 2
+                            },
+                            borderDash: [10, 5],
+                            borderRadius: 10,
+                            backgroundColor: 'rgba(255, 255, 255, 0.8)'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function drawTotalUsersChart() {
+            var ctx = document.getElementById('totalUsersChart').getContext('2d');
+            var totalUsersChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Total Users'],
+                    datasets: [{
+                        label: 'Users',
+                        data: [@ViewBag.Stats.TotalUsers],
+                        backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                        borderColor: 'rgba(153, 102, 255, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Total Users',
+                            color: '#000',
+                            font: {
+                                size: 24,
+                                weight: 'bold',
+                                family: 'Arial'
+                            },
+                            padding: {
+                                top: 10,
+                                bottom: 30
+                            },
+                            border: {
+                                color: '#000',
+                                width: 2
+                            },
+                            borderDash: [10, 5],
+                            borderRadius: 10,
+                            backgroundColor: 'rgba(255, 255, 255, 0.8)'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function drawTotalRevenueChart() {
+            var ctx = document.getElementById('totalRevenueChart').getContext('2d');
+            var totalRevenueChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Total Revenue'],
+                    datasets: [{
+                        label: 'Revenue',
+                        data: [@ViewBag.Stats.TotalRevenue],
+                        backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                        borderColor: 'rgba(255, 159, 64, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Total Revenue',
+                            color: '#000',
+                            font: {
+                                size: 24,
+                                weight: 'bold',
+                                family: 'Arial'
+                            },
+                            padding: {
+                                top: 10,
+                                bottom: 30
+                            },
+                            border: {
+                                color: '#000',
+                                width: 2
+                            },
+                            borderDash: [10, 5],
+                            borderRadius: 10,
+                            backgroundColor: 'rgba(255, 255, 255, 0.8)'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function drawTopSellingItemsChart() {
+            var labels = [];
+            var data = [];
+        @foreach (var item in ViewBag.Stats.TopSellingItems)
+        {
+            <text>
+                    labels.push('@item.Name');
+                data.push(@item.Count);
+            </text>
+        }
+
+                            var ctx = document.getElementById('topSellingItemsChart').getContext('2d');
+            var topSellingItemsChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Top Selling Items',
+                        data: data,
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Top Selling Items',
+                            color: '#000',
+                            font: {
+                                size: 24,
+                                weight: 'bold',
+                                family: 'Arial'
+                            },
+                            padding: {
+                                top: 10,
+                                bottom: 30
+                            },
+                            border: {
+                                color: '#000',
+                                width: 2
+                            },
+                            borderDash: [10, 5],
+                            borderRadius: 10,
+                            backgroundColor: 'rgba(255, 255, 255, 0.8)'
+                        }
+                    },
                     scales: {
                         y: {
                             beginAtZero: true

@@ -9,35 +9,30 @@
     <div class="table-wrapper">
         <div class="table-title">
             <div class="row d-flex justify-content-between align-items-center">
-                <div class="col-sm-8">
+                <div class="col-sm-3">
                     <h2>Manage Menu Items</h2>
                 </div>
-                <div class="col-sm-4 text-end">
+                <div class="col-sm-6">
+                    <form method="get" class="d-flex justify-content-center">
+                        <div class="input-group">
+                            <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" class="form-control" placeholder="Search by name or description" />
+                            <select name="categoryId" class="form-select mx-2">
+                                <option value="">All Categories</option>
+                                @foreach (var category in ViewBag.Categories)
+                                {
+                                    bool selected = category.CategoryId == (int?)ViewData["CurrentCategory"];
+                                    <option value="@category.CategoryId" selected="@selected">@category.Name</option>
+                                }
+                            </select>
+                            <button type="submit" class="btn btn-primary">Filter</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-sm-3 text-end">
                     <a asp-action="Create" class="btn btn-success">Create New Menu Item</a>
                 </div>
             </div>
         </div>
-
-        <form method="get">
-            <div class="row mb-3">
-                <div class="col-sm-4">
-                    <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" class="form-control" placeholder="Search by name or description" />
-                </div>
-                <div class="col-sm-4">
-                    <select name="categoryId" class="form-select">
-                        <option value="">All Categories</option>
-                        @foreach (var category in ViewBag.Categories)
-                        {
-                            bool selected = category.CategoryId == (int?)ViewData["CurrentCategory"];
-                            <option value="@category.CategoryId" selected="@(selected ? "selected" : "")">@category.Name</option>
-                        }
-                    </select>
-                </div>
-                <div class="col-sm-4 text-end">
-                    <button type="submit" class="btn btn-primary">Filter</button>
-                </div>
-            </div>
-        </form>
 
         <table class="table table-striped table-hover">
             <thead>
@@ -94,30 +89,29 @@
         </table>
 
         <div class="d-flex justify-content-center">
-            <div class="d-flex justify-content-center">
-                <nav>
-                    <ul class="pagination">
-                        @if (Model.MenuItems.HasPreviousPage)
-                        {
-                            <li class="page-item">
-                                <a class="page-link" href="/manage/menu?page=@(Model.CurrentPage - 1)@(string.IsNullOrEmpty(ViewData["CurrentSort"]?.ToString()) ? "" : $"&sortOrder={ViewData["CurrentSort"]}")@(string.IsNullOrEmpty(ViewData["CurrentFilter"]?.ToString()) ? "" : $"&searchString={ViewData["CurrentFilter"]}")@(ViewData["CurrentCategory"] == null ? "" : $"&categoryId={ViewData["CurrentCategory"]}")">Previous</a>
-                            </li>
-                        }
-                        @for (var i = 1; i <= Model.TotalPages; i++)
-                        {
-                            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
-                                <a class="page-link" href="/manage/menu?page=@i@(string.IsNullOrEmpty(ViewData["CurrentSort"]?.ToString()) ? "" : $"&sortOrder={ViewData["CurrentSort"]}")@(string.IsNullOrEmpty(ViewData["CurrentFilter"]?.ToString()) ? "" : $"&searchString={ViewData["CurrentFilter"]}")@(ViewData["CurrentCategory"] == null ? "" : $"&categoryId={ViewData["CurrentCategory"]}")">@i</a>
-                            </li>
-                        }
-                        @if (Model.MenuItems.HasNextPage)
-                        {
-                            <li class="page-item">
-                                <a class="page-link" href="/manage/menu?page=@(Model.CurrentPage + 1)@(string.IsNullOrEmpty(ViewData["CurrentSort"]?.ToString()) ? "" : $"&sortOrder={ViewData["CurrentSort"]}")@(string.IsNullOrEmpty(ViewData["CurrentFilter"]?.ToString()) ? "" : $"&searchString={ViewData["CurrentFilter"]}")@(ViewData["CurrentCategory"] == null ? "" : $"&categoryId={ViewData["CurrentCategory"]}")">Next</a>
-                            </li>
-                        }
-                    </ul>
-                </nav>
-            </div>
+            <nav>
+                <ul class="pagination">
+                    @if (Model.MenuItems.HasPreviousPage)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="/manage/menu?page=@(Model.CurrentPage - 1)@(string.IsNullOrEmpty(ViewData["CurrentSort"]?.ToString()) ? "" : $"&sortOrder={ViewData["CurrentSort"]}")@(string.IsNullOrEmpty(ViewData["CurrentFilter"]?.ToString()) ? "" : $"&searchString={ViewData["CurrentFilter"]}")@(ViewData["CurrentCategory"] == null ? "" : $"&categoryId={ViewData["CurrentCategory"]}")">Previous</a>
+                        </li>
+                    }
+                    @for (var i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                            <a class="page-link" href="/manage/menu?page=@i@(string.IsNullOrEmpty(ViewData["CurrentSort"]?.ToString()) ? "" : $"&sortOrder={ViewData["CurrentSort"]}")@(string.IsNullOrEmpty(ViewData["CurrentFilter"]?.ToString()) ? "" : $"&searchString={ViewData["CurrentFilter"]}")@(ViewData["CurrentCategory"] == null ? "" : $"&categoryId={ViewData["CurrentCategory"]}")">@i</a>
+                        </li>
+                    }
+                    @if (Model.MenuItems.HasNextPage)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="/manage/menu?page=@(Model.CurrentPage + 1)@(string.IsNullOrEmpty(ViewData["CurrentSort"]?.ToString()) ? "" : $"&sortOrder={ViewData["CurrentSort"]}")@(string.IsNullOrEmpty(ViewData["CurrentFilter"]?.ToString()) ? "" : $"&searchString={ViewData["CurrentFilter"]}")@(ViewData["CurrentCategory"] == null ? "" : $"&categoryId={ViewData["CurrentCategory"]}")">Next</a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        </div>
     </div>
 </div>
 

@@ -4,11 +4,8 @@
     ViewData["Title"] = "Create";
 }
 
-<head>
-    <link rel="stylesheet" href="~/css/editAdmin.css" asp-append-version="true" />
-</head>
 
-<div class="container">
+<div class="edit-container">
     <div class="card">
         <div class="card-header">
             <h2>Add User</h2>
@@ -18,7 +15,6 @@
                <div class="form-group">
                     <label asp-for="UserName" class="control-label mb-2"></label>
                     <input asp-for="UserName" class="form-control mb-4" />
-                    <span asp-validation-for="UserName" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <label asp-for="Email" class="control-label mb-2"></label>
