@@ -29,7 +29,7 @@
                         @foreach (var category in ViewBag.Categories)
                         {
                             bool selected = category.CategoryId == (int?)ViewData["CurrentCategory"];
-                            <option value="@category.CategoryId" selected="@(selected ? "selected" : "")">@category.Name</option>
+                            <option value="@category.CategoryId" selected="@selected">@category.Name</option>
                         }
                     </select>
                 </div>

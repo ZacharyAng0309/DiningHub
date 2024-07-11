@@ -33,17 +33,23 @@ namespace DiningHub.Data
                 if (!context.Categories.Any())
                 {
                     context.Categories.AddRange(
-                        new Category { Name = "Pizza" },
-                        new Category { Name = "Salad" },
-                        new Category { Name = "Pasta" }
+                        new Category { Name = "Appetizers" },
+                        new Category { Name = "Main Courses" },
+                        new Category { Name = "Cheeses" },
+                        new Category { Name = "Desserts" },
+                        new Category { Name = "Beverages" }
+
+
                     );
                     await context.SaveChangesAsync();
                 }
 
                 // Fetch categories
-                var pizzaCategory = context.Categories.First(c => c.Name == "Pizza").CategoryId;
-                var saladCategory = context.Categories.First(c => c.Name == "Salad").CategoryId;
-                var pastaCategory = context.Categories.First(c => c.Name == "Pasta").CategoryId;
+                var appetizersCategory = context.Categories.First(c => c.Name == "Appetizers").CategoryId;
+                var mainCoursesCategory = context.Categories.First(c => c.Name == "Main Courses").CategoryId;
+                var cheeseCategory = context.Categories.First(c => c.Name == "Cheeses").CategoryId;
+                var dessertsCategory = context.Categories.First(c => c.Name == "Desserts").CategoryId;
+                var beveragesCategory = context.Categories.First(c => c.Name == "Beverages").CategoryId;
 
                 // Seed initial menu items if not already seeded
                 if (!context.MenuItems.Any())
@@ -51,99 +57,143 @@ namespace DiningHub.Data
                     context.MenuItems.AddRange(
                         new MenuItem
                         {
-                            Name = "Margherita Pizza",
-                            Description = "Classic pizza with tomato sauce, mozzarella cheese, and fresh basil.",
-                            Price = 12.99m,
-                            CategoryId = pizzaCategory,
-                            ImageUrl = "/Img/menu/margherita_pizza.jpg",
+                            Name = "French Onion Soup",
+                            Description = "Classic French onion soup with caramelized onions, beef broth, and a cheesy crouton topping.",
+                            Price = 28.00m,
+                            CategoryId = appetizersCategory,
+                            ImageUrl = "/Img/menu/appetizers1.jpg",
                             IsAvailable = true,
                             CreatedById = adminUser.Id,
                             LastUpdatedById = adminUser.Id
                         },
                         new MenuItem
                         {
-                            Name = "Pepperoni Pizza",
-                            Description = "Pizza topped with pepperoni, mozzarella cheese, and tomato sauce.",
-                            Price = 14.99m,
-                            CategoryId = pizzaCategory,
-                            ImageUrl = "/Img/menu/pepperoni_pizza.jpg",
+                            Name = "Escargots de Bourgogne",
+                            Description = "Burgundy snails cooked in garlic butter and herbs, served with fresh baguette slices.",
+                            Price = 38.00m,
+                            CategoryId = appetizersCategory,
+                            ImageUrl = "/Img/menu/appetizers2.jpg",
                             IsAvailable = true,
                             CreatedById = adminUser.Id,
                             LastUpdatedById = adminUser.Id
                         },
                         new MenuItem
                         {
-                            Name = "BBQ Chicken Pizza",
-                            Description = "Pizza with BBQ sauce, chicken, red onions, and cilantro.",
-                            Price = 15.99m,
-                            CategoryId = pizzaCategory,
-                            ImageUrl = "/Img/menu/bbq_chicken_pizza.jpg",
+                            Name = "Foie Gras",
+                            Description = "Pan-seared foie gras served with a fig compote and toasted brioche.",
+                            Price = 68.00m,
+                            CategoryId = appetizersCategory,
+                            ImageUrl = "/Img/menu/appetizers3.jpg",
                             IsAvailable = true,
                             CreatedById = adminUser.Id,
                             LastUpdatedById = adminUser.Id
                         },
                         new MenuItem
                         {
-                            Name = "Caesar Salad",
-                            Description = "Crisp romaine lettuce, croutons, and Caesar dressing.",
-                            Price = 8.99m,
-                            CategoryId = saladCategory,
-                            ImageUrl = "/Img/menu/caesar_salad.jpg",
+                            Name = "Salade Nicoise",
+                            Description = "Mixed greens with tuna, hard-boiled eggs, green beans, potatoes, olives, and anchovies, dressed with vinaigrette.",
+                            Price = 32.00m,
+                            CategoryId = appetizersCategory,
+                            ImageUrl = "/Img/menu/appetizers4.jpg",
                             IsAvailable = true,
                             CreatedById = adminUser.Id,
                             LastUpdatedById = adminUser.Id
                         },
                         new MenuItem
                         {
-                            Name = "Greek Salad",
-                            Description = "Salad with cucumbers, tomatoes, olives, feta cheese, and Greek dressing.",
-                            Price = 9.99m,
-                            CategoryId = saladCategory,
-                            ImageUrl = "/Img/menu/greek_salad.jpg",
+                            Name = "Coq au Vin",
+                            Description = "Chicken braised with red wine, mushrooms, bacon, and pearl onions, served with mashed potatoes.",
+                            Price = 68.00m,
+                            CategoryId = mainCoursesCategory,
+                            ImageUrl = "/Img/menu/maincourse1.jpg",
                             IsAvailable = true,
                             CreatedById = adminUser.Id,
                             LastUpdatedById = adminUser.Id
                         },
                         new MenuItem
                         {
-                            Name = "House Salad",
-                            Description = "Mixed greens, tomatoes, cucumbers, red onions, and house dressing.",
-                            Price = 7.99m,
-                            CategoryId = saladCategory,
-                            ImageUrl = "/Img/menu/house_salad.jpg",
+                            Name = "Boeuf Bourguignon",
+                            Description = "Slow-cooked beef stew with red wine, carrots, onions, and mushrooms, served with a side of crusty bread.",
+                            Price = 75.00m,
+                            CategoryId = mainCoursesCategory,
+                            ImageUrl = "/Img/menu/maincourse2.jpg",
                             IsAvailable = true,
                             CreatedById = adminUser.Id,
                             LastUpdatedById = adminUser.Id
                         },
                         new MenuItem
                         {
-                            Name = "Spaghetti Carbonara",
-                            Description = "Spaghetti with pancetta, eggs, and Parmesan cheese.",
-                            Price = 14.99m,
-                            CategoryId = pastaCategory,
-                            ImageUrl = "/Img/menu/spaghetti_carbonara.jpg",
+                            Name = "Sole Meuniere",
+                            Description = "Sole fish lightly floured and pan-fried in butter, lemon, and parsley, served with steamed vegetables.",
+                            Price = 85.00m,
+                            CategoryId = mainCoursesCategory,
+                            ImageUrl = "/Img/menu/maincourse3.jpg",
                             IsAvailable = true,
                             CreatedById = adminUser.Id,
                             LastUpdatedById = adminUser.Id
                         },
                         new MenuItem
                         {
-                            Name = "Fettuccine Alfredo",
-                            Description = "Fettuccine pasta with creamy Alfredo sauce.",
-                            Price = 13.99m,
-                            CategoryId = pastaCategory,
-                            ImageUrl = "/Img/menu/fettuccine_alfredo.jpg",
+                            Name = "Ratatouille",
+                            Description = "A Provençal vegetable dish made with layers of zucchini, eggplant, tomatoes, and bell peppers, served with couscous.",
+                            Price = 45.00m,
+                            CategoryId = mainCoursesCategory,
+                            ImageUrl = "/Img/menu/maincourse4.jpg",
                             IsAvailable = true,
                             CreatedById = adminUser.Id,
                             LastUpdatedById = adminUser.Id
                         },
                         new MenuItem
                         {
-                            Name = "Penne Arrabbiata",
-                            Description = "Penne pasta in a spicy tomato sauce.",
-                            Price = 12.99m,
-                            CategoryId = pastaCategory,
-                            ImageUrl = "/Img/menu/penne_arrabbiata.jpg",
+                            Name = "Selection of French Cheeses",
+                            Description = "An assortment of French cheeses, including Brie, Camembert served with fresh baguette slices, crackers, fruit, nuts, honey, and jams.",
+                            Price = 98.00m,
+                            CategoryId = cheeseCategory,
+                            ImageUrl = "/Img/menu/cheese1.png",
+                            IsAvailable = true,
+                            CreatedById = adminUser.Id,
+                            LastUpdatedById = adminUser.Id
+                        },
+                        new MenuItem
+                        {
+                            Name = "Creme Brulee",
+                            Description = "Vanilla custard topped with a caramelized sugar crust.",
+                            Price = 25.00m,
+                            CategoryId = dessertsCategory,
+                            ImageUrl = "/Img/menu/dessert1.jpg",
+                            IsAvailable = true,
+                            CreatedById = adminUser.Id,
+                            LastUpdatedById = adminUser.Id
+                        },
+                        new MenuItem
+                        {
+                            Name = "Tarte Tatin",
+                            Description = "Caramelized apple tart served warm with a scoop of vanilla ice cream.",
+                            Price = 28.00m,
+                            CategoryId = dessertsCategory,
+                            ImageUrl = "/Img/menu/dessert2.jpg",
+                            IsAvailable = true,
+                            CreatedById = adminUser.Id,
+                            LastUpdatedById = adminUser.Id
+                        },
+                        new MenuItem
+                        {
+                            Name = "Wine Selection",
+                            Description = "A carefully curated list of French wines, including red, white, and sparkling options.",
+                            Price = 40.00m,
+                            CategoryId = beveragesCategory,
+                            ImageUrl = "/Img/menu/drinks1.jpg",
+                            IsAvailable = true,
+                            CreatedById = adminUser.Id,
+                            LastUpdatedById = adminUser.Id
+                        },
+                        new MenuItem
+                        {
+                            Name = "Cafe",
+                            Description = "Traditional French coffee, including espresso, cappuccino, and café au lait.",
+                            Price = 15.00m,
+                            CategoryId = beveragesCategory,
+                            ImageUrl = "/Img/menu/drinks2.jpg",
                             IsAvailable = true,
                             CreatedById = adminUser.Id,
                             LastUpdatedById = adminUser.Id
@@ -158,73 +208,73 @@ namespace DiningHub.Data
                     context.InventoryItems.AddRange(
                         new InventoryItem
                         {
-                            Name = "Tomatoes",
-                            Description = "Fresh organic tomatoes.",
+                            Name = "Garlic",
+                            Description = "Used in Escargots de Bourgogne and various sauces.",
                             Quantity = 100,
-                            CategoryId = pizzaCategory,
+                            CategoryId = appetizersCategory,
                             CreatedById = adminUser.Id,
                             LastUpdatedById = adminUser.Id
                         },
                         new InventoryItem
                         {
-                            Name = "Mozzarella Cheese",
-                            Description = "Creamy mozzarella cheese.",
+                            Name = "Onions",
+                            Description = "Essential for Soupe à l'oignon and flavoring various appetizers.",
                             Quantity = 50,
-                            CategoryId = pizzaCategory,
+                            CategoryId = appetizersCategory,
                             CreatedById = adminUser.Id,
                             LastUpdatedById = adminUser.Id
                         },
                         new InventoryItem
                         {
-                            Name = "Pasta",
-                            Description = "High-quality durum wheat pasta.",
+                            Name = "Baguette",
+                            Description = "Served with Escargots de Bourgogne and cheese selections.",
                             Quantity = 200,
-                            CategoryId = pastaCategory,
+                            CategoryId = appetizersCategory,
                             CreatedById = adminUser.Id,
                             LastUpdatedById = adminUser.Id
                         },
                         new InventoryItem
                         {
-                            Name = "Olive Oil",
-                            Description = "Extra virgin olive oil.",
+                            Name = "Butter",
+                            Description = "Used for sautéing, making sauces, and enriching dishes like Coq au Vin and Sole Meunière.",
                             Quantity = 30,
-                            CategoryId = saladCategory,
+                            CategoryId = mainCoursesCategory,
                             CreatedById = adminUser.Id,
                             LastUpdatedById = adminUser.Id
                         },
                         new InventoryItem
                         {
-                            Name = "Basil",
-                            Description = "Fresh basil leaves.",
+                            Name = "Red Wine",
+                            Description = "Key ingredient for braising in dishes like Coq au Vin and Boeuf Bourguignon.",
                             Quantity = 50,
-                            CategoryId = pizzaCategory,
+                            CategoryId = mainCoursesCategory,
                             CreatedById = adminUser.Id,
                             LastUpdatedById = adminUser.Id
                         },
                         new InventoryItem
                         {
-                            Name = "Chicken Breast",
-                            Description = "Boneless, skinless chicken breast.",
+                            Name = "Thyme",
+                            Description = "A commonly used herb in stews like Boeuf Bourguignon and Coq au Vin.",
                             Quantity = 25,
-                            CategoryId = saladCategory,
+                            CategoryId = mainCoursesCategory,
                             CreatedById = adminUser.Id,
                             LastUpdatedById = adminUser.Id
                         },
                         new InventoryItem
                         {
-                            Name = "Red Onions",
-                            Description = "Fresh red onions.",
+                            Name = "Cheese",
+                            Description = "Varieties like Brie, Camembert, and Roquefort are served in the cheese selection.",
                             Quantity = 40,
-                            CategoryId = saladCategory,
+                            CategoryId = cheeseCategory,
                             CreatedById = adminUser.Id,
                             LastUpdatedById = adminUser.Id
                         },
                         new InventoryItem
                         {
-                            Name = "Parmesan Cheese",
-                            Description = "Grated Parmesan cheese.",
+                            Name = "Heavy Cream",
+                            Description = "Used in making Crème Brûlée and other creamy desserts.",
                             Quantity = 60,
-                            CategoryId = pastaCategory,
+                            CategoryId = dessertsCategory,
                             CreatedById = adminUser.Id,
                             LastUpdatedById = adminUser.Id
                         }
