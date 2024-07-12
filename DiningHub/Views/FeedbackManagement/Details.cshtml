@@ -4,22 +4,32 @@
     ViewData["Title"] = $"Feedback Details - {Model.FeedbackId}";
 }
 
-<h2>Feedback Details</h2>
+@* <div class="container-fluid shadow rounded-3 mb-5 bg-white pt-4">
+    <h1 class="text-center mb-4">Feedback Details</h1>
 
-<div>
-    <h4>User</h4>
-    <p>@Model.User.UserName</p>
+    <div class="card mb-4">
+        <div class="card-header bg-danger text-white text-center rounded-3">
+            <h4>Feedback Details - @Model.FeedbackId</h4>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">User</dt>
+                <dd class="col-sm-9">@Model.User.UserName</dd>
 
-    <h4>Comments</h4>
-    <p>@Model.Comments</p>
+                <dt class="col-sm-3">Comments</dt>
+                <dd class="col-sm-9">@Model.Comments</dd>
 
-    <h4>Rating</h4>
-    <p>@Model.Rating</p>
+                <dt class="col-sm-3">Rating</dt>
+                <dd class="col-sm-9">@Model.Rating</dd>
 
-    <h4>Date</h4>
-    <p>@Model.Date.ToString("g")</p>
+                <dt class="col-sm-3">Date</dt>
+                <dd class="col-sm-9">@Model.Date.ToString("g")</dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-center pb-4">
+        <a asp-action="Index" class="btn btn-secondary btn-lg rounded-pill col-6">Back to List</a>
+    </div>
 </div>
-
-<div>
-    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-</div>
+ *@

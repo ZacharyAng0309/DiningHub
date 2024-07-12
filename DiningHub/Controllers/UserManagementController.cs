@@ -110,7 +110,7 @@ namespace DiningHub.Controllers
 
         [HttpPost("edit/{id}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,UserName,Email,FirstName,LastName,Points,PhoneNumber")] DiningHubUser user)
+        public async Task<IActionResult> Edit(string id, [Bind("Id,UserName,Email,FirstName,LastName,PhoneNumber")] DiningHubUser user)
         {
             if (id != user.Id)
             {
@@ -138,10 +138,6 @@ namespace DiningHub.Controllers
             existingUser.Email = user.Email;
             existingUser.FirstName = user.FirstName;
             existingUser.LastName = user.LastName;
-            if (!await _userManager.IsInRoleAsync(existingUser, "Manager") && !await _userManager.IsInRoleAsync(existingUser, "Staff"))
-            {
-                existingUser.Points = user.Points;
-            }
             existingUser.PhoneNumber = user.PhoneNumber;
             existingUser.UpdatedAt = DateTimeHelper.GetMalaysiaTime();
 

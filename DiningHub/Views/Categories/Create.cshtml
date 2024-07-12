@@ -28,26 +28,36 @@
 }
  *@
 
-<div class="edit-container">
+<div class="container-fluid shadow rounded-3 mb-5 bg-white pt-4 pb-4">
     <div class="card">
-        <div class="card-header">
+        <div class="card-header bg-danger text-white text-center">
             <h2>Create Category</h2>
         </div>
-        <div class="card-body">
+        <div class="">
             <form asp-action="Create" method="post">
-                <div class="form-group">
-                    <label asp-for="Name" class="control-label mb-2"></label>
-                    <input asp-for="Name" class="form-control mb-4" />
+                <div class="form-group mb-4">
+                    <label asp-for="Name" class="form-label"></label>
+                    <input asp-for="Name" class="form-control rounded-pill" />
                     <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
                 <div class="form-group text-center">
-                    <input type="submit" value="Create" class="btn btn-save" />
-                    <a asp-action="Index" class="btn btn-cancel">Cancel</a>
+                    <div class="row justify-content-center pb-4">
+                        <div class="col-md-6 col-12 d-grid gap-2 py-2">
+                            <input type="submit" value="Create" class="btn btn-success rounded-pill mx-2" />
+                        </div>
+                        <div class="col-md-6 col-12 d-grid gap-2 py-2">
+                            <a asp-action="Index" class="btn btn-secondary rounded-pill mx-2">Cancel</a>
+                        </div>
+                    </div>
+                    
                 </div>
+
+                
             </form>
         </div>
     </div>
 </div>
+
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

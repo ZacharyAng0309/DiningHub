@@ -40,8 +40,6 @@ namespace DiningHub.Areas.Identity.Pages.Account.Manage
             [EmailAddress]
             public string Email { get; set; }
 
-            [Display(Name = "Reward points")]
-            public int RewardPoints { get; set; }
 
             [Phone]
             [Display(Name = "Phone number")]
@@ -65,7 +63,7 @@ namespace DiningHub.Areas.Identity.Pages.Account.Manage
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
-                RewardPoints = user.Points,
+             
                 DateOfBirth = user.DateOfBirth
             };
         }

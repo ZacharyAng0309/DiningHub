@@ -153,12 +153,6 @@
                         <dt class="col-sm-4">Last Name</dt>
                         <dd class="col-sm-8">@user.LastName</dd>
 
-                        @if (!Model.UserRoles[user.Id].Contains("Manager") && !Model.UserRoles[user.Id].Contains("Staff"))
-                        {
-                            <dt class="col-sm-4">Points</dt>
-                            <dd class="col-sm-8">@user.Points</dd>
-                        }
-
                         <dt class="col-sm-4">Phone Number</dt>
                         <dd class="col-sm-8">@user.PhoneNumber</dd>
 

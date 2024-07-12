@@ -90,8 +90,24 @@ namespace DiningHub.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var feedback = await _context.Feedbacks.FindAsync(id);
-            _context.Feedbacks.Remove(feedback);
-            await _context.SaveChangesAsync();
+            if (feedback == null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                _context.Feedbacks.Remove(feedback);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Feedback deleted successfully.";
+            }
+            catch (DbUpdateException ex)
+            {
+                // Log the error (uncomment ex variable name and write a log.)
+                TempData["ErrorMessage"] = "Unable to delete feedback. Try again, and if the problem persists see your system administrator.";
+                // You might want to log the exception here
+            }
+
             return RedirectToAction(nameof(Index));
         }
 
