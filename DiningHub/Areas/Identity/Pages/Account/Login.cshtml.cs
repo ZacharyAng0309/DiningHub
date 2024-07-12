@@ -112,19 +112,21 @@ namespace DiningHub.Areas.Identity.Pages.Account
                         if (result.Succeeded)
                         {
                             _logger.LogInformation("User logged in.");
+
                             if (await _userManager.IsInRoleAsync(user, "Staff"))
                             {
-                                _logger.LogInformation("Staff logged in. Redirecting to the inventory index page."); return RedirectToAction("Index", "InventoryNanagement"); // Adjust the controller name as necessary
+                                _logger.LogInformation("Staff logged in. Redirecting to the inventory index page.");
+                                return RedirectToAction("Index", "InventoryManagement"); // Adjust the controller name as necessary
                             }
-                            
-                            // Redirect to the Report Index page if the user is a Manager
                             else if (await _userManager.IsInRoleAsync(user, "Manager"))
                             {
-                                _logger.LogInformation("Manager logged in.Redirecting to the report index page.");
+                                _logger.LogInformation("Manager logged in. Redirecting to the report index page.");
                                 return RedirectToAction("Index", "Report");
                             }
-                            
+
+                            return RedirectToAction("Index", "Menu");
                         }
+
                         if (result.RequiresTwoFactor)
                         {
                             _logger.LogInformation("User requires two-factor authentication.");

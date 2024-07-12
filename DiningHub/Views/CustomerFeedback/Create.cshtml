@@ -5,11 +5,11 @@
     var order = ViewData["OrderDetails"] as DiningHub.Models.Order;
 }
 <div class="container-fluid shadow rounded-3 mb-5 bg-white pt-4">
-    <h2>Create Feedback</h2>
+    <h1 class="text-center mb-4">「 ✦ CREATE FEEDBACK ✦ 」</h1>
 
-    <h4>Order Details</h4>
-    <table class="table table-striped">
-        <thead>
+    <h4 class="mb-3">Order Details</h4>
+    <table class="table table-hover table-bordered">
+        <thead class="table-danger text-center">
             <tr>
                 <th>Item</th>
                 <th>Quantity</th>
@@ -21,24 +21,27 @@
             @foreach (var item in order.OrderItems)
             {
                 <tr>
-                    <td>@item.MenuItem.Name</td>
-                    <td>@item.Quantity</td>
-                    <td>@item.Price.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("ms-MY"))</td>
-                    <td>RM @(item.Quantity * item.Price)</td>
+                    <td class="align-middle">
+                        <img src="@item.MenuItem.ImageUrl" alt="@item.MenuItem.Name" class="img-thumbnail" style="width: 100px; height: 100px;" />
+                        @item.MenuItem.Name
+                    </td>
+                    <td class="align-middle text-center">@item.Quantity</td>
+                    <td class="align-middle">@item.Price.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("ms-MY"))</td>
+                    <td class="align-middle">RM @string.Format("{0:F2}", item.Quantity * item.Price)</td>
                 </tr>
             }
         </tbody>
     </table>
 
     <form asp-action="Create" method="post">
-        <div class="form-group">
-            <label for="Comments">Comments</label>
-            <textarea asp-for="Comments" class="form-control"></textarea>
+        <div class="mb-4">
+            <label for="Comments" class="form-label">Comments</label>
+            <textarea asp-for="Comments" class="form-control rounded-3"></textarea>
             <span asp-validation-for="Comments" class="text-danger"></span>
         </div>
-        <div class="form-group">
-            <label for="Rating">Rating</label>
-            <select asp-for="Rating" class="form-control">
+        <div class="mb-4">
+            <label for="Rating" class="form-label">Rating</label>
+            <select asp-for="Rating" class="form-control rounded-pill">
                 <option value="">Select a rating</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
@@ -50,17 +53,17 @@
         </div>
         <input type="hidden" asp-for="OrderId" />
         <input type="hidden" asp-for="UserId" />
-        <div class="row justify-content-center py-4">
-            <div class="col-6 d-grid gap-2 py-2">
-                <a asp-action="Index" asp-controller="Order" class="btn btn-secondary">Back to Order History</a>
+        <div class="row justify-content-center pb-4">
+            <div class="col-md-6 col-12 d-grid gap-2 py-2">
+                <a asp-action="Index" asp-controller="Order" class="btn btn-secondary btn-lg rounded-pill">Back to Order History</a>
             </div>
-            <div class="col-6 d-grid gap-2 py-2">
-                <button type="submit" class="btn btn-primary">Submit</button>
+            <div class="col-md-6 col-12 d-grid gap-2 py-2">
+                <button type="submit" class="btn btn-primary btn-lg rounded-pill">Submit</button>
             </div>
         </div>
-
     </form>
 </div>
+
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>

@@ -4,11 +4,11 @@
     ViewData["Title"] = "Order History";
 }
 
-<div class="container-fluid shadow rounded-3 mb-5 bg-white pt-4">
-    <h2>Order History</h2>
+<div class="container-fluid shadow rounded-3 mb-5 bg-white pt-4 pb-4">
+    <h1 class="text-center mb-4">「 ✦ ORDER HISTORY ✦ 」</h1>
 
-    <table class="table">
-        <thead>
+    <table class="table table-hover table-bordered">
+        <thead class="table-danger text-center">
             <tr>
                 <th>Order ID</th>
                 <th>Order Date</th>
@@ -20,28 +20,25 @@
             @foreach (var item in Model)
             {
                 <tr>
-                    <td>@item.Order.OrderId</td>
-                    <td>@item.Order.OrderDate.ToString("g")</td>
-                    <td>@item.Order.TotalAmount.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("ms-MY"))</td>
-                    <td>
+                    <td class="align-middle text-center">@item.Order.OrderId</td>
+                    <td class="align-middle text-center">@item.Order.OrderDate.ToString("g")</td>
+                    <td class="align-middle text-center">@item.Order.TotalAmount.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("ms-MY"))</td>
+                    <td class="align-middle">
                         <div class="row">
                             <div class="col-6 d-grid gap-2 py-2">
                                 @if (item.HasFeedback)
                                 {
-                                    <a asp-action="Edit" asp-controller="CustomerFeedback" asp-route-id="@item.FeedbackId" class="btn btn-secondary">Edit Feedback</a>
+                                    <a asp-action="Edit" asp-controller="CustomerFeedback" asp-route-id="@item.FeedbackId" class="btn btn-secondary rounded-pill ">Edit Feedback</a>
                                 }
                                 else if (item.CanProvideFeedback)
                                 {
-                                    <a asp-action="Create" asp-controller="CustomerFeedback" asp-route-orderId="@item.Order.OrderId" class="btn btn-primary">Create Feedback</a>
+                                    <a asp-action="Create" asp-controller="CustomerFeedback" asp-route-orderId="@item.Order.OrderId" class="btn btn-primary rounded-pill">Create Feedback</a>
                                 }
-                                
                             </div>
                             <div class="col-6 d-grid gap-2 py-2">
-                                <a asp-action="Details" asp-route-id="@item.Order.OrderId" class="btn btn-success">Details</a>
+                                <a asp-action="Details" asp-route-id="@item.Order.OrderId" class="btn btn-success rounded-pill">Details</a>
                             </div>
                         </div>
-                       
-                      
                     </td>
                 </tr>
             }
