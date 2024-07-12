@@ -61,7 +61,7 @@ namespace DiningHub.Controllers
                 menuItems = menuItems.Where(m => m.Name.Contains(searchString) || m.Description.Contains(searchString));
             }
 
-            if (categoryId.HasValue)
+            if (categoryId.HasValue && categoryId.Value > 0)
             {
                 menuItems = menuItems.Where(m => m.CategoryId == categoryId.Value);
             }
@@ -97,6 +97,8 @@ namespace DiningHub.Controllers
             };
 
             return View(viewModel);
+
+
         }
 
 
