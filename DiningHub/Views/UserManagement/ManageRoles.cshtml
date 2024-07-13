@@ -67,28 +67,34 @@
     </div>
 </div> *@
 
-<<div class="edit-container mt-5">
-    <div class="card">
-        <div class="card-header">          
-                    <h2 >Manage Roles for @Model.UserId</h2>
+<div class="container-fluid shadow rounded-3 mb-5 bg-white pt-4">
+    <div class="table-wrapper">
+        <div class="table-title">
+            <div class="row d-flex justify-content-between align-items-center">
+                <div class="col-sm-8">
+                    <h2>Manage Roles for @Model.UserName</h2>
+                </div>
+                <div class="col-sm-4 text-end">
+                    <a asp-action="Index" class="btn btn-secondary btn-lg rounded-pill col-6">Back to List</a>
+                </div>
+            </div>
         </div>
 
-        <div class="card-body">
+        <div class="mt-4">
             <form asp-action="ManageRoles" method="post">
                 <input type="hidden" asp-for="UserId" />
-                <div class="form-group">
+                <div class="form-group px-4">
                     <label style="font-weight:bold; font-size: 1.5em; margin:20px;">Available Roles</label>
                     @foreach (var role in Model.AvailableRoles)
                     {
                         <div class="form-check mb-3">
-                            <input type="checkbox" class="form-check-input" name="SelectedRoles" value="@role.Name" @(Model.UserRoles.Contains(role.Name) ? "checked" : "") style="transform: scale(1.5);" />
+                            <input type="radio" class="form-check-input" name="SelectedRoles" value="@role.Name" @(Model.UserRoles.Contains(role.Name) ? "checked" : "") style="transform: scale(1.5);" />
                             <label class="form-check-label" style="font-size: 1.25em;">@role.Name</label>
                         </div>
                     }
                 </div>
                 <div class="form-group d-flex justify-content-center align-items-center mt-4">
-                    <input type="submit" value="Save" class="btn btn-success mx-2" style="font-size: 1.25em;" />
-                    <a asp-action="Index" class="btn btn-secondary mx-2" style="font-size: 1.25em;">Back to List</a>
+                    <input type="submit" value="Save" class="btn btn-success mx-2 btn-lg rounded-pill col-6" />
                 </div>
             </form>
 
@@ -101,3 +107,4 @@
         </div>
     </div>
 </div>
+

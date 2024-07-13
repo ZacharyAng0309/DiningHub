@@ -206,12 +206,16 @@ namespace DiningHub.Controllers
             var model = new ManageRolesViewModel
             {
                 UserId = user.Id,
+                UserName = user.UserName,
                 AvailableRoles = roles,
-                UserRoles = userRoles
+                UserRoles = userRoles,
+                
             };
 
             return View(model);
         }
+
+
 
         [HttpPost("manage-roles/{id}")]
         [ValidateAntiForgeryToken]

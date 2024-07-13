@@ -4,50 +4,58 @@
     ViewData["Title"] = $"User Details - {Model.UserName}";
 }
 
-<h2>User Details</h2>
+<div class="container-fluid shadow rounded-3 mb-5 bg-white pt-4 pb-4">
+    <div class="table-wrapper">
+        <div class="table-title bg-danger text-white text-center rounded-top">
+            <h2>User Details - @Model.UserName</h2>
+        </div>
+        <div class="px-4">
+            <h4 class="mt-4">User Information</h4>
+            <hr />
+            <dl class="row">
+                <dt class="col-sm-2">User ID</dt>
+                <dd class="col-sm-10">@Model.Id</dd>
 
-<div>
-    <h4>User Information</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">User ID</dt>
-        <dd class="col-sm-10">@Model.Id</dd>
+                <dt class="col-sm-2">Username</dt>
+                <dd class="col-sm-10">@Model.UserName</dd>
 
-        <dt class="col-sm-2">Username</dt>
-        <dd class="col-sm-10">@Model.UserName</dd>
+                <dt class="col-sm-2">Email</dt>
+                <dd class="col-sm-10">@Model.Email</dd>
 
-        <dt class="col-sm-2">Email</dt>
-        <dd class="col-sm-10">@Model.Email</dd>
+                <dt class="col-sm-2">Email Confirmed</dt>
+                <dd class="col-sm-10">@Model.EmailConfirmed</dd>
 
-        <dt class="col-sm-2">Email Confirmed</dt>
-        <dd class="col-sm-10">@Model.EmailConfirmed</dd>
+                <dt class="col-sm-2">First Name</dt>
+                <dd class="col-sm-10">@Model.FirstName</dd>
 
-        <dt class="col-sm-2">First Name</dt>
-        <dd class="col-sm-10">@Model.FirstName</dd>
+                <dt class="col-sm-2">Last Name</dt>
+                <dd class="col-sm-10">@Model.LastName</dd>
 
-        <dt class="col-sm-2">Last Name</dt>
-        <dd class="col-sm-10">@Model.LastName</dd>
+                <dt class="col-sm-2">Phone Number</dt>
+                <dd class="col-sm-10">@Model.PhoneNumber</dd>
 
-        <dt class="col-sm-2">Phone Number</dt>
-        <dd class="col-sm-10">@Model.PhoneNumber</dd>
+                <dt class="col-sm-2">Phone Number Confirmed</dt>
+                <dd class="col-sm-10">@Model.PhoneNumberConfirmed</dd>
 
-        <dt class="col-sm-2">Phone Number Confirmed</dt>
-        <dd class="col-sm-10">@Model.PhoneNumberConfirmed</dd>
+                <dt class="col-sm-2">Access Failed Count</dt>
+                <dd class="col-sm-10">@Model.AccessFailedCount</dd>
+            </dl>
 
-        <dt class="col-sm-2">Access Failed Count</dt>
-        <dd class="col-sm-10">@Model.AccessFailedCount</dd>
-    </dl>
+            <h4>User Roles</h4>
+            <ul>
+                @foreach (var role in ViewData["Roles"] as IList<string>)
+                {
+                    <li>@role</li>
+                }
+            </ul>
 
-    <h4>User Roles</h4>
-    <ul>
-        @foreach (var role in ViewData["Roles"] as IList<string>)
-        {
-            <li>@role</li>
-        }
-    </ul>
-</div>
-
-<div>
-    <a asp-action="ManageRoles" asp-route-id="@Model.Id" class="btn btn-primary">Manage Roles</a>
-    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+            <div class="form-group text-center mt-4">
+                <div class="row justify-content-center pb-4">
+                    <div class="col-md-6 col-12 d-grid gap-2 py-2">
+                        <a asp-action="Index" class="btn btn-secondary btn-lg rounded-pill mx-2 col6">Back to List</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

@@ -4,32 +4,40 @@
     ViewData["Title"] = "Edit Inventory Item";
 }
 
-<div class="edit-container">
-    <div class="card">
-        <div class="card-header">
-            <h2>Edit Inventory Item</h2>
+<div class="container-fluid shadow rounded-3 mb-5 bg-white pt-4 pb-4">
+    <div class="table-wrapper">
+        <div class="table-title">
+            <div class="row d-flex justify-content-between align-items-center">
+                <div class="col-sm-8">
+                    <h2>Edit Inventory Item</h2>
+                </div>
+                <div class="col-sm-4 text-end">
+                    <a asp-action="Index" class="btn btn-secondary btn-lg rounded-pill">Back to List</a>
+                </div>
+            </div>
         </div>
-        <div class="card-body">
+
+        <div class="mt-4">
             <form asp-action="Edit" method="post">
                 <input type="hidden" asp-for="InventoryItemId" />
-                <div class="form-group">
-                    <label asp-for="Name" class="control-label mb-2"></label>
-                    <input asp-for="Name" class="form-control mb-4" />
+                <div class="form-group mb-4 px-4">
+                    <label asp-for="Name" class="form-label">Name</label>
+                    <input asp-for="Name" class="form-control rounded-pill" />
                     <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
-                <div class="form-group">
-                    <label asp-for="Description" class="control-label mb-2"></label>
-                    <input asp-for="Description" class="form-control mb-4" />
+                <div class="form-group mb-4 px-4">
+                    <label asp-for="Description" class="form-label">Description</label>
+                    <input asp-for="Description" class="form-control rounded-pill" />
                     <span asp-validation-for="Description" class="text-danger"></span>
                 </div>
-                <div class="form-group">
-                    <label asp-for="Quantity" class="control-label mb-2"></label>
-                    <input asp-for="Quantity" class="form-control mb-4" />
+                <div class="form-group mb-4 px-4">
+                    <label asp-for="Quantity" class="form-label">Quantity</label>
+                    <input asp-for="Quantity" class="form-control rounded-pill" />
                     <span asp-validation-for="Quantity" class="text-danger"></span>
                 </div>
-                <div class="form-group">
-                    <label asp-for="CategoryId" class="control-label mb-2">Category</label>
-                    <select asp-for="CategoryId" class="form-control mb-4">
+                <div class="form-group mb-4 px-4">
+                    <label asp-for="CategoryId" class="form-label">Category</label>
+                    <select asp-for="CategoryId" class="form-control rounded-pill">
                         @foreach (var category in ViewBag.Categories)
                         {
                             bool selected = category.Value == Model.CategoryId.ToString();
@@ -38,9 +46,9 @@
                     </select>
                     <span asp-validation-for="CategoryId" class="text-danger"></span>
                 </div>
-                <div class="form-group text-center">
-                    <input type="submit" value="Save" class="btn btn-save" />
-                    <a asp-action="Index" class="btn btn-cancel">Cancel</a>
+                <div class="d-flex justify-content-center align-items-center mt-4">
+                    <input type="submit" value="Save" class="btn btn-success btn-lg rounded-pill mx-2 col-9" />
+  
                 </div>
             </form>
         </div>

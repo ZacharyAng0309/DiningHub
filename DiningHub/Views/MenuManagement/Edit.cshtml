@@ -4,37 +4,44 @@
     ViewData["Title"] = $"Edit Menu Item - {Model.Name}";
 }
 
-<div class="edit-container">
-    <div class="card">
-        <div class="card-header">
-            <h2>Edit Menu Item</h2>
+<div class="container-fluid shadow rounded-3 mb-5 bg-white pt-4 pb-4">
+    <div class="table-wrapper">
+        <div class="table-title">
+            <div class="row d-flex justify-content-between align-items-center">
+                <div class="col-sm-8">
+                    <h2>Edit Menu Item</h2>
+                </div>
+                <div class="col-sm-4 text-end">
+                    <a asp-action="Index" class="btn btn-secondary btn-lg rounded-pill col-6">Back to List</a>
+                </div>
+            </div>
         </div>
-        <div class="card-body">
+        <div class="mt-4">
             <form asp-action="Edit" method="post" enctype="multipart/form-data">
                 <input type="hidden" asp-for="MenuItemId" />
                 <input type="hidden" asp-for="ImageUrl" id="ImageUrl" value="@Model.ImageUrl" />
 
-                <div class="form-group">
-                    <label asp-for="Name" class="control-label mb-2"></label>
-                    <input asp-for="Name" class="form-control mb-4" />
+                <div class="form-group mb-4">
+                    <label asp-for="Name" class="form-label"></label>
+                    <input asp-for="Name" class="form-control rounded-pill" />
                     <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
 
-                <div class="form-group">
-                    <label asp-for="Description" class="control-label mb-2"></label>
-                    <input asp-for="Description" class="form-control mb-4" />
+                <div class="form-group mb-4">
+                    <label asp-for="Description" class="form-label"></label>
+                    <input asp-for="Description" class="form-control rounded-pill" />
                     <span asp-validation-for="Description" class="text-danger"></span>
                 </div>
 
-                <div class="form-group">
-                    <label asp-for="Price" class="control-label mb-2"></label>
-                    <input asp-for="Price" type="number" class="form-control mb-4" />
+                <div class="form-group mb-4">
+                    <label asp-for="Price" class="form-label"></label>
+                    <input asp-for="Price" type="number" class="form-control rounded-pill" />
                     <span asp-validation-for="Price" class="text-danger"></span>
                 </div>
 
-                <div class="form-group">
-                    <label asp-for="CategoryId" class="control-label mb-2">Category</label>
-                    <select asp-for="CategoryId" class="form-control mb-4">
+                <div class="form-group mb-4">
+                    <label asp-for="CategoryId" class="form-label">Category</label>
+                    <select asp-for="CategoryId" class="form-control rounded-pill">
                         @foreach (var category in ViewBag.Categories)
                         {
                             <option value="@category.Value" selected="@(category.Value == Model.CategoryId.ToString())">@category.Text</option>
@@ -43,22 +50,21 @@
                     <span asp-validation-for="CategoryId" class="text-danger"></span>
                 </div>
 
-                <div class="form-group">
-                    <label class="control-label mb-2" for="imageUpload">Image</label>
-                    <input type="file" class="form-control mb-4" accept="image/*" onchange="uploadImage(event)" id="imageUpload" />
+                <div class="form-group mb-4">
+                    <label class="form-label" for="imageUpload">Image</label>
+                    <input type="file" class="form-control rounded-pill" accept="image/*" onchange="uploadImage(event)" id="imageUpload" />
                     <span asp-validation-for="ImageUrl" class="text-danger"></span>
-                    <img id="imagePreview" src="@Model.ImageUrl" alt="Image Preview" class="img-thumbnail mt-2" />
+                    <img id="imagePreview" src="@Model.ImageUrl" alt="Image Preview" class="img-thumbnail mt-2" style="max-width: 100px;" />
                 </div>
 
-                <div class="form-group">
-                    <label asp-for="IsAvailable" class="control-label mb-2"></label>
-                    <input asp-for="IsAvailable" class="form-check-input mb-4" type="checkbox" />
+                <div class="form-group form-check mb-4">
+                    <input asp-for="IsAvailable" class="form-check-input" type="checkbox" />
+                    <label asp-for="IsAvailable" class="form-check-label"></label>
                     <span asp-validation-for="IsAvailable" class="text-danger"></span>
                 </div>
 
                 <div class="form-group text-center">
-                    <input type="submit" value="Save" class="btn btn-save" />
-                    <a asp-action="Index" class="btn btn-cancel">Cancel</a>
+                    <input type="submit" value="Save" class="btn btn-success rounded-pill btn-lg mx-2 col-9" />
                 </div>
             </form>
         </div>
