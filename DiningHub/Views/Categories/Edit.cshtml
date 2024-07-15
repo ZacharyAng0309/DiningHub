@@ -4,7 +4,7 @@
     ViewData["Title"] = "Edit Category";
 }
 
-<h2>Edit Category</h2>
+@* <h2>Edit Category</h2>
 
 <h4>Category</h4>
 <hr />
@@ -26,4 +26,42 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+} *@
+
+<div class="container-fluid shadow rounded-3 mb-5 bg-white pt-4 pb-4">
+    <div class="table-wrapper">
+        <div class="table-title">
+            <div class="row d-flex justify-content-between align-items-center">
+                <div class="col-sm-8 text-center">
+                    <h2 class="text-white">Edit Category</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <form asp-action="Edit" method="post">
+                <input type="hidden" asp-for="CategoryId" />
+
+                <div class="form-group mb-4">
+                    <label asp-for="Name" class="form-label">Name</label>
+                    <input asp-for="Name" class="form-control rounded-pill" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="row justify-content-center pb-4">
+                    <div class="col-md-6 col-12 d-grid gap-2 py-2">
+                        <input type="submit" value="Save" class="btn btn-success rounded-pill btn-lg" />
+                    </div>
+                    <div class="col-md-6 col-12 d-grid gap-2 py-2">
+                        <a asp-action="Index" class="btn btn-secondary rounded-pill btn-lg">Cancel</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
 }
+

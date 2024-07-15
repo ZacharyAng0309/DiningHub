@@ -6,6 +6,8 @@
     <title>@ViewData["Title"] - DiningHub</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/editAdmin.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/DiningHub.styles.css" asp-append-version="true" />
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 </head>
@@ -13,8 +15,23 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3 navbar" style="background-color: #E57373;">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                    <img src="/Img/dininghublogo.png" alt="DiningHub Logo" width="60" height="60" class="d-inline-block align-text-top">
+                @{
+                    string controller = "Home";
+                    string action = "Index";
+
+                    if (User.IsInRole("Manager"))
+                    {
+                        controller = "Report";
+                        action = "Index";
+                    }
+                    else if (User.IsInRole("Staff"))
+                    {
+                        controller = "InventoryManagement";
+                        action = "Index";
+                    }
+                }
+                <a class="navbar-brand" asp-area="" asp-controller="@controller" asp-action="@action">
+                    <img src="/Img/homepage/dininghublogo.png" alt="DiningHub Logo" width="60" height="60" class="d-inline-block align-text-top">
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -49,10 +66,10 @@
                                 <a class="nav-link" asp-area="" asp-controller="InventoryManagement" asp-action="Index">Manage Inventory</a>
                             </li>
                             <li class="nav-item mx-5">
-                                <a class="nav-link" asp-area="" asp-controller="OrderManagement" asp-action="Index">View Orders</a>
+                                <a class="nav-link" asp-area="" asp-controller="OrderManagement" asp-action="Index">Manage Orders</a>
                             </li>
                             <li class="nav-item mx-5">
-                                <a class="nav-link" asp-area="" asp-controller="FeedbackManagement" asp-action="Index">View Feedback</a>
+                                <a class="nav-link" asp-area="" asp-controller="FeedbackManagement" asp-action="Index">Manage Feedback</a>
                             </li>
                         }
                         else if (User.IsInRole("Customer"))
@@ -81,7 +98,7 @@
         </nav>
     </header>
     <div class="container" style="flex: 1;">
-        <main role="main" class="p-2">
+        <main role="main">
             @RenderBody()
         </main>
     </div>

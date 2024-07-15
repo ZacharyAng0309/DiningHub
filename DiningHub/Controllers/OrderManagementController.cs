@@ -79,5 +79,22 @@ namespace DiningHub.Controllers
 
             return View(order);
         }
+
+        [HttpPost("delete/{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var order = await _context.Orders
+                .Include(o => o.OrderItems)
+                .FirstOrDefaultAsync(o => o.OrderId == id);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            _context.OrderItems.RemoveRange(order.OrderItems);
+            _context.Orders.Remove(order);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

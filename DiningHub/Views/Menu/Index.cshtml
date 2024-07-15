@@ -1,82 +1,132 @@
 ﻿@model DiningHub.Models.MenuViewModel
 
-<div class="container-fluid shadow rounded-3 mb-5 bg-white pt-2">
+<!-- Custom CSS for Hover Effect -->
+<style>
+    .menu-item-hover {
+        transition: box-shadow 0.3s ease-in-out;
+    }
 
-    <h2>Menu</h2>
-
-    <form method="get" action="">
-        <div class="row mb-3">
-            <div class="col-md-4">
-                <input type="text" name="searchString" value="@Model.SearchString" class="form-control" placeholder="Search for menu items..." />
+        .menu-item-hover:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+</style>
+<div class="container-fluid shadow rounded-3 mb-5 bg-white">
+    <!-- Menu Start -->
+    <div class="container-xxl py-5">
+        <div class="container">
+            <div class="text-center">
+                <h1 class="mb-5">「 ✦ MENU ✦ 」</h1>
             </div>
-            <div class="col-md-4">
-                <select name="categoryId" class="form-control">
+            <div class="tab-class text-center">
+                <form method="get" action="">
+                    <div class="row mb-3">
+                        <div class="col-md-12 d-flex justify-content-center">
+                            <input type="text" name="searchString" value="@Model.SearchString" class="form-control rounded-pill" placeholder="Search for menu items..." />
+                        </div>
+                    </div>
+                </form>
+
+                <ul class="nav nav-tabs mb-3 justify-content-center" id="pills-tab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link @(Model.CategoryId == null ? "active" : "")" id="pills-all-tab" href="?categoryId=">All</a>
+                    </li>
                     @foreach (var category in ViewBag.Categories)
                     {
-                        bool selected = category.CategoryId == Model.CategoryId;
-                        <option value="@category.CategoryId" selected="@selected">@category.Name</option>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link @(Model.CategoryId == category.CategoryId ? "active" : "")" id="pills-@category.CategoryId-tab" href="?categoryId=@category.CategoryId">@category.Name</a>
+                        </li>
                     }
-                </select>
-            </div>
-            <div class="col-md-4 text-end">
-                <button type="submit" class="btn btn-primary">Filter</button>
+                </ul>
+                <div class="tab-content" id="pills-tabContent">
+                    <div class="tab-pane fade @(Model.CategoryId == null ? "show active" : "")" id="pills-all" role="tabpanel" aria-labelledby="pills-all-tab">
+                        <div class="row g-4 pt-4 pb-4">
+                            @foreach (var item in Model.MenuItems)
+                            {
+                                <div class="col-lg-6">
+                                    <div class="d-flex align-items-center menu-item-hover p-4">
+                                        <img class="flex-shrink-0 img-fluid rounded" src="@item.ImageUrl" alt="@item.Name" style="width: 80px;">
+                                        <div class="w-100 d-flex flex-column text-start ps-4">
+                                            <h5 class="d-flex justify-content-between border-bottom pb-2">
+                                                <span>@item.Name</span>
+                                                <span class="text-success">RM @item.Price</span>
+                                            </h5>
+                                            <small class="fst-italic">@item.Description</small>
+                                            <small class="fst-italic">@item.Category.Name</small>
+                                            <div class="col-12 d-grid gap-2 py-2">
+                                                <a asp-action="Details" asp-route-id="@item.MenuItemId" class="btn btn-success col-12 rounded-pill">View Details</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    @foreach (var category in ViewBag.Categories)
+                    {
+                        <div class="tab-pane fade @(Model.CategoryId == category.CategoryId ? "show active" : "")" id="pills-@category.CategoryId" role="tabpanel" aria-labelledby="pills-@category.CategoryId-tab">
+                            <div class="row g-4 pt-4 pb-4">
+                                @foreach (var item in Model.MenuItems.Where(m => m.CategoryId == category.CategoryId))
+                                {
+                                    <div class="col-lg-6">
+                                        <div class="d-flex align-items-center menu-item-hover p-4">
+                                            <img class="flex-shrink-0 img-fluid rounded" src="@item.ImageUrl" alt="@item.Name" style="width: 100px;">
+                                            <div class="w-100 d-flex flex-column text-start ps-4">
+                                                <h5 class="d-flex justify-content-between border-bottom pb-2">
+                                                    <span>@item.Name</span>
+                                                    <span class="text-success">RM @item.Price</span>
+                                                </h5>
+                                                <small class="fst-italic">@item.Description</small>
+                                                <div class="col-12 d-grid gap-2 py-2">
+                                                    <a asp-action="Details" asp-route-id="@item.MenuItemId" class="btn btn-success col-12 rounded-pill">View Details</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="d-flex justify-content-center">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination">
+                            @if (Model.MenuItems.HasPreviousPage)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=@(Model.MenuItems.PageNumber - 1)@(string.IsNullOrEmpty(ViewData["CurrentSort"]?.ToString()) ? "" : $"&sortOrder={ViewData["CurrentSort"]}")@(string.IsNullOrEmpty(Model.SearchString) ? "" : $"&searchString={Model.SearchString}")@(Model.CategoryId == null ? "" : $"&categoryId={Model.CategoryId}")" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                            }
+                            @for (var i = 1; i <= Model.MenuItems.PageCount; i++)
+                            {
+                                <li class="page-item @(i == Model.MenuItems.PageNumber ? "active" : "")">
+                                    <a class="page-link" href="?page=@i@(string.IsNullOrEmpty(ViewData["CurrentSort"]?.ToString()) ? "" : $"&sortOrder={ViewData["CurrentSort"]}")@(string.IsNullOrEmpty(Model.SearchString) ? "" : $"&searchString={Model.SearchString}")@(Model.CategoryId == null ? "" : $"&categoryId={Model.CategoryId}")">@i</a>
+                                </li>
+                            }
+                            @if (Model.MenuItems.HasNextPage)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=@(Model.MenuItems.PageNumber + 1)@(string.IsNullOrEmpty(ViewData["CurrentSort"]?.ToString()) ? "" : $"&sortOrder={ViewData["CurrentSort"]}")@(string.IsNullOrEmpty(Model.SearchString) ? "" : $"&searchString={Model.SearchString}")@(Model.CategoryId == null ? "" : $"&categoryId={Model.CategoryId}")" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </nav>
+                </div>
             </div>
         </div>
-    </form>
-
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]">Name</a>
-                </th>
-                <th>Description</th>
-                <th>
-                    <a asp-action="Index" asp-route-sortOrder="@ViewData["PriceSortParm"]">Price</a>
-                </th>
-                <th>Category</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.MenuItems)
-            {
-                <tr>
-                    <td>@item.Name</td>
-                    <td>@item.Description</td>
-                    <td>@item.Price</td>
-                    <td>@item.Category.Name</td>
-                    <td>
-                        <a asp-action="Details" asp-route-id="@item.MenuItemId">View Details</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-
-
-    <div class="d-flex justify-content-center">
-        <nav>
-            <ul class="pagination">
-                @if (Model.MenuItems.HasPreviousPage)
-                {
-                    <li class="page-item">
-                        <a class="page-link" href="?page=@(Model.MenuItems.PageNumber - 1)@(string.IsNullOrEmpty(ViewData["CurrentSort"]?.ToString()) ? "" : $"&sortOrder={ViewData["CurrentSort"]}")@(string.IsNullOrEmpty(Model.SearchString) ? "" : $"&searchString={Model.SearchString}")@(Model.CategoryId == null ? "" : $"&categoryId={Model.CategoryId}")">Previous</a>
-                    </li>
-                }
-                @for (var i = 1; i <= Model.MenuItems.PageCount; i++)
-                {
-                    <li class="page-item @(i == Model.MenuItems.PageNumber ? "active" : "")">
-                        <a class="page-link" href="?page=@i@(string.IsNullOrEmpty(ViewData["CurrentSort"]?.ToString()) ? "" : $"&sortOrder={ViewData["CurrentSort"]}")@(string.IsNullOrEmpty(Model.SearchString) ? "" : $"&searchString={Model.SearchString}")@(Model.CategoryId == null ? "" : $"&categoryId={Model.CategoryId}")">@i</a>
-                    </li>
-                }
-                @if (Model.MenuItems.HasNextPage)
-                {
-                    <li class="page-item">
-                        <a class="page-link" href="?page=@(Model.MenuItems.PageNumber + 1)@(string.IsNullOrEmpty(ViewData["CurrentSort"]?.ToString()) ? "" : $"&sortOrder={ViewData["CurrentSort"]}")@(string.IsNullOrEmpty(Model.SearchString) ? "" : $"&searchString={Model.SearchString}")@(Model.CategoryId == null ? "" : $"&categoryId={Model.CategoryId}")">Next</a>
-                    </li>
-                }
-            </ul>
-        </nav>
     </div>
+    <!-- Menu End -->
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var triggerEl = document.querySelector('#pills-tab .nav-link.active');
+        if (triggerEl) {
+            bootstrap.Tab.getInstance(triggerEl).show();
+        }
+    });
+</script>

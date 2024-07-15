@@ -6,13 +6,14 @@
     var userActivity = ViewBag.UserActivity as IEnumerable<dynamic>;
 }
 
-<h2>User Report</h2>
+<h2 class="report-title">User Report</h2>
 
+@* 
 <div class="row mt-4">
     <div class="col-md-12">
         <a href="@Url.Action("Index", "Report")" class="btn btn-secondary mb-4">Return to Report Index</a>
     </div>
-</div>
+</div> *@
 
 <form method="get" action="">
     <div class="row mb-3">
@@ -81,6 +82,29 @@
                     }]
                 },
                 options: {
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Total Orders Per User',
+                            color: '#000',
+                            font: {
+                                size: 24,
+                                weight: 'bold',
+                                family: 'Arial'
+                            },
+                            padding: {
+                                top: 10,
+                                bottom: 30
+                            },
+                            border: {
+                                color: '#000',
+                                width: 2
+                            },
+                            borderDash: [10, 5],
+                            borderRadius: 10,
+                            backgroundColor: 'rgba(255, 255, 255, 0.8)'
+                        }
+                    },
                     scales: {
                         y: {
                             beginAtZero: true
@@ -115,6 +139,29 @@
                     }]
                 },
                 options: {
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Total Spend Per User',
+                            color: '#000',
+                            font: {
+                                size: 24,
+                                weight: 'bold',
+                                family: 'Arial'
+                            },
+                            padding: {
+                                top: 10,
+                                bottom: 30
+                            },
+                            border: {
+                                color: '#000',
+                                width: 2
+                            },
+                            borderDash: [10, 5],
+                            borderRadius: 10,
+                            backgroundColor: 'rgba(255, 255, 255, 0.8)'
+                        }
+                    },
                     scales: {
                         y: {
                             beginAtZero: true
@@ -149,6 +196,29 @@
                     }]
                 },
                 options: {
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Average Order Value Per User',
+                            color: '#000',
+                            font: {
+                                size: 24,
+                                weight: 'bold',
+                                family: 'Arial'
+                            },
+                            padding: {
+                                top: 10,
+                                bottom: 30
+                            },
+                            border: {
+                                color: '#000',
+                                width: 2
+                            },
+                            borderDash: [10, 5],
+                            borderRadius: 10,
+                            backgroundColor: 'rgba(255, 255, 255, 0.8)'
+                        }
+                    },
                     scales: {
                         y: {
                             beginAtZero: true

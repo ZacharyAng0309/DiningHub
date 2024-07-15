@@ -5,119 +5,89 @@
     ViewData["Title"] = "Manage Menu Items";
 }
 
-<div class="container">
+<div class="container-fluid shadow rounded-3 mb-5 bg-white pt-2">
     <div class="table-wrapper">
         <div class="table-title">
             <div class="row d-flex justify-content-between align-items-center">
-                <div class="col-sm-8">
+                <div class="col-sm-4">
                     <h2>Manage Menu Items</h2>
                 </div>
-                <div class="col-sm-4 text-end">
-                    <a asp-action="Create" class="btn btn-success">Create New Menu Item</a>
+                <div class="col-sm-5">
+                    <form method="get" class="d-flex justify-content-center">
+                        <div class="input-group">
+                            <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" class="form-control rounded-pill" placeholder="Search by name or description" />
+                            <select name="categoryId" class="form-select mx-2 rounded-pill">
+                                <option value="">All Categories</option>
+                                @foreach (var category in ViewBag.Categories)
+                                {
+                                    bool selected = category.CategoryId == (int?)ViewData["CurrentCategory"];
+                                    <option value="@category.CategoryId" selected="@selected">@category.Name</option>
+                                }
+                            </select>
+                            <button type="submit" class="btn btn-primary rounded-pill">Filter</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-sm-3 text-end">
+                    <a asp-action="Create" class="btn btn-success rounded-pill">Create New Menu Item</a>
                 </div>
             </div>
         </div>
 
-        <form method="get">
-            <div class="row mb-3">
-                <div class="col-sm-4">
-                    <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" class="form-control" placeholder="Search by name or description" />
-                </div>
-                <div class="col-sm-4">
-                    <select name="categoryId" class="form-select">
-                        <option value="">All Categories</option>
-                        @foreach (var category in ViewBag.Categories)
-                        {
-                            bool selected = category.CategoryId == (int?)ViewData["CurrentCategory"];
-                            <option value="@category.CategoryId" selected="@(selected ? "selected" : "")">@category.Name</option>
-                        }
-                    </select>
-                </div>
-                <div class="col-sm-4 text-end">
-                    <button type="submit" class="btn btn-primary">Filter</button>
-                </div>
-            </div>
-        </form>
-
         <table class="table table-striped table-hover">
-            <thead>
+            <thead class="table-danger text-center">
                 <tr>
                     <th>
-                        <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]">
+                        <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]" class="text-black">
                             Name
-                            @if (ViewData["CurrentSort"]?.ToString() == "name_desc")
-                            {
-                                <i class="bi bi-arrow-down"></i>
-                            }
-                            else
-                            {
-                                <i class="bi bi-arrow-up"></i>
-                            }
                         </a>
                     </th>
                     <th>Description</th>
                     <th>
-                        <a asp-action="Index" asp-route-sortOrder="@ViewData["PriceSortParm"]">
+                        <a asp-action="Index" asp-route-sortOrder="@ViewData["PriceSortParm"]" class="text-black">
                             Price
-                            @if (ViewData["CurrentSort"]?.ToString() == "price_desc")
-                            {
-                                <i class="bi bi-arrow-down"></i>
-                            }
-                            else
-                            {
-                                <i class="bi bi-arrow-up"></i>
-                            }
                         </a>
                     </th>
                     <th>Category</th>
-                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var item in Model.MenuItems)
                 {
-                    <tr>
+                    <tr data-bs-toggle="modal" data-bs-target="#detailsModal-@item.MenuItemId" style="cursor: pointer;">
                         <td>@item.Name</td>
                         <td>@item.Description</td>
                         <td>@item.Price.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("ms-MY"))</td>
                         <td>@item.Category.Name</td>
-                        <td>
-                            <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#detailsModal-@item.MenuItemId">Details</button>
-                            <a asp-action="Edit" asp-route-id="@item.MenuItemId" class="btn btn-primary">Edit</a>
-                            <form method="post" asp-action="Delete" asp-route-id="@item.MenuItemId" class="d-inline">
-                                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this menu item?');">Delete</button>
-                            </form>
-                        </td>
                     </tr>
                 }
             </tbody>
         </table>
 
         <div class="d-flex justify-content-center">
-            <div class="d-flex justify-content-center">
-                <nav>
-                    <ul class="pagination">
-                        @if (Model.MenuItems.HasPreviousPage)
-                        {
-                            <li class="page-item">
-                                <a class="page-link" href="/manage/menu?page=@(Model.CurrentPage - 1)@(string.IsNullOrEmpty(ViewData["CurrentSort"]?.ToString()) ? "" : $"&sortOrder={ViewData["CurrentSort"]}")@(string.IsNullOrEmpty(ViewData["CurrentFilter"]?.ToString()) ? "" : $"&searchString={ViewData["CurrentFilter"]}")@(ViewData["CurrentCategory"] == null ? "" : $"&categoryId={ViewData["CurrentCategory"]}")">Previous</a>
-                            </li>
-                        }
-                        @for (var i = 1; i <= Model.TotalPages; i++)
-                        {
-                            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
-                                <a class="page-link" href="/manage/menu?page=@i@(string.IsNullOrEmpty(ViewData["CurrentSort"]?.ToString()) ? "" : $"&sortOrder={ViewData["CurrentSort"]}")@(string.IsNullOrEmpty(ViewData["CurrentFilter"]?.ToString()) ? "" : $"&searchString={ViewData["CurrentFilter"]}")@(ViewData["CurrentCategory"] == null ? "" : $"&categoryId={ViewData["CurrentCategory"]}")">@i</a>
-                            </li>
-                        }
-                        @if (Model.MenuItems.HasNextPage)
-                        {
-                            <li class="page-item">
-                                <a class="page-link" href="/manage/menu?page=@(Model.CurrentPage + 1)@(string.IsNullOrEmpty(ViewData["CurrentSort"]?.ToString()) ? "" : $"&sortOrder={ViewData["CurrentSort"]}")@(string.IsNullOrEmpty(ViewData["CurrentFilter"]?.ToString()) ? "" : $"&searchString={ViewData["CurrentFilter"]}")@(ViewData["CurrentCategory"] == null ? "" : $"&categoryId={ViewData["CurrentCategory"]}")">Next</a>
-                            </li>
-                        }
-                    </ul>
-                </nav>
-            </div>
+            <nav>
+                <ul class="pagination">
+                    @if (Model.MenuItems.HasPreviousPage)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="/manage/menu?page=@(Model.CurrentPage - 1)@(string.IsNullOrEmpty(ViewData["CurrentSort"]?.ToString()) ? "" : $"&sortOrder={ViewData["CurrentSort"]}")@(string.IsNullOrEmpty(ViewData["CurrentFilter"]?.ToString()) ? "" : $"&searchString={ViewData["CurrentFilter"]}")@(ViewData["CurrentCategory"] == null ? "" : $"&categoryId={ViewData["CurrentCategory"]}")">Previous</a>
+                        </li>
+                    }
+                    @for (var i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                            <a class="page-link" href="/manage/menu?page=@i@(string.IsNullOrEmpty(ViewData["CurrentSort"]?.ToString()) ? "" : $"&sortOrder={ViewData["CurrentSort"]}")@(string.IsNullOrEmpty(ViewData["CurrentFilter"]?.ToString()) ? "" : $"&searchString={ViewData["CurrentFilter"]}")@(ViewData["CurrentCategory"] == null ? "" : $"&categoryId={ViewData["CurrentCategory"]}")">@i</a>
+                        </li>
+                    }
+                    @if (Model.MenuItems.HasNextPage)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="/manage/menu?page=@(Model.CurrentPage + 1)@(string.IsNullOrEmpty(ViewData["CurrentSort"]?.ToString()) ? "" : $"&sortOrder={ViewData["CurrentSort"]}")@(string.IsNullOrEmpty(ViewData["CurrentFilter"]?.ToString()) ? "" : $"&searchString={ViewData["CurrentFilter"]}")@(ViewData["CurrentCategory"] == null ? "" : $"&categoryId={ViewData["CurrentCategory"]}")">Next</a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        </div>
     </div>
 </div>
 
@@ -127,7 +97,7 @@
     <div class="modal fade" id="detailsModal-@item.MenuItemId" tabindex="-1" aria-labelledby="detailsModalLabel-@item.MenuItemId" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header bg-danger text-white">
                     <h5 class="modal-title" id="detailsModalLabel-@item.MenuItemId">Details - @item.Name</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -136,6 +106,8 @@
                     <hr />
                     <div>
                         <dl class="row">
+                            <dt class="col-sm-2">Image</dt>
+                            <dd class="col-sm-10"><img src="@item.ImageUrl" alt="Image" class="img-thumbnail" style="max-width: 150px;" /></dd>
                             <dt class="col-sm-2">Name</dt>
                             <dd class="col-sm-10">@item.Name</dd>
                             <dt class="col-sm-2">Description</dt>
@@ -144,12 +116,17 @@
                             <dd class="col-sm-10">@item.Price.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("ms-MY"))</dd>
                             <dt class="col-sm-2">Category</dt>
                             <dd class="col-sm-10">@item.Category.Name</dd>
+                          
+                           
                         </dl>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <a asp-action="Edit" asp-route-id="@item.MenuItemId" class="btn btn-primary">Edit</a>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <div class="modal-footer d-flex justify-content-center">
+                    <a asp-action="Edit" asp-route-id="@item.MenuItemId" class="btn btn-primary me-2 rounded-pill col-2">Edit</a>
+                    <form method="post" asp-action="Delete" asp-route-id="@item.MenuItemId" class="d-inline col-2">
+                        <button type="submit" class="btn btn-danger rounded-pill col-12" onclick="return confirm('Are you sure you want to delete this menu item?');">Delete</button>
+                    </form>
+                    <button type="button" class="btn btn-secondary rounded-pill col-2" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>

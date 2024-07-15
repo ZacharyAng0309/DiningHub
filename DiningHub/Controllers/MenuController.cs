@@ -29,7 +29,7 @@ namespace DiningHub.Controllers
             ViewBag.Categories = await _context.Categories.ToListAsync();
 
             var menuItems = from m in _context.MenuItems.Include(m => m.Category)
-                            where m.IsAvailable && !m.IsDeleted
+                            where !m.IsDeleted
                             select m;
 
             if (!string.IsNullOrEmpty(searchString))
@@ -76,13 +76,13 @@ namespace DiningHub.Controllers
 
         // View details of a single menu item
         public async Task<IActionResult> Details(int id)
-        {
-            var menuItem = await _context.MenuItems.Include(m => m.Category).FirstOrDefaultAsync(m => m.MenuItemId == id);
-            if (menuItem == null)
             {
-                return NotFound();
+                var menuItem = await _context.MenuItems.Include(m => m.Category).FirstOrDefaultAsync(m => m.MenuItemId == id);
+                if (menuItem == null)
+                {
+                    return NotFound();
+                }
+                return View(menuItem);
             }
-            return View(menuItem);
         }
     }
-}

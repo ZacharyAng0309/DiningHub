@@ -4,7 +4,7 @@
     ViewData["Title"] = "Create Category";
 }
 
-<h2>Create Category</h2>
+@* <h2>Create Category</h2>
 
 <h4>Category</h4>
 <hr />
@@ -22,6 +22,38 @@
         </form>
     </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+ *@
+
+<div class="container-fluid shadow rounded-3 mb-5 bg-white pt-4 pb-4">
+    <div class="table-wrapper">
+        <div class="table-title bg-danger text-white text-center rounded-top">
+            <h2>Create Category</h2>
+        </div>
+        <form asp-action="Create" method="post">
+            <div class="form-group mb-4 px-4">
+                <label asp-for="Name" class="form-label pt-4">Name</label>
+                <input asp-for="Name" class="form-control rounded-pill" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group text-center">
+                <div class="row justify-content-center pb-4">
+                    <div class="col-md-6 col-12 d-grid gap-2 py-2">
+                        <input type="submit" value="Create" class="btn btn-success rounded-pill mx-2" />
+                    </div>
+                    <div class="col-md-6 col-12 d-grid gap-2 py-2">
+                        <a asp-action="Index" class="btn btn-secondary rounded-pill mx-2">Cancel</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

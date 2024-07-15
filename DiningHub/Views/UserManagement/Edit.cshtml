@@ -4,56 +4,55 @@
     ViewData["Title"] = $"Edit User - {Model.UserName}";
 }
 
-<head>
-    <link rel="stylesheet" href="~/css/editAdmin.css" asp-append-version="true" />
-</head>
-
-<div class="container">
-    <div class="card">
-        <div class="card-header">
-            <h2>Edit User</h2>
+<div class="container-fluid shadow rounded-3 mb-5 bg-white pt-4 pb-4">
+    <div class="table-wrapper">
+        <div class="table-title">
+            <div class="row d-flex justify-content-between align-items-center">
+                <div class="col-sm-8">
+                    <h2>Edit User</h2>
+                </div>
+                <div class="col-sm-4 text-end">
+                    <a asp-action="Index" class="btn btn-secondary btn-lg rounded-pill">Back to List</a>
+                </div>
+            </div>
         </div>
-        <div class="card-body">
+
+        <div class="mt-4">
             <form asp-action="Edit" method="post">
                 <input type="hidden" asp-for="Id" />
-                <div class="form-group">
-                    <label asp-for="UserName" class="control-label mb-2"></label>
-                    <input asp-for="UserName" class="form-control mb-4" />
+                <div class="form-group mb-4 px-4">
+                    <label asp-for="UserName" class="form-label">Username</label>
+                    <input asp-for="UserName" class="form-control rounded-pill" />
                     <span asp-validation-for="UserName" class="text-danger"></span>
                 </div>
-                <div class="form-group">
-                    <label asp-for="Email" class="control-label mb-2"></label>
-                    <input asp-for="Email" class="form-control mb-4" />
+                <div class="form-group mb-4 px-4">
+                    <label asp-for="Email" class="form-label">Email</label>
+                    <input asp-for="Email" class="form-control rounded-pill" />
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
-                <div class="form-group">
-                    <label asp-for="FirstName" class="control-label mb-2"></label>
-                    <input asp-for="FirstName" class="form-control mb-4" />
+                <div class="form-group mb-4 px-4">
+                    <label asp-for="FirstName" class="form-label">First Name</label>
+                    <input asp-for="FirstName" class="form-control rounded-pill" />
                     <span asp-validation-for="FirstName" class="text-danger"></span>
                 </div>
-                <div class="form-group">
-                    <label asp-for="LastName" class="control-label mb-2"></label>
-                    <input asp-for="LastName" class="form-control mb-4" />
+                <div class="form-group mb-4 px-4">
+                    <label asp-for="LastName" class="form-label">Last Name</label>
+                    <input asp-for="LastName" class="form-control rounded-pill" />
                     <span asp-validation-for="LastName" class="text-danger"></span>
                 </div>
-                @if (!(ViewData["Roles"] as IList<string>).Contains("Manager") && !(ViewData["Roles"] as IList<string>).Contains("Staff"))
-                {
-                    <div class="form-group">
-                        <label asp-for="Points" class="control-label mb-2"></label>
-                        <input asp-for="Points" class="form-control mb-4" />
-                        <span asp-validation-for="Points" class="text-danger"></span>
-                    </div>
-                }
-                <div class="form-group">
-                    <label asp-for="PhoneNumber" class="control-label mb-2"></label>
-                    <input asp-for="PhoneNumber" class="form-control mb-4" />
+                <div class="form-group mb-4 px-4">
+                    <label asp-for="PhoneNumber" class="form-label">Phone Number</label>
+                    <input asp-for="PhoneNumber" class="form-control rounded-pill" />
                     <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                 </div>
-                <div class="form-group text-center">
-                    <input type="submit" value="Save" class="btn btn-save" />
-                    <a asp-action="Index" class="btn btn-cancel">Cancel</a>
+                <div class="d-flex justify-content-center align-items-center mt-4">
+                    <input type="submit" value="Save" class="btn btn-success btn-lg rounded-pill mx-2 col-9" />
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

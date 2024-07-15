@@ -4,85 +4,95 @@
     ViewData["Title"] = "Checkout";
 }
 
-<h2>Checkout</h2>
-
-<h3>Your Items</h3>
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Item</th>
-            <th>Quantity</th>
-            <th>Price</th>
-            <th>Total</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.CartItems)
-        {
+<div class="container-fluid shadow rounded-3 mb-5 bg-white pt-4">
+    <h1 class="text-center mb-4">ORDER SUMMARY</h1>
+    <h3 class="mb-4">Your Items</h3>
+    <table class="table table-hover table-bordered">
+        <thead class="table-danger text-center">
             <tr>
-                <td>
-                    <img src="@item.MenuItem.ImageUrl" alt="@item.MenuItem.Name" class="img-thumbnail" style="width: 50px; height: 50px;" />
-                    @item.MenuItem.Name
-                </td>
-                <td>@item.Quantity</td>
-                <td>@item.MenuItem.Price.ToString("C", new System.Globalization.CultureInfo("ms-MY"))</td>
-                <td>RM @(item.MenuItem.Price * item.Quantity)</td>
+                <th>Item</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
             </tr>
-        }
-    </tbody>
-    <tfoot>
-        <tr>
-            <td colspan="3" class="text-end">Total Amount</td>
-            <td>@Model.TotalAmount.ToString("C", new System.Globalization.CultureInfo("ms-MY"))</td>
-        </tr>
-    </tfoot>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.CartItems)
+            {
+                <tr>
+                    <td class="align-middle">
+                        <img src="@item.MenuItem.ImageUrl" alt="@item.MenuItem.Name" class="img-thumbnail" style="width: 100px; height: 100px;" />
+                        @item.MenuItem.Name
+                    </td>
+                    <td class="align-middle text-center">@item.Quantity</td>
+                    <td class="align-middle">@item.MenuItem.Price.ToString("C", new System.Globalization.CultureInfo("ms-MY"))</td>
+                    <td class="align-middle">RM @string.Format("{0:F2}", item.MenuItem.Price * item.Quantity)</td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3" class="text-end fw-bold">Total Amount</td>
+                <td class="fw-bold">@Model.TotalAmount.ToString("C", new System.Globalization.CultureInfo("ms-MY"))</td>
+            </tr>
+        </tfoot>
+    </table>
 
-<form id="checkoutForm" asp-action="ConfirmCheckout" method="post" onsubmit="return validateForm()">
-    <div class="form-group">
-        <label for="PaymentMethod">Payment Method</label>
-        <select asp-for="PaymentMethod" class="form-control" id="PaymentMethod">
-            <option value="">Select a payment method</option>
-            <option value="CreditCard">Credit/Debit Card</option>
-            <option value="OnlineBanking">Online Banking</option>
-            <option value="Other">Other</option>
-        </select>
-        <span id="PaymentMethodError" class="text-danger"></span>
-    </div>
+    <form id="checkoutForm" asp-action="ConfirmCheckout" method="post" onsubmit="return validateForm()">
+        <div class="mb-4">
+            <label for="PaymentMethod" class="form-label"><h3>Payment Method</h3></label>
+            <select asp-for="PaymentMethod" class="form-control py-3 rounded-pill" id="PaymentMethod">
+                <option value="">Select a payment method</option>
+                <option value="CreditCard">Credit/Debit Card</option>
+                <option value="OnlineBanking">Online Banking</option>
+                <option value="Other">Other</option>
+            </select>
+            <div class="pt-2">
+                <span id="PaymentMethodError" class="text-danger d-none"></span>
+            </div>
+        </div>
 
-    <div id="CreditCardInfo" style="display:none;">
-        <div class="form-group">
-            <label for="CreditCardNumber">Credit Card Number</label>
-            <input id="CreditCardNumber" name="CreditCardNumber" class="form-control" />
-            <span id="CreditCardNumberError" class="text-danger"></span>
+        <div id="CreditCardInfo" style="display:none;">
+            <div class="mb-3">
+                <label for="CreditCardNumber" class="form-label">Credit Card Number</label>
+                <input id="CreditCardNumber" name="CreditCardNumber" class="form-control rounded-pill" />
+                <span id="CreditCardNumberError" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label for="ExpirationDate" class="form-label">Expiration Date (MM/YY)</label>
+                <input id="ExpirationDate" name="ExpirationDate" class="form-control rounded-pill" />
+                <span id="ExpirationDateError" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label for="CVV" class="form-label">CVV</label>
+                <input id="CVV" name="CVV" class="form-control rounded-pill" />
+                <span id="CVVError" class="text-danger"></span>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="ExpirationDate">Expiration Date (MM/YY)</label>
-            <input id="ExpirationDate" name="ExpirationDate" class="form-control" />
-            <span id="ExpirationDateError" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label for="CVV">CVV</label>
-            <input id="CVV" name="CVV" class="form-control" />
-            <span id="CVVError" class="text-danger"></span>
-        </div>
-    </div>
 
-    <div id="OnlineBankingInfo" style="display:none;">
-        <div class="form-group">
-            <label for="BankName">Bank Name</label>
-            <input id="BankName" name="BankName" class="form-control" />
-            <span id="BankNameError" class="text-danger"></span>
+        <div id="OnlineBankingInfo" style="display:none;">
+            <div class="mb-3">
+                <label for="BankName" class="form-label">Bank Name</label>
+                <input id="BankName" name="BankName" class="form-control rounded-pill" />
+                <span id="BankNameError" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label for="AccountNumber" class="form-label">Account Number</label>
+                <input id="AccountNumber" name="AccountNumber" class="form-control rounded-pill" />
+                <span id="AccountNumberError" class="text-danger"></span>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="AccountNumber">Account Number</label>
-            <input id="AccountNumber" name="AccountNumber" class="form-control" />
-            <span id="AccountNumberError" class="text-danger"></span>
-        </div>
-    </div>
 
-    <button type="submit" class="btn btn-primary">Confirm Checkout</button>
-</form>
+        <div class="row pt-5">
+            <div class="col-lg-6 col-md-12 d-grid gap-2 py-4">
+                <a asp-action="Index" class="btn btn-secondary btn-lg rounded-pill">Back to Cart</a>
+            </div>
+            <div class="col-lg-6 col-md-12 d-grid gap-2 py-4">
+                <button type="submit" class="btn btn-primary btn-lg rounded-pill">Confirm Checkout</button>
+            </div>
+        </div>
+    </form>
+</div>
 
 @section Scripts {
     <script>
@@ -97,9 +107,11 @@
             var paymentMethod = document.getElementById("PaymentMethod").value;
             var paymentMethodError = document.getElementById("PaymentMethodError");
             paymentMethodError.textContent = "";
+            paymentMethodError.classList.add("d-none");
 
             if (!paymentMethod) {
                 paymentMethodError.textContent = "Please select a payment method.";
+                paymentMethodError.classList.remove("d-none");
                 isValid = false;
             }
 

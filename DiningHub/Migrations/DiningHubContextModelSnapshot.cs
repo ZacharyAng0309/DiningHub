@@ -83,9 +83,6 @@ namespace DiningHub.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<int>("Points")
-                        .HasColumnType("int");
-
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -127,7 +124,7 @@ namespace DiningHub.Migrations
 
                     b.HasKey("CategoryId");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("DiningHub.Models.Feedback", b =>
@@ -168,7 +165,7 @@ namespace DiningHub.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Feedbacks");
+                    b.ToTable("Feedbacks", (string)null);
                 });
 
             modelBuilder.Entity("DiningHub.Models.InventoryItem", b =>
@@ -219,7 +216,7 @@ namespace DiningHub.Migrations
 
                     b.HasIndex("LastUpdatedById");
 
-                    b.ToTable("InventoryItems");
+                    b.ToTable("InventoryItems", (string)null);
                 });
 
             modelBuilder.Entity("DiningHub.Models.MenuItem", b =>
@@ -282,7 +279,7 @@ namespace DiningHub.Migrations
 
                     b.HasIndex("LastUpdatedById");
 
-                    b.ToTable("MenuItems");
+                    b.ToTable("MenuItems", (string)null);
                 });
 
             modelBuilder.Entity("DiningHub.Models.Order", b =>
@@ -321,7 +318,7 @@ namespace DiningHub.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("DiningHub.Models.OrderItem", b =>
@@ -349,7 +346,7 @@ namespace DiningHub.Migrations
 
                     b.HasIndex("MenuItemId");
 
-                    b.ToTable("OrderItems");
+                    b.ToTable("OrderItems", (string)null);
                 });
 
             modelBuilder.Entity("DiningHub.Models.Receipt", b =>
@@ -373,7 +370,7 @@ namespace DiningHub.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("Receipts");
+                    b.ToTable("Receipts", (string)null);
                 });
 
             modelBuilder.Entity("DiningHub.Models.ShoppingCartItem", b =>
@@ -401,7 +398,7 @@ namespace DiningHub.Migrations
 
                     b.HasIndex("MenuItemId");
 
-                    b.ToTable("ShoppingCartItems");
+                    b.ToTable("ShoppingCartItems", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

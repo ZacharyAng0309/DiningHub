@@ -29,9 +29,6 @@ namespace DiningHub.Areas.Identity.Data
         public string LastName { get; set; }
 
         [PersonalData]
-        public int Points { get; set; }
-
-        [PersonalData]
         [DataType(DataType.Date)]
         public DateTime? DateOfBirth { get; set; }
 

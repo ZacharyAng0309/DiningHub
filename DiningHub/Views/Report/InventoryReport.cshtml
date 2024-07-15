@@ -6,13 +6,13 @@
     var lowStockItems = ViewBag.LowStockItems as IEnumerable<dynamic>;
 }
 
-<h2>Inventory Report</h2>
+<h2 class="report-title">Inventory Report</h2>
 
-<div class="row mt-4">
+@* <div class="row mt-4">
     <div class="col-md-12">
         <a href="@Url.Action("Index", "Report")" class="btn btn-secondary mb-4">Return to Report Index</a>
     </div>
-</div>
+</div> *@
 
 <div class="row mt-4">
     <div class="col-md-6">
@@ -46,7 +46,7 @@
             </text>
         }
 
-                    var ctx = document.getElementById('inventoryQuantityByItemChart').getContext('2d');
+                            var ctx = document.getElementById('inventoryQuantityByItemChart').getContext('2d');
             var inventoryQuantityByItemChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -60,6 +60,29 @@
                     }]
                 },
                 options: {
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Inventory Quantity by Item',
+                            color: '#000',
+                            font: {
+                                size: 24,
+                                weight: 'bold',
+                                family: 'Arial'
+                            },
+                            padding: {
+                                top: 10,
+                                bottom: 30
+                            },
+                            border: {
+                                color: '#000',
+                                width: 2
+                            },
+                            borderDash: [10, 5],
+                            borderRadius: 10,
+                            backgroundColor: 'rgba(255, 255, 255, 0.8)'
+                        }
+                    },
                     scales: {
                         y: {
                             beginAtZero: true
@@ -80,7 +103,7 @@
             </text>
         }
 
-                    var ctx = document.getElementById('lowStockItemsChart').getContext('2d');
+                            var ctx = document.getElementById('lowStockItemsChart').getContext('2d');
             var lowStockItemsChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -94,6 +117,29 @@
                     }]
                 },
                 options: {
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Low Stock Items',
+                            color: '#000',
+                            font: {
+                                size: 24,
+                                weight: 'bold',
+                                family: 'Arial'
+                            },
+                            padding: {
+                                top: 10,
+                                bottom: 30
+                            },
+                            border: {
+                                color: '#000',
+                                width: 2
+                            },
+                            borderDash: [10, 5],
+                            borderRadius: 10,
+                            backgroundColor: 'rgba(255, 255, 255, 0.8)'
+                        }
+                    },
                     scales: {
                         y: {
                             beginAtZero: true

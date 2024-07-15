@@ -1,15 +1,16 @@
-﻿body {
+﻿/*body {
     color: #566787;
     background: #f5f5f5;
     font-family: 'Varela Round', sans-serif;
     font-size: 13px;
 }
+*/
 
-.container {
+/*.admin-container {
     display: block;
     margin:auto;
     max-width: 1800px;
-}
+}*/
 
 .table-wrapper {
     background: #fff;
@@ -53,6 +54,7 @@ table.table-striped.table-hover tbody tr:hover {
     font-weight: bold;
     font-size:14px;
 }
+
 
 
 

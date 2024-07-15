@@ -9,13 +9,13 @@
     var categoryOrderQuantities = ViewBag.CategoryOrderQuantities as IEnumerable<dynamic> ?? Enumerable.Empty<dynamic>();
 }
 
-<h2>Order Report</h2>
+<h2 class="report-title">Order Report</h2>
 
-<div class="row mt-4">
+@*<div class="row mt-4">
     <div class="col-md-12">
         <a href="@Url.Action("Index", "Report")" class="btn btn-secondary mb-4">Return to Report Index</a>
     </div>
-</div>
+</div> *@
 
 <form method="get" action="">
     <div class="row mb-3">
@@ -47,8 +47,8 @@
 </div>
 
 <div class="row mt-4">
-    <div class="col-md-12">
-        <canvas id="categoryOrderQuantitiesChart" style="width: 100%; height: 500px;"></canvas>
+    <div class="col-md-6 offset-md-3">
+        <canvas id="categoryOrderQuantitiesChart" style="width: 100%; height: 400px;"></canvas>
     </div>
 </div>
 
@@ -77,7 +77,7 @@
             </text>
         }
 
-                    var ctx = document.getElementById('popularProductsChart').getContext('2d');
+                            var ctx = document.getElementById('popularProductsChart').getContext('2d');
             var popularProductsChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -91,6 +91,29 @@
                     }]
                 },
                 options: {
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Popular Products',
+                            color: '#000',
+                            font: {
+                                size: 24,
+                                weight: 'bold',
+                                family: 'Arial'
+                            },
+                            padding: {
+                                top: 10,
+                                bottom: 30
+                            },
+                            border: {
+                                color: '#000',
+                                width: 2
+                            },
+                            borderDash: [10, 5],
+                            borderRadius: 10,
+                            backgroundColor: 'rgba(255, 255, 255, 0.8)'
+                        }
+                    },
                     scales: {
                         y: {
                             beginAtZero: true
@@ -111,7 +134,7 @@
             </text>
         }
 
-                    var ctx = document.getElementById('popularCategoriesChart').getContext('2d');
+                            var ctx = document.getElementById('popularCategoriesChart').getContext('2d');
             var popularCategoriesChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -125,6 +148,29 @@
                     }]
                 },
                 options: {
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Popular Categories',
+                            color: '#000',
+                            font: {
+                                size: 24,
+                                weight: 'bold',
+                                family: 'Arial'
+                            },
+                            padding: {
+                                top: 10,
+                                bottom: 30
+                            },
+                            border: {
+                                color: '#000',
+                                width: 2
+                            },
+                            borderDash: [10, 5],
+                            borderRadius: 10,
+                            backgroundColor: 'rgba(255, 255, 255, 0.8)'
+                        }
+                    },
                     scales: {
                         y: {
                             beginAtZero: true
@@ -145,7 +191,7 @@
             </text>
         }
 
-                    var ctx = document.getElementById('monthlySalesChart').getContext('2d');
+                            var ctx = document.getElementById('monthlySalesChart').getContext('2d');
             var monthlySalesChart = new Chart(ctx, {
                 type: 'line',
                 data: {
@@ -159,6 +205,29 @@
                     }]
                 },
                 options: {
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Monthly Sales',
+                            color: '#000',
+                            font: {
+                                size: 24,
+                                weight: 'bold',
+                                family: 'Arial'
+                            },
+                            padding: {
+                                top: 10,
+                                bottom: 30
+                            },
+                            border: {
+                                color: '#000',
+                                width: 2
+                            },
+                            borderDash: [10, 5],
+                            borderRadius: 10,
+                            backgroundColor: 'rgba(255, 255, 255, 0.8)'
+                        }
+                    },
                     scales: {
                         y: {
                             beginAtZero: true
@@ -179,7 +248,7 @@
             </text>
         }
 
-                    var ctx = document.getElementById('categoryOrderQuantitiesChart').getContext('2d');
+                            var ctx = document.getElementById('categoryOrderQuantitiesChart').getContext('2d');
             var categoryOrderQuantitiesChart = new Chart(ctx, {
                 type: 'pie',
                 data: {
@@ -209,6 +278,27 @@
                 options: {
                     responsive: true,
                     plugins: {
+                        title: {
+                            display: true,
+                            text: 'Order Quantity by Category',
+                            color: '#000',
+                            font: {
+                                size: 24,
+                                weight: 'bold',
+                                family: 'Arial'
+                            },
+                            padding: {
+                                top: 10,
+                                bottom: 30
+                            },
+                            border: {
+                                color: '#000',
+                                width: 2
+                            },
+                            borderDash: [10, 5],
+                            borderRadius: 10,
+                            backgroundColor: 'rgba(255, 255, 255, 0.8)'
+                        },
                         legend: {
                             position: 'top',
                         },

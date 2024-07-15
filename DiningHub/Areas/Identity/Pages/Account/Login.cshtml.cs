@@ -13,6 +13,9 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using Azure;
+using Humanizer;
+using System.Composition;
 
 namespace DiningHub.Areas.Identity.Pages.Account
 {
@@ -109,8 +112,21 @@ namespace DiningHub.Areas.Identity.Pages.Account
                         if (result.Succeeded)
                         {
                             _logger.LogInformation("User logged in.");
-                            return LocalRedirect(returnUrl);
+
+                            if (await _userManager.IsInRoleAsync(user, "Staff"))
+                            {
+                                _logger.LogInformation("Staff logged in. Redirecting to the inventory index page.");
+                                return RedirectToAction("Index", "InventoryManagement"); // Adjust the controller name as necessary
+                            }
+                            else if (await _userManager.IsInRoleAsync(user, "Manager"))
+                            {
+                                _logger.LogInformation("Manager logged in. Redirecting to the report index page.");
+                                return RedirectToAction("Index", "Report");
+                            }
+
+                            return RedirectToAction("Index", "Menu");
                         }
+
                         if (result.RequiresTwoFactor)
                         {
                             _logger.LogInformation("User requires two-factor authentication.");
