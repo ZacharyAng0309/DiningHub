@@ -34,12 +34,11 @@
                     <label asp-for="CategoryId" class="control-label mb-2"></label>
                     <select asp-for="CategoryId" class="form-control mb-4">
                         <option value="">Select Category</option>
-                        @foreach (var category in ViewBag.Categories as List<DiningHub.Models.Category>)
+                        @foreach (var category in ViewBag.Categories)
                         {
-                            <option value="@category.CategoryId">@category.Name</option>
+                            <option value="@category.Value">@category.Text</option>
                         }
                     </select>
-                    <span asp-validation-for="CategoryId" class="text-danger"></span>
                 </div>
                 <div class="form-group text-center">
                     <input type="submit" value="Create" class="btn btn-save" />
