@@ -132,6 +132,27 @@ namespace DiningHub.Controllers
                 return NotFound();
             }
 
+            var userWithSameUsername = await _userManager.Users
+                .FirstOrDefaultAsync(u => u.UserName == user.UserName && u.Id != user.Id);
+            if (userWithSameUsername != null)
+            {
+                ModelState.AddModelError("UserName", "A user with this username already exists.");
+                _logger.LogWarning($"A user with the username {user.UserName} already exists.");
+                return View(user);
+            }
+
+           
+            var userWithSameEmail = await _userManager.Users
+                .FirstOrDefaultAsync(u => u.Email == user.Email && u.Id != user.Id);
+            if (userWithSameEmail != null)
+            {
+                ModelState.AddModelError("Email", "A user with this email address already exists.");
+                _logger.LogWarning($"A user with the email {user.Email} already exists.");
+                return View(user);
+            }
+
+
+
             _logger.LogInformation($"Updating user: {user.UserName}");
 
             existingUser.UserName = user.UserName;
@@ -253,12 +274,22 @@ namespace DiningHub.Controllers
             return View();
         }
 
+
         [HttpPost("add-staff")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddStaff(AddStaffViewModel model)
         {
             if (ModelState.IsValid)
             {
+                // Check if a user with the given email already exists
+                var existingUser = await _userManager.FindByEmailAsync(model.Email);
+                if (existingUser != null)
+                {
+                    ModelState.AddModelError("Email", "A user with this email address already exists.");
+                    _logger.LogWarning($"A user with the email {model.Email} already exists.");
+                    return View(model);
+                }
+
                 var user = new DiningHubUser
                 {
                     UserName = model.Email,

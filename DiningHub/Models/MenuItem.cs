@@ -25,6 +25,7 @@ namespace DiningHub.Models
         [ForeignKey("Category")]
         public int CategoryId { get; set; }
 
+        [Required]
         public string ImageUrl { get; set; }
 
         public bool IsAvailable { get; set; }

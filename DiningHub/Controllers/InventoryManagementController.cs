@@ -107,14 +107,13 @@ namespace DiningHub.Controllers
             return View();
         }
 
+        // Create a new inventory item (POST)
         [HttpPost("create")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(InventoryItem inventoryItem)
         {
-            // Get the current user
             var user = await _userManager.GetUserAsync(User);
 
-            // Ensure user is found
             if (user == null)
             {
                 ModelState.AddModelError("", "User not found.");
@@ -122,7 +121,18 @@ namespace DiningHub.Controllers
                 return View(inventoryItem);
             }
 
-            // Ensure category is valid
+            var trimmedName = inventoryItem.Name.Trim().ToLower();
+            var existingInventoryItem = await _context.InventoryItems
+                .FirstOrDefaultAsync(i => i.Name.Trim().ToLower() == trimmedName);
+
+            if (existingInventoryItem != null)
+            {
+                ModelState.AddModelError("Name", "An inventory item with this name already exists.");
+                _logger.LogWarning("An inventory item with this name already exists.");
+                ViewBag.Categories = new SelectList(_context.Categories, "CategoryId", "Name");
+                return View(inventoryItem);
+            }
+
             var category = await _context.Categories.FindAsync(inventoryItem.CategoryId);
             if (category == null)
             {
@@ -131,7 +141,6 @@ namespace DiningHub.Controllers
                 return View(inventoryItem);
             }
 
-            // Populate required fields
             inventoryItem.CreatedById = user.Id;
             inventoryItem.LastUpdatedById = user.Id;
             inventoryItem.CreatedAt = DateTimeHelper.GetMalaysiaTime();
@@ -140,7 +149,6 @@ namespace DiningHub.Controllers
             inventoryItem.CreatedBy = user;
             inventoryItem.LastUpdatedBy = user;
 
-            // Clear existing validation errors to revalidate the model with the new values
             ModelState.Clear();
             TryValidateModel(inventoryItem);
 
@@ -152,7 +160,6 @@ namespace DiningHub.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // Log ModelState errors in detail
             foreach (var state in ModelState)
             {
                 foreach (var error in state.Value.Errors)
@@ -180,7 +187,7 @@ namespace DiningHub.Controllers
             return View(inventoryItem);
         }
 
-        // Edit an inventory item (POST)
+
         [HttpPost("edit/{id}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, InventoryItem inventoryItem)
@@ -202,6 +209,18 @@ namespace DiningHub.Controllers
                 return View(inventoryItem);
             }
 
+            var trimmedName = inventoryItem.Name.Trim().ToLower();
+            var existingInventoryItem = await _context.InventoryItems
+                .FirstOrDefaultAsync(i => i.Name.Trim().ToLower() == trimmedName && i.InventoryItemId != id);
+
+            if (existingInventoryItem != null)
+            {
+                ModelState.AddModelError("Name", "An inventory item with this name already exists.");
+                _logger.LogWarning("An inventory item with this name already exists.");
+                ViewBag.Categories = new SelectList(_context.Categories, "CategoryId", "Name", inventoryItem.CategoryId);
+                return View(inventoryItem);
+            }
+
             var category = await _context.Categories.FindAsync(inventoryItem.CategoryId);
             if (category == null)
             {
@@ -211,28 +230,25 @@ namespace DiningHub.Controllers
                 return View(inventoryItem);
             }
 
-            var existingInventoryItem = await _context.InventoryItems.FindAsync(id);
-            if (existingInventoryItem == null)
+            var existingInventoryItemInDb = await _context.InventoryItems.FindAsync(id);
+            if (existingInventoryItemInDb == null)
             {
                 _logger.LogWarning($"Inventory item with ID {id} not found.");
                 return NotFound();
             }
 
-            // Preserve necessary properties
-            existingInventoryItem.Name = inventoryItem.Name;
-            existingInventoryItem.Description = inventoryItem.Description;
-            existingInventoryItem.Quantity = inventoryItem.Quantity;
-            existingInventoryItem.CategoryId = inventoryItem.CategoryId;
-            existingInventoryItem.UpdatedAt = DateTimeHelper.GetMalaysiaTime();
-            existingInventoryItem.LastUpdatedById = user.Id;
-            existingInventoryItem.Category = category;
-            existingInventoryItem.LastUpdatedBy = user;
+            existingInventoryItemInDb.Name = inventoryItem.Name;
+            existingInventoryItemInDb.Description = inventoryItem.Description;
+            existingInventoryItemInDb.Quantity = inventoryItem.Quantity;
+            existingInventoryItemInDb.CategoryId = inventoryItem.CategoryId;
+            existingInventoryItemInDb.UpdatedAt = DateTimeHelper.GetMalaysiaTime();
+            existingInventoryItemInDb.LastUpdatedById = user.Id;
+            existingInventoryItemInDb.Category = category;
+            existingInventoryItemInDb.LastUpdatedBy = user;
 
-            // Revalidate the model with updated properties
             ModelState.Clear();
-            TryValidateModel(existingInventoryItem);
+            TryValidateModel(existingInventoryItemInDb);
 
-            // Log the model state errors before checking if ModelState.IsValid
             if (!ModelState.IsValid)
             {
                 foreach (var state in ModelState)
@@ -249,14 +265,14 @@ namespace DiningHub.Controllers
 
             try
             {
-                _context.Update(existingInventoryItem);
+                _context.Update(existingInventoryItemInDb);
                 await _context.SaveChangesAsync();
-                _logger.LogInformation($"Inventory item '{existingInventoryItem.Name}' updated successfully.");
+                _logger.LogInformation($"Inventory item '{existingInventoryItemInDb.Name}' updated successfully.");
                 return RedirectToAction(nameof(Index));
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!InventoryItemExists(existingInventoryItem.InventoryItemId))
+                if (!InventoryItemExists(existingInventoryItemInDb.InventoryItemId))
                 {
                     return NotFound();
                 }
