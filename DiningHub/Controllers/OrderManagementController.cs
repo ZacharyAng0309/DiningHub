@@ -27,10 +27,13 @@ namespace DiningHub.Controllers
             ViewData["TotalAmountSortParm"] = sortOrder == "TotalAmount" ? "amount_desc" : "TotalAmount";
             ViewData["CurrentFilter"] = searchString;
 
+
             var orders = from o in _context.Orders
-                         .Include(o => o.User)
-                         .Include(o => o.OrderItems)
-                         .ThenInclude(oi => oi.MenuItem)
+                        .Include(o => o.User)
+                        .Include(o => o.OrderItems)
+                        .ThenInclude(oi => oi.MenuItem)
+                        .Include(o => o.Feedback)
+                        .ThenInclude(f => f.User)
                          select o;
 
             if (!string.IsNullOrEmpty(searchString))

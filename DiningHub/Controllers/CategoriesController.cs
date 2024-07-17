@@ -40,6 +40,15 @@ namespace DiningHub.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Check if a category with the same name already exists
+                var existingCategory = await _context.Categories
+                    .FirstOrDefaultAsync(c => c.Name.Trim().ToLower() == category.Name.Trim().ToLower());
+                if (existingCategory != null)
+                {
+                    ModelState.AddModelError("Name", "A category with this name already exists.");
+                    return View(category);
+                }
+
                 _context.Add(category);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -76,6 +85,17 @@ namespace DiningHub.Controllers
 
             if (ModelState.IsValid)
             {
+                // Check if a category with the same name already exists (excluding the current category)
+                var trimmedName = category.Name.Trim().ToLower();
+                var existingCategory = await _context.Categories
+                    .FirstOrDefaultAsync(c => c.Name.Trim().ToLower() == trimmedName && c.CategoryId != id);
+
+                if (existingCategory != null)
+                {
+                    ModelState.AddModelError("Name", "A category with this name already exists.");
+                    return View(category);
+                }
+
                 try
                 {
                     _context.Update(category);

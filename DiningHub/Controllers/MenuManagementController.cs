@@ -144,6 +144,63 @@ namespace DiningHub.Controllers
             return View();
         }
 
+        //[HttpPost("create")]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Create(MenuItem menuItem)
+        //{
+        //    _logger.LogInformation("Creating a new menu item.");
+
+        //    var user = await _userManager.GetUserAsync(User);
+
+        //    if (user == null)
+        //    {
+        //        ModelState.AddModelError("", "User not found.");
+        //        _logger.LogWarning("User not found.");
+        //        ViewBag.Categories = _context.Categories.ToList();
+        //        return View(menuItem);
+        //    }
+
+        //    var category = await _context.Categories.FindAsync(menuItem.CategoryId);
+        //    if (category == null)
+        //    {
+        //        ModelState.AddModelError("CategoryId", "Invalid category selected.");
+        //        _logger.LogWarning("Invalid category selected.");
+        //        ViewBag.Categories = _context.Categories.ToList();
+        //        return View(menuItem);
+        //    }
+
+        //    menuItem.CreatedById = user.Id;
+        //    menuItem.LastUpdatedById = user.Id;
+        //    menuItem.CreatedAt = DateTimeHelper.GetMalaysiaTime();
+        //    menuItem.UpdatedAt = DateTimeHelper.GetMalaysiaTime();
+        //    menuItem.Category = category;
+        //    menuItem.CreatedBy = user;
+        //    menuItem.LastUpdatedBy = user;
+
+        //    ModelState.Clear();
+        //    TryValidateModel(menuItem);
+
+        //    if (ModelState.IsValid)
+        //    {
+        //        _context.Add(menuItem);
+        //        await _context.SaveChangesAsync();
+        //        _logger.LogInformation($"Menu item '{menuItem.Name}' created successfully.");
+        //        return RedirectToAction(nameof(Index));
+        //    }
+
+        //    _logger.LogWarning("Invalid model state for creating menu item.");
+        //    foreach (var state in ModelState)
+        //    {
+        //        foreach (var error in state.Value.Errors)
+        //        {
+        //            _logger.LogWarning($"ModelState Error in {state.Key}: {error.ErrorMessage}");
+        //        }
+        //    }
+
+        //    ViewBag.Categories = _context.Categories.ToList();
+        //    return View(menuItem);
+        //}
+
         [HttpPost("create")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(MenuItem menuItem)
@@ -156,6 +213,19 @@ namespace DiningHub.Controllers
             {
                 ModelState.AddModelError("", "User not found.");
                 _logger.LogWarning("User not found.");
+                ViewBag.Categories = _context.Categories.ToList();
+                return View(menuItem);
+            }
+
+            var trimmedName = menuItem.Name.Trim().ToLower();
+
+            var existingMenuItem = await _context.MenuItems
+                .FirstOrDefaultAsync(m => m.Name.Trim().ToLower() == trimmedName);
+
+            if (existingMenuItem != null)
+            {
+                ModelState.AddModelError("Name", "A menu item with this name already exists.");
+                _logger.LogWarning("A menu item with this name already exists.");
                 ViewBag.Categories = _context.Categories.ToList();
                 return View(menuItem);
             }
@@ -216,6 +286,7 @@ namespace DiningHub.Controllers
         }
 
 
+       
         [HttpPost("edit/{id}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, MenuItem menuItem)
@@ -237,6 +308,19 @@ namespace DiningHub.Controllers
                 return View(menuItem);
             }
 
+            // Check if a menu item with the same name already exists (excluding the current menu item)
+            var trimmedName = menuItem.Name.Trim().ToLower();
+            var existingMenuItem = await _context.MenuItems
+                .FirstOrDefaultAsync(m => m.Name.Trim().ToLower() == trimmedName && m.MenuItemId != id);
+
+            if (existingMenuItem != null)
+            {
+                ModelState.AddModelError("Name", "A menu item with this name already exists.");
+                _logger.LogWarning("A menu item with this name already exists.");
+                ViewBag.Categories = _context.Categories.ToList();
+                return View(menuItem);
+            }
+
             var category = await _context.Categories.FindAsync(menuItem.CategoryId);
             if (category == null)
             {
@@ -246,33 +330,30 @@ namespace DiningHub.Controllers
                 return View(menuItem);
             }
 
-            var existingMenuItem = await _context.MenuItems.Include(m => m.CreatedBy).Include(m => m.LastUpdatedBy).FirstOrDefaultAsync(m => m.MenuItemId == id);
-            if (existingMenuItem == null)
+            var existingMenuItemInDb = await _context.MenuItems.Include(m => m.CreatedBy).Include(m => m.LastUpdatedBy).FirstOrDefaultAsync(m => m.MenuItemId == id);
+            if (existingMenuItemInDb == null)
             {
                 _logger.LogWarning($"Menu item with ID {id} not found.");
                 return NotFound();
             }
 
-            // Preserve necessary properties
-            menuItem.CreatedById = existingMenuItem.CreatedById;
-            menuItem.CreatedBy = existingMenuItem.CreatedBy;
-            menuItem.CreatedAt = existingMenuItem.CreatedAt;
+
+            menuItem.CreatedById = existingMenuItemInDb.CreatedById;
+            menuItem.CreatedBy = existingMenuItemInDb.CreatedBy;
+            menuItem.CreatedAt = existingMenuItemInDb.CreatedAt;
             menuItem.LastUpdatedById = user.Id;
             menuItem.LastUpdatedBy = user;
             menuItem.UpdatedAt = DateTimeHelper.GetMalaysiaTime();
             menuItem.Category = category;
 
-            // Handle ImageUrl update if needed
             if (!string.IsNullOrEmpty(menuItem.ImageUrl))
             {
-                existingMenuItem.ImageUrl = menuItem.ImageUrl;
+                existingMenuItemInDb.ImageUrl = menuItem.ImageUrl;
             }
 
-            // Revalidate the model with updated properties
             ModelState.Clear();
             TryValidateModel(menuItem);
 
-            // Log the model state errors before checking if ModelState.IsValid
             if (!ModelState.IsValid)
             {
                 foreach (var state in ModelState)
@@ -287,27 +368,26 @@ namespace DiningHub.Controllers
                 return View(menuItem);
             }
 
-            // Update the menu item with preserved properties
-            existingMenuItem.Name = menuItem.Name;
-            existingMenuItem.Description = menuItem.Description;
-            existingMenuItem.Price = menuItem.Price;
-            existingMenuItem.CategoryId = menuItem.CategoryId;
-            existingMenuItem.IsAvailable = menuItem.IsAvailable;
-            existingMenuItem.UpdatedAt = menuItem.UpdatedAt;
-            existingMenuItem.LastUpdatedById = menuItem.LastUpdatedById;
-            existingMenuItem.LastUpdatedBy = menuItem.LastUpdatedBy;
-            existingMenuItem.Category = menuItem.Category;
+            existingMenuItemInDb.Name = menuItem.Name;
+            existingMenuItemInDb.Description = menuItem.Description;
+            existingMenuItemInDb.Price = menuItem.Price;
+            existingMenuItemInDb.CategoryId = menuItem.CategoryId;
+            existingMenuItemInDb.IsAvailable = menuItem.IsAvailable;
+            existingMenuItemInDb.UpdatedAt = menuItem.UpdatedAt;
+            existingMenuItemInDb.LastUpdatedById = menuItem.LastUpdatedById;
+            existingMenuItemInDb.LastUpdatedBy = menuItem.LastUpdatedBy;
+            existingMenuItemInDb.Category = menuItem.Category;
 
             try
             {
-                _context.Update(existingMenuItem);
+                _context.Update(existingMenuItemInDb);
                 await _context.SaveChangesAsync();
-                _logger.LogInformation($"Menu item '{existingMenuItem.Name}' updated successfully.");
+                _logger.LogInformation($"Menu item '{existingMenuItemInDb.Name}' updated successfully.");
                 return RedirectToAction(nameof(Index));
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!MenuItemExists(existingMenuItem.MenuItemId))
+                if (!MenuItemExists(existingMenuItemInDb.MenuItemId))
                 {
                     return NotFound();
                 }
