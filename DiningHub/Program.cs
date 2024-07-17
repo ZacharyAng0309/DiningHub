@@ -3,20 +3,21 @@ using Microsoft.EntityFrameworkCore;
 using DiningHub.Areas.Identity.Data;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
-using DiningHub.Data; // Add the correct namespace for SeedData
-// using Amazon.S3; // Uncomment for AWS S3 integration
-// using Amazon.Extensions.NETCore.Setup; // Uncomment for AWS S3 integration
+using DiningHub.Data;
+using Amazon.S3;
+using Amazon.Extensions.NETCore.Setup;
+using Amazon;
 
 var builder = WebApplication.CreateBuilder(args);
-string connectionString;
-if (builder.Environment.IsDevelopment())
-{
-    connectionString = builder.Configuration.GetConnectionString("DiningHubContextConnection") ?? throw new InvalidOperationException("Connection string 'DiningHubContextConnection' not found.");
-}
-else
-{
-    connectionString = builder.Configuration.GetConnectionString("DiningHubContextConnectionCloud") ?? throw new InvalidOperationException("Connection string 'DiningHubContextConnectionCloud' not found.");
-}
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
+builder.Logging.AddEventSourceLogger();
+builder.Logging.SetMinimumLevel(LogLevel.Debug);
+
+// Configure connection string
+string connectionString = builder.Configuration.GetConnectionString("DiningHubContextConnectionCloud")
+    ?? throw new InvalidOperationException("Connection string 'DiningHubContextConnectionCloud' not found.");
 
 // Configure DbContext with SQL Server
 builder.Services.AddDbContext<DiningHubContext>(options =>
@@ -61,17 +62,10 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("RequireAnyRole", policy => policy.RequireRole("Manager", "Customer", "Staff"));
 });
 
-// Uncomment these lines for AWS S3 integration
-/*
 builder.Services.AddAWSService<IAmazonS3>(new AWSOptions
 {
-    Credentials = new BasicAWSCredentials(
-        builder.Configuration["AWS:AccessKey"],
-        builder.Configuration["AWS:SecretKey"]
-    ),
     Region = RegionEndpoint.GetBySystemName(builder.Configuration["AWS:Region"])
 });
-*/
 
 builder.Services.AddLogging(loggingBuilder =>
 {
@@ -93,11 +87,16 @@ using (var scope = app.Services.CreateScope())
 }
 
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+else
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
+
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

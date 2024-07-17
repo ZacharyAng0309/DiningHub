@@ -10,6 +10,8 @@
     @using Microsoft.AspNetCore.Identity
     @inject UserManager<DiningHubUser> UserManager
 
+@inject SignInManager<DiningHubUser> SignInManager
+
 <style>
     /*** Section Title ***/
     .section-title {
@@ -104,7 +106,7 @@
             position: relative;
             z-index: 2;
         }
-        /*** Service ***/
+    /*** Service ***/
     .service-hover {
         transition: box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out;
     }
@@ -131,6 +133,26 @@
         </div>
     </div>
     <!-- Service Start -->
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <p> Logged in</p>
+        @if (User.IsInRole("Manager"))
+        {
+            <p>Manager</p>
+        }
+        @if (User.IsInRole("Staff"))
+        {
+            <p>Staff</p>
+        }
+        @if (User.IsInRole("Customer"))
+        {
+            <p>Customer</p>
+        }
+    }
+    else
+    {
+        <p>Guest</p>
+    }
     <div class="container-xxl py-5">
         <div class="container">
             <div class="row g-4">

@@ -13,9 +13,9 @@ using DiningHub.Areas.Identity.Data;
 using DiningHub.Helper;
 using DiningHub.Helpers;
 using Microsoft.AspNetCore.Mvc.Rendering;
-// Uncomment the following lines if using AWS S3
-// using Amazon.S3;
-// using Amazon.S3.Transfer;
+using Amazon.S3;
+using Amazon.S3.Transfer;
+using Amazon.S3.Model;
 
 namespace DiningHub.Controllers
 {
@@ -28,17 +28,15 @@ namespace DiningHub.Controllers
         private readonly IConfiguration _configuration;
         private readonly ILogger<MenuManagementController> _logger;
 
-        // Uncomment the following line if using AWS S3
-        // private readonly IAmazonS3 _s3Client;
+        private readonly IAmazonS3 _s3Client;
 
-        public MenuManagementController(DiningHubContext context, UserManager<DiningHubUser> userManager, IConfiguration configuration, ILogger<MenuManagementController> logger)
+        public MenuManagementController(DiningHubContext context, UserManager<DiningHubUser> userManager, IConfiguration configuration, ILogger<MenuManagementController> logger, IAmazonS3 s3Client)
         {
             _context = context;
             _userManager = userManager;
             _configuration = configuration;
             _logger = logger;
-            // Uncomment the following line if using AWS S3
-            // _s3Client = s3Client;
+            _s3Client = s3Client;
         }
 
         [HttpGet("")]
@@ -133,10 +131,11 @@ namespace DiningHub.Controllers
                 return BadRequest("Invalid file type. Only JPG, JPEG, PNG, and GIF are allowed.");
             }
 
-            var imageUrlPath = await SaveFileLocally(file);
+            var imageUrl = await UploadFileToS3(file);
 
-            return Ok(new { imageUrl = imageUrlPath });
+            return Ok(new { imageUrl });
         }
+
 
         [HttpGet("create")]
         public IActionResult Create()
@@ -465,12 +464,12 @@ namespace DiningHub.Controllers
             }
         }
 
-        // Uncomment this method when you want to use S3 for file uploads
-        /*
         private async Task<string> UploadFileToS3(IFormFile file)
         {
             var bucketName = _configuration["AWS:BucketName"];
             var key = $"images/{file.FileName}";
+
+            _logger.LogInformation($"Uploading file to bucket {bucketName} with key {key}");
 
             using (var newMemoryStream = new MemoryStream())
             {
@@ -480,16 +479,36 @@ namespace DiningHub.Controllers
                 {
                     InputStream = newMemoryStream,
                     Key = key,
-                    BucketName = bucketName,
-                    CannedACL = S3CannedACL.PublicRead
+                    BucketName = bucketName
                 };
 
                 var fileTransferUtility = new TransferUtility(_s3Client);
-                await fileTransferUtility.UploadAsync(uploadRequest);
-            }
 
-            return $"https://{bucketName}.s3.amazonaws.com/{key}";
+                try
+                {
+                    await fileTransferUtility.UploadAsync(uploadRequest);
+                    _logger.LogInformation("File uploaded successfully.");
+
+                    // Generate a pre-signed URL for 30 days
+                    var request = new GetPreSignedUrlRequest
+                    {
+                        BucketName = bucketName,
+                        Key = key,
+                        Expires = DateTime.UtcNow.AddDays(30) // URL valid for 30 days
+                    };
+
+                    string url = _s3Client.GetPreSignedURL(request);
+                    return url;
+                }
+                catch (AmazonS3Exception ex)
+                {
+                    _logger.LogError($"Error uploading file to S3: {ex.Message}");
+                    throw;
+                }
+            }
         }
-        */
+
+
+
     }
 }
