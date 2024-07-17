@@ -11,6 +11,7 @@ using System.ComponentModel.DataAnnotations;
 using DiningHub.Models;
 using DiningHub.Helper;
 using X.PagedList;
+using Microsoft.Data.SqlClient;
 
 namespace DiningHub.Controllers
 {
@@ -274,51 +275,79 @@ namespace DiningHub.Controllers
             return View();
         }
 
-
         [HttpPost("add-staff")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddStaff(AddStaffViewModel model)
         {
             if (ModelState.IsValid)
             {
-                // Check if a user with the given email already exists
-                var existingUser = await _userManager.FindByEmailAsync(model.Email);
-                if (existingUser != null)
+                try
                 {
-                    ModelState.AddModelError("Email", "A user with this email address already exists.");
-                    _logger.LogWarning($"A user with the email {model.Email} already exists.");
-                    return View(model);
-                }
+                    // Check if a user with the given email already exists
+                    var existingUser = await _userManager.FindByEmailAsync(model.Email);
+                    if (existingUser != null)
+                    {
+                        if (existingUser.IsDeleted)
+                        {
+                            TempData["AlertMessage"] = "A user with this email address already exists but is deactivated. Please contact support to reactivate the account.";
+                            _logger.LogWarning($"A user with the email {model.Email} already exists but is deactivated.");
+                        }
+                        else
+                        {
+                            TempData["AlertMessage"] = "A user with this email address already exists.";
+                            _logger.LogWarning($"A user with the email {model.Email} already exists.");
+                        }
+                        return RedirectToAction(nameof(AddStaff)); // Ensure redirect to same action to display TempData
+                    }
 
-                var user = new DiningHubUser
-                {
-                    UserName = model.Email,
-                    Email = model.Email,
-                    FirstName = model.FirstName,
-                    LastName = model.LastName,
-                    EmailConfirmed = true, // Set to true if email confirmation is not required
-                    CreatedAt = DateTimeHelper.GetMalaysiaTime(),
-                    UpdatedAt = DateTimeHelper.GetMalaysiaTime()
-                };
+                    var user = new DiningHubUser
+                    {
+                        UserName = model.Email,
+                        Email = model.Email,
+                        FirstName = model.FirstName,
+                        LastName = model.LastName,
+                        EmailConfirmed = true, // Set to true if email confirmation is not required
+                        CreatedAt = DateTimeHelper.GetMalaysiaTime(),
+                        UpdatedAt = DateTimeHelper.GetMalaysiaTime()
+                    };
 
-                var result = await _userManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
-                {
-                    result = await _userManager.AddToRoleAsync(user, "Staff");
+                    var result = await _userManager.CreateAsync(user, model.Password);
                     if (result.Succeeded)
                     {
-                        _logger.LogInformation($"Staff user {model.Email} created successfully.");
-                        return RedirectToAction(nameof(Index));
+                        result = await _userManager.AddToRoleAsync(user, "Staff");
+                        if (result.Succeeded)
+                        {
+                            _logger.LogInformation($"Staff user {model.Email} created successfully.");
+                            return RedirectToAction(nameof(Index));
+                        }
+                    }
+
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
                     }
                 }
-
-                foreach (var error in result.Errors)
+                catch (DbUpdateException ex) when (ex.InnerException is SqlException sqlEx && sqlEx.Number == 2627)
                 {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                    // Handle duplicate key exception
+                    TempData["AlertMessage"] = "An account with this email address already exists.";
+                    _logger.LogError($"Duplicate key error: {ex.Message}");
+                }
+                catch (Exception ex)
+                {
+                    // Handle other exceptions
+                    TempData["AlertMessage"] = "An error occurred while creating the account. Please try again later.";
+                    _logger.LogError($"Unexpected error: {ex.Message}");
                 }
             }
+            else
+            {
+                TempData["AlertMessage"] = "Please correct the errors in the form.";
+            }
 
-            return View(model);
+            return RedirectToAction(nameof(AddStaff)); // Ensure redirect to same action to display TempData
         }
+
+
     }
 }

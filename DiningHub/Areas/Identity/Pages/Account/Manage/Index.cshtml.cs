@@ -29,6 +29,9 @@ namespace DiningHub.Areas.Identity.Pages.Account.Manage
         [BindProperty]
         public InputModel Input { get; set; }
 
+        [BindProperty]
+        public DeleteInputModel DeleteInput { get; set; }
+
         public class InputModel
         {
             [Display(Name = "First name")]
@@ -40,7 +43,6 @@ namespace DiningHub.Areas.Identity.Pages.Account.Manage
             [EmailAddress]
             public string Email { get; set; }
 
-
             [Phone]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
@@ -48,6 +50,18 @@ namespace DiningHub.Areas.Identity.Pages.Account.Manage
             [DataType(DataType.Date)]
             [Display(Name = "Date of Birth")]
             public DateTime? DateOfBirth { get; set; }
+        }
+
+        public class DeleteInputModel
+        {
+            [Required]
+            [DataType(DataType.Password)]
+            public string Password { get; set; }
+
+            [Required]
+            [DataType(DataType.Password)]
+            [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+            public string ConfirmPassword { get; set; }
         }
 
         private async Task LoadAsync(DiningHubUser user)
@@ -63,7 +77,6 @@ namespace DiningHub.Areas.Identity.Pages.Account.Manage
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
-             
                 DateOfBirth = user.DateOfBirth
             };
         }
@@ -119,6 +132,46 @@ namespace DiningHub.Areas.Identity.Pages.Account.Manage
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your profile has been updated";
             return RedirectToPage();
+        }
+
+        public async Task<IActionResult> OnPostDeleteAsync()
+        {
+            if (!ModelState.IsValid)
+            {
+                await LoadAsync(await _userManager.GetUserAsync(User));
+                return Page();
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            var checkPasswordResult = await _userManager.CheckPasswordAsync(user, DeleteInput.Password);
+            if (!checkPasswordResult)
+            {
+                ModelState.AddModelError(string.Empty, "Incorrect password.");
+                await LoadAsync(user);
+                return Page();
+            }
+
+            user.IsDeleted = true;
+            var updateResult = await _userManager.UpdateAsync(user);
+
+            if (!updateResult.Succeeded)
+            {
+                foreach (var error in updateResult.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+                await LoadAsync(user);
+                return Page();
+            }
+
+            await _signInManager.SignOutAsync();
+
+            return Redirect("~/");
         }
     }
 }

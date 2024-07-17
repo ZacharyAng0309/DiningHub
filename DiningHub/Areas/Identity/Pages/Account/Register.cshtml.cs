@@ -16,6 +16,8 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using DiningHub.Helper;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Data.SqlClient;
 
 namespace DiningHub.Areas.Identity.Pages.Account
 {
@@ -57,7 +59,7 @@ namespace DiningHub.Areas.Identity.Pages.Account
             public string FirstName { get; set; }
 
             [Required]
-            [Display(Name = "LastName")]
+            [Display(Name = "Last Name")]
             public string LastName { get; set; }
 
             [Required]
@@ -94,36 +96,51 @@ namespace DiningHub.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
-                var user = CreateUser();
-
-                await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
-                await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
-                user.FirstName = Input.FirstName;
-                user.LastName = Input.LastName;
-                user.EmailConfirmed = true;
-                user.CreatedAt = DateTimeHelper.GetMalaysiaTime();
-                user.UpdatedAt = DateTimeHelper.GetMalaysiaTime();
-
-                var result = await _userManager.CreateAsync(user, Input.Password);
-
-                if (result.Succeeded)
+                try
                 {
-                    _logger.LogInformation("User created a new account with password.");
+                    var user = CreateUser();
 
-                    // Assign role to the user
-                    if (!string.IsNullOrEmpty(Input.Role))
+                    await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
+                    await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+                    user.FirstName = Input.FirstName;
+                    user.LastName = Input.LastName;
+                    user.EmailConfirmed = true;
+                    user.CreatedAt = DateTimeHelper.GetMalaysiaTime();
+                    user.UpdatedAt = DateTimeHelper.GetMalaysiaTime();
+
+                    var result = await _userManager.CreateAsync(user, Input.Password);
+
+                    if (result.Succeeded)
                     {
-                        await _userManager.AddToRoleAsync(user, Input.Role);
+                        _logger.LogInformation("User created a new account with password.");
+
+                        // Assign role to the user
+                        if (!string.IsNullOrEmpty(Input.Role))
+                        {
+                            await _userManager.AddToRoleAsync(user, Input.Role);
+                        }
+
+                        // Directly sign in the user without email confirmation
+                        await _signInManager.SignInAsync(user, isPersistent: false);
+                        return LocalRedirect(returnUrl);
                     }
 
-                    // Directly sign in the user without email confirmation
-                    await _signInManager.SignInAsync(user, isPersistent: false);
-                    return LocalRedirect(returnUrl);
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
                 }
-
-                foreach (var error in result.Errors)
+                catch (DbUpdateException ex) when (ex.InnerException is SqlException sqlEx && sqlEx.Number == 2627)
                 {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                    // Handle duplicate key exception
+                    ModelState.AddModelError(string.Empty, "An account with this email address already exists.");
+                    _logger.LogError($"Duplicate key error: {ex.Message}");
+                }
+                catch (Exception ex)
+                {
+                    // Handle other exceptions
+                    ModelState.AddModelError(string.Empty, "An error occurred while creating the account. Please try again later.");
+                    _logger.LogError($"Unexpected error: {ex.Message}");
                 }
             }
 

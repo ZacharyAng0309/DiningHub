@@ -1,5 +1,5 @@
 ﻿@page
-@model IndexModel
+@model DiningHub.Areas.Identity.Pages.Account.Manage.IndexModel
 @{
     ViewData["Title"] = "Profile";
     ViewData["ActivePage"] = ManageNavPages.Index;
@@ -8,41 +8,37 @@
 <partial name="_StatusMessage" for="StatusMessage" />
 
 <div class="container-fluid shadow rounded-3 mb-5 bg-white py-5">
-
-        <h2>Profile Information</h2>
-        <form id="profile-form" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-   
+    <h2>Profile Information</h2>
+    <form id="profile-form" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
         <div class="row">
             <div class="col-sm-6 col-md-6 mb-3">
-            <div class="form-floating mb-3">
-                <input asp-for="Username" class="form-control" placeholder="Username" disabled />
-                <label asp-for="Username" class="form-label"></label>
-            </div>
-            </div>
-            <div class="col-sm-6 col-md-6 mb-3">
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Email" class="form-control" placeholder="Email" disabled />
-                <label asp-for="Input.Email" class="form-label"></label>
-            </div>
-           </div>
-         </div>
-         <div class="row">
-            <div class="col-sm-6 col-md-6 mb-3">
-            <div class="form-floating mb-3">
-                <input asp-for="Input.FirstName" class="form-control" placeholder="First Name" enabled />
-                <label asp-for="Input.FirstName" class="form-label"></label>
-            </div>
+                <div class="form-floating mb-3">
+                    <input asp-for="Username" class="form-control" placeholder="Username" disabled />
+                    <label asp-for="Username" class="form-label"></label>
+                </div>
             </div>
             <div class="col-sm-6 col-md-6 mb-3">
-            <div class="form-floating mb-3">
-                <input asp-for="Input.LastName" class="form-control" placeholder="Last Name" enabled />
-                <label asp-for="Input.LastName" class="form-label"></label>
+                <div class="form-floating mb-3">
+                    <input asp-for="Input.Email" class="form-control" placeholder="Email" disabled />
+                    <label asp-for="Input.Email" class="form-label"></label>
+                </div>
             </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6 col-md-6 mb-3">
+                <div class="form-floating mb-3">
+                    <input asp-for="Input.FirstName" class="form-control" placeholder="First Name" />
+                    <label asp-for="Input.FirstName" class="form-label"></label>
+                </div>
             </div>
-           </div>
-           
-
+            <div class="col-sm-6 col-md-6 mb-3">
+                <div class="form-floating mb-3">
+                    <input asp-for="Input.LastName" class="form-control" placeholder="Last Name" />
+                    <label asp-for="Input.LastName" class="form-label"></label>
+                </div>
+            </div>
+        </div>
         <div class="row">
             <div class="col-sm-6 col-md-6 mb-3">
                 <div class="form-floating mb-3">
@@ -60,9 +56,23 @@
             </div>
         </div>
         <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary mt-3">Save</button>
-        </form>
-    </div>
-</div>
+    </form>
+
+    <h2 class="mt-5">Delete Account</h2>
+    <form id="delete-account-form" method="post" asp-page-handler="Delete">
+        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+        <div class="form-floating mb-3">
+            <input asp-for="DeleteInput.Password" class="form-control" placeholder="Password" />
+            <label asp-for="DeleteInput.Password" class="form-label"></label>
+            <span asp-validation-for="DeleteInput.Password" class="text-danger"></span>
+        </div>
+        <div class="form-floating mb-3">
+            <input asp-for="DeleteInput.ConfirmPassword" class="form-control" placeholder="Confirm Password" />
+            <label asp-for="DeleteInput.ConfirmPassword" class="form-label"></label>
+            <span asp-validation-for="DeleteInput.ConfirmPassword" class="text-danger"></span>
+        </div>
+        <button id="delete-account-button" type="submit" class="w-100 btn btn-lg btn-danger mt-3" onclick="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">Delete Account</button>
+    </form>
 </div>
 
 @section Scripts {
