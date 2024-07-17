@@ -37,32 +37,36 @@ namespace DiningHub.Controllers
             ViewData["EmailSortParm"] = sortOrder == "Email" ? "email_desc" : "Email";
             ViewData["CurrentFilter"] = searchString;
 
-            var users = _userManager.Users.Where(u => !u.IsDeleted);
+            // Fetch users with AsNoTracking and ToListAsync
+            var usersQuery = _userManager.Users.AsQueryable();
 
             if (!string.IsNullOrEmpty(searchString))
             {
-                users = users.Where(u => u.UserName.Contains(searchString)
-                                       || u.Email.Contains(searchString)
-                                       || u.FirstName.Contains(searchString)
-                                       || u.LastName.Contains(searchString));
+                usersQuery = usersQuery.Where(u => u.UserName.Contains(searchString)
+                                                   || u.Email.Contains(searchString)
+                                                   || u.FirstName.Contains(searchString)
+                                                   || u.LastName.Contains(searchString));
             }
 
             switch (sortOrder)
             {
                 case "name_desc":
-                    users = users.OrderByDescending(u => u.UserName);
+                    usersQuery = usersQuery.OrderByDescending(u => u.UserName);
                     break;
                 case "Email":
-                    users = users.OrderBy(u => u.Email);
+                    usersQuery = usersQuery.OrderBy(u => u.Email);
                     break;
                 case "email_desc":
-                    users = users.OrderByDescending(u => u.Email);
+                    usersQuery = usersQuery.OrderByDescending(u => u.Email);
                     break;
                 default:
-                    users = users.OrderBy(u => u.UserName);
+                    usersQuery = usersQuery.OrderBy(u => u.UserName);
                     break;
             }
 
+            var users = await usersQuery.AsNoTracking().ToListAsync();
+
+            // Fetch roles in a batch
             var userRoles = new Dictionary<string, IList<string>>();
             foreach (var user in users)
             {
@@ -75,7 +79,7 @@ namespace DiningHub.Controllers
 
             var model = new ManageUsersViewModel
             {
-                Users = await users.ToPagedListAsync(pageNumber, pageSize),
+                Users = users.ToPagedList(pageNumber, pageSize),
                 UserRoles = userRoles
             };
 

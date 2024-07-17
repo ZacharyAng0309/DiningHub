@@ -81,87 +81,58 @@ namespace DiningHub.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
-                // Normalize email to ensure consistency
                 var normalizedEmail = _userManager.NormalizeEmail(Input.Email);
-                _logger.LogInformation("Normalized email: {NormalizedEmail}", normalizedEmail);
-
-                // Check if the user exists
                 var user = await _userManager.FindByEmailAsync(normalizedEmail);
+
                 if (user != null)
                 {
-                    _logger.LogInformation("User found: {Email}", normalizedEmail);
-
-                    // Check if the user is locked out
                     if (await _userManager.IsLockedOutAsync(user))
                     {
-                        _logger.LogWarning("User account locked out.");
                         return RedirectToPage("./Lockout");
                     }
 
-                    // Validate the password
-                    var passwordValid = await _userManager.CheckPasswordAsync(user, Input.Password);
-                    if (passwordValid)
+                    var result = await _signInManager.PasswordSignInAsync(user, Input.Password, Input.RememberMe, lockoutOnFailure: true);
+
+                    if (result.Succeeded)
                     {
-                        _logger.LogInformation("Password validation succeeded for user: {Email}", normalizedEmail);
-
-                        // Sign the user in
-                        var result = await _signInManager.PasswordSignInAsync(user, Input.Password, Input.RememberMe, lockoutOnFailure: true);
-
-                        LogSignInResult(result);
-
-                        if (result.Succeeded)
+                        if (await _userManager.IsInRoleAsync(user, "Staff"))
                         {
-                            _logger.LogInformation("User logged in.");
-
-                            if (await _userManager.IsInRoleAsync(user, "Staff"))
-                            {
-                                _logger.LogInformation("Staff logged in. Redirecting to the inventory index page.");
-                                return RedirectToAction("Index", "InventoryManagement"); // Adjust the controller name as necessary
-                            }
-                            else if (await _userManager.IsInRoleAsync(user, "Manager"))
-                            {
-                                _logger.LogInformation("Manager logged in. Redirecting to the report index page.");
-                                return RedirectToAction("Index", "Report");
-                            }
-
-                            return RedirectToAction("Index", "Menu");
+                            return LocalRedirect("/manage/inventory");
                         }
-
-                        if (result.RequiresTwoFactor)
+                        else if (await _userManager.IsInRoleAsync(user, "Manager"))
                         {
-                            _logger.LogInformation("User requires two-factor authentication.");
-                            return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
-                        }
-                        if (result.IsLockedOut)
-                        {
-                            _logger.LogWarning("User account locked out.");
-                            return RedirectToPage("./Lockout");
+                            return LocalRedirect("/report");
                         }
                         else
                         {
-                            _logger.LogWarning("Invalid login attempt.");
-                            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                            return Page();
+                            return LocalRedirect("/menu");
                         }
+                    }
+
+                    if (result.RequiresTwoFactor)
+                    {
+                        return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
+                    }
+                    if (result.IsLockedOut)
+                    {
+                        return RedirectToPage("./Lockout");
                     }
                     else
                     {
-                        _logger.LogWarning("Invalid password for user: {Email}", normalizedEmail);
                         ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                         return Page();
                     }
                 }
                 else
                 {
-                    _logger.LogWarning("User not found: {Email}", normalizedEmail);
                     ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                     return Page();
                 }
             }
 
-            // If we got this far, something failed, redisplay form
             return Page();
         }
+
 
 
         private void LogSignInResult(Microsoft.AspNetCore.Identity.SignInResult result)
