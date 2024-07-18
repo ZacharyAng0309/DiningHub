@@ -1,12 +1,11 @@
-﻿#nullable disable
-
-using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using DiningHub.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.ComponentModel.DataAnnotations;
+using DiningHub.Areas.Identity.Data;
 
 namespace DiningHub.Areas.Identity.Pages.Account.Manage
 {
@@ -31,6 +30,8 @@ namespace DiningHub.Areas.Identity.Pages.Account.Manage
 
         [BindProperty]
         public DeleteInputModel DeleteInput { get; set; }
+
+        public IList<string> UserRoles { get; set; }
 
         public class InputModel
         {
@@ -68,8 +69,10 @@ namespace DiningHub.Areas.Identity.Pages.Account.Manage
         {
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
+            var roles = await _userManager.GetRolesAsync(user);
 
             Username = userName;
+            UserRoles = roles.ToList();
 
             Input = new InputModel
             {

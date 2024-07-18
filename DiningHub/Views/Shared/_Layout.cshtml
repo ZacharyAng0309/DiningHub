@@ -29,17 +29,17 @@
                 color: #E57373;
             }
 
-        .nav-link {
+        .nav-links {
             color: white;
             transition: background-color 0.3s, color 0.3s;
         }
 
-            .nav-link:hover {
+            .nav-links:hover {
                 background-color: white;
                 color: #E57373;
             }
 
-        .nav-link-custom {
+        .nav-links-custom {
             font-size: 1.25rem; /* Adjust font size here */
         }
     </style>
@@ -60,32 +60,32 @@
                     @if (User.IsInRole("Manager"))
                     {
                         <li class="nav-item">
-                            <a class="btn btn-custom-hover px-4 me-2 nav-link-custom" asp-area="" asp-controller="Report" asp-action="Index">
+                            <a class="btn btn-custom-hover px-4 me-2 nav-links-custom" asp-area="" asp-controller="Report" asp-action="Index">
                                 <i class="bi bi-bar-chart me-1"></i> Reports
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="btn btn-custom-hover px-4 me-2 nav-link-custom" asp-area="" asp-controller="FeedbackManagement" asp-action="Index">
+                            <a class="btn btn-custom-hover px-4 me-2 nav-links-custom" asp-area="" asp-controller="FeedbackManagement" asp-action="Index">
                                 <i class="bi bi-chat-dots me-1"></i> View Feedback
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="btn btn-custom-hover px-4 me-2 nav-link-custom" asp-area="" asp-controller="UserManagement" asp-action="Index">
+                            <a class="btn btn-custom-hover px-4 me-2 nav-links-custom" asp-area="" asp-controller="UserManagement" asp-action="Index">
                                 <i class="bi bi-people me-1"></i> Manage Users
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="btn btn-custom-hover px-4 me-2 nav-link-custom" asp-area="" asp-controller="MenuManagement" asp-action="Index">
+                            <a class="btn btn-custom-hover px-4 me-2 nav-links-custom" asp-area="" asp-controller="MenuManagement" asp-action="Index">
                                 <i class="bi bi-book me-1"></i> Manage Menu
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="btn btn-custom-hover px-4 me-2 nav-link-custom" asp-area="" asp-controller="OrderManagement" asp-action="Index">
+                            <a class="btn btn-custom-hover px-4 me-2 nav-links-custom" asp-area="" asp-controller="OrderManagement" asp-action="Index">
                                 <i class="bi bi-receipt me-1"></i> View Order
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="btn btn-custom-hover px-4 me-2 nav-link-custom" asp-area="" asp-controller="InventoryManagement" asp-action="Index">
+                            <a class="btn btn-custom-hover px-4 me-2 nav-links-custom" asp-area="" asp-controller="InventoryManagement" asp-action="Index">
                                 <i class="bi bi-box-seam-fill me-1"></i> Manage Inventory
                             </a>
                         </li>
@@ -93,17 +93,17 @@
                     else if (User.IsInRole("Staff"))
                     {
                         <li class="nav-item">
-                            <a class="btn btn-custom-hover px-4 me-2 nav-link-custom" asp-area="" asp-controller="InventoryManagement" asp-action="Index">
+                            <a class="btn btn-custom-hover px-4 me-2 nav-links-custom" asp-area="" asp-controller="InventoryManagement" asp-action="Index">
                                 <i class="bi bi-box-seam-fill me-1"></i> Manage Inventory
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="btn btn-custom-hover px-4 me-2 nav-link-custom" asp-area="" asp-controller="OrderManagement" asp-action="Index">
+                            <a class="btn btn-custom-hover px-4 me-2 nav-links-custom" asp-area="" asp-controller="OrderManagement" asp-action="Index">
                                 <i class="bi bi-receipt me-1"></i> View Order
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="btn btn-custom-hover px-4 me-2 nav-link-custom" asp-area="" asp-controller="FeedbackManagement" asp-action="Index">
+                            <a class="btn btn-custom-hover px-4 me-2 nav-links-custom" asp-area="" asp-controller="FeedbackManagement" asp-action="Index">
                                 <i class="bi bi-chat-dots me-1"></i> View Feedback
                             </a>
                         </li>
@@ -111,17 +111,17 @@
                     else if (User.IsInRole("Customer"))
                     {
                         <li class="nav-item">
-                            <a class="btn btn-custom-hover px-4 me-2 nav-link-custom" asp-area="" asp-controller="Menu" asp-action="Index">
+                            <a class="btn btn-custom-hover px-4 me-2 nav-links-custom" asp-area="" asp-controller="Menu" asp-action="Index">
                                 <i class="bi bi-book me-1"></i> Menu
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="btn btn-custom-hover px-4 me-2 nav-link-custom" asp-area="" asp-controller="ShoppingCart" asp-action="Index">
+                            <a class="btn btn-custom-hover px-4 me-2 nav-links-custom" asp-area="" asp-controller="ShoppingCart" asp-action="Index">
                                 <i class="bi bi-cart me-1"></i> Cart
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="btn btn-custom-hover px-4 me-2 nav-link-custom" asp-area="" asp-controller="Order" asp-action="Index">
+                            <a class="btn btn-custom-hover px-4 me-2 nav-links-custom" asp-area="" asp-controller="Order" asp-action="Index">
                                 <i class="bi bi-clock-history me-1"></i> Order History
                             </a>
                         </li>
@@ -129,7 +129,7 @@
                     else
                     {
                         <li class="nav-item">
-                            <a class="btn btn-custom-hover px-4 me-2 nav-link-custom" asp-area="" asp-controller="Menu" asp-action="Index">
+                            <a class="btn btn-custom-hover px-4 me-2 nav-links-custom" asp-area="" asp-controller="Menu" asp-action="Index">
                                 <i class="bi bi-book me-1"></i> Menu
                             </a>
                         </li>
@@ -154,17 +154,17 @@
                     <h3 class="h5">ABOUT Dine Master</h3>
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a href="#" class="btn btn-custom-hover text-white my-1">
+                            <a href="#" class="nav-link text-white my-1">
                                 <i class="bi bi-info-circle me-1"></i> About Us
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="btn btn-custom-hover text-white my-1">
+                            <a href="#" class="nav-link text-white my-1">
                                 <i class="bi bi-bullseye me-1"></i> Mission
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="btn btn-custom-hover text-white my-1">
+                            <a href="#" class="nav-link text-white my-1">
                                 <i class="bi bi-eye me-1"></i> Vision
                             </a>
                         </li>
@@ -174,12 +174,12 @@
                     <h3 class="h5">HELP</h3>
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a href="#" class="btn btn-custom-hover text-white my-1">
+                            <a href="#" class="nav-link text-white my-1">
                                 <i class="bi bi-question-circle me-1"></i> FAQ
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="btn btn-custom-hover text-white my-1">
+                            <a href="#" class="nav-link text-white my-1">
                                 <i class="bi bi-headset me-1"></i> Customer Service
                             </a>
                         </li>
@@ -189,12 +189,12 @@
                     <h3 class="h5">TERMS & POLICIES</h3>
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a href="#" class="btn btn-custom-hover text-white my-1">
+                            <a href="#" class="nav-link text-white my-1">
                                 <i class="bi bi-file-earmark-text me-1"></i> Legal Notices
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="btn btn-custom-hover text-white my-1">
+                            <a href="#" class="nav-link text-white my-1">
                                 <i class="bi bi-shield-lock me-1"></i> Privacy Policy
                             </a>
                         </li>
@@ -208,7 +208,6 @@
             </div>
         </div>
     </footer>
-
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

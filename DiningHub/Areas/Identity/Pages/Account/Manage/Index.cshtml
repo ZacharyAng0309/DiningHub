@@ -58,21 +58,26 @@
         <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary mt-3">Save</button>
     </form>
 
-    <h2 class="mt-5">Delete Account</h2>
-    <form id="delete-account-form" method="post" asp-page-handler="Delete">
-        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-        <div class="form-floating mb-3">
-            <input asp-for="DeleteInput.Password" class="form-control" placeholder="Password" />
-            <label asp-for="DeleteInput.Password" class="form-label"></label>
-            <span asp-validation-for="DeleteInput.Password" class="text-danger"></span>
-        </div>
-        <div class="form-floating mb-3">
-            <input asp-for="DeleteInput.ConfirmPassword" class="form-control" placeholder="Confirm Password" />
-            <label asp-for="DeleteInput.ConfirmPassword" class="form-label"></label>
-            <span asp-validation-for="DeleteInput.ConfirmPassword" class="text-danger"></span>
-        </div>
-        <button id="delete-account-button" type="submit" class="w-100 btn btn-lg btn-danger mt-3" onclick="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">Delete Account</button>
-    </form>
+    @if (!Model.UserRoles.Contains("Manager"))
+    {
+        <h2 class="mt-5">Delete Account</h2>
+        <form id="delete-account-form" method="post" asp-page-handler="Delete">
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            <div class="form-floating mb-3">
+                <input asp-for="DeleteInput.Password" class="form-control" placeholder="Password" />
+                <label asp-for="DeleteInput.Password" class="form-label"></label>
+                <span asp-validation-for="DeleteInput.Password" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="DeleteInput.ConfirmPassword" class="form-control" placeholder="Confirm Password" />
+                <label asp-for="DeleteInput.ConfirmPassword" class="form-label"></label>
+                <span asp-validation-for="DeleteInput.ConfirmPassword" class="text-danger"></span>
+            </div>
+            <button id="delete-account-button" type="submit" class="w-100 btn btn-lg btn-danger mt-3" onclick="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">Delete Account</button>
+        </form>
+    }
+
+   
 </div>
 
 @section Scripts {

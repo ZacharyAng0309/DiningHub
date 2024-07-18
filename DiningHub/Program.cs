@@ -20,7 +20,7 @@ builder.Logging.AddEventSourceLogger();
 builder.Logging.SetMinimumLevel(LogLevel.Debug);
 
 // Configure connection string
-string connectionString = builder.Configuration.GetConnectionString("DiningHubContextConnectionCloud")
+string connectionString = builder.Configuration.GetConnectionString("DiningHubContextConnection")
     ?? throw new InvalidOperationException("Connection string 'DiningHubContextConnectionCloud' not found.");
 
 // Configure DbContext with SQL Server
