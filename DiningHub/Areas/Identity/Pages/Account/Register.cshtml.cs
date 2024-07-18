@@ -78,10 +78,16 @@ namespace DiningHub.Areas.Identity.Pages.Account
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
 
+            [Required]
+            [Phone]
+            [Display(Name = "Phone Number")]
+            public string PhoneNumber { get; set; }
+
             // Optional: Role selection during registration
             [Display(Name = "Role")]
             public string Role { get; set; } = "Customer";  // Default role
         }
+
 
         public async Task OnGetAsync(string returnUrl = null)
         {
@@ -104,6 +110,7 @@ namespace DiningHub.Areas.Identity.Pages.Account
                     await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                     user.FirstName = Input.FirstName;
                     user.LastName = Input.LastName;
+                    user.PhoneNumber = Input.PhoneNumber;
                     user.EmailConfirmed = true;
                     user.CreatedAt = DateTimeHelper.GetMalaysiaTime();
                     user.UpdatedAt = DateTimeHelper.GetMalaysiaTime();
@@ -139,7 +146,7 @@ namespace DiningHub.Areas.Identity.Pages.Account
                 catch (Exception ex)
                 {
                     // Handle other exceptions
-                    ModelState.AddModelError(string.Empty, "An error occurred while creating the account. Please try again later.");
+                    ModelState.AddModelError(string.Empty, "A deleted account with this email address already exists. Please use other email address.");
                     _logger.LogError($"Unexpected error: {ex.Message}");
                 }
             }
@@ -147,6 +154,7 @@ namespace DiningHub.Areas.Identity.Pages.Account
             // If we got this far, something failed, redisplay form
             return Page();
         }
+
 
         private DiningHubUser CreateUser()
         {
