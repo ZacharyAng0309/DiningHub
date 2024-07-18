@@ -10,8 +10,8 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using DiningHub.Models;
 using DiningHub.Helper;
-using X.PagedList;
 using Microsoft.Data.SqlClient;
+using DiningHub.Helpers;
 
 namespace DiningHub.Controllers
 {
@@ -38,7 +38,6 @@ namespace DiningHub.Controllers
             ViewData["EmailSortParm"] = sortOrder == "Email" ? "email_desc" : "Email";
             ViewData["CurrentFilter"] = searchString;
 
-            // Fetch users with AsNoTracking and ToListAsync
             var usersQuery = _userManager.Users.AsQueryable();
 
             if (!string.IsNullOrEmpty(searchString))
@@ -65,27 +64,31 @@ namespace DiningHub.Controllers
                     break;
             }
 
-            var users = await usersQuery.AsNoTracking().ToListAsync();
+            int pageSize = 10;
+            int pageNumber = (page ?? 1);
 
-            // Fetch roles in a batch
+            var paginatedUsers = await PaginatedList<DiningHubUser>.CreateAsync(usersQuery.AsNoTracking(), pageNumber, pageSize);
+
             var userRoles = new Dictionary<string, IList<string>>();
-            foreach (var user in users)
+            foreach (var user in paginatedUsers)
             {
                 var roles = await _userManager.GetRolesAsync(user);
                 userRoles[user.Id] = roles;
             }
 
-            int pageSize = 10;
-            int pageNumber = (page ?? 1);
-
             var model = new ManageUsersViewModel
             {
-                Users = users.ToPagedList(pageNumber, pageSize),
-                UserRoles = userRoles
+                Users = paginatedUsers,
+                UserRoles = userRoles,
+                PageNumber = paginatedUsers.PageIndex,
+                TotalPages = paginatedUsers.TotalPages,
+                HasPreviousPage = paginatedUsers.HasPreviousPage,
+                HasNextPage = paginatedUsers.HasNextPage
             };
 
             return View(model);
         }
+
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Details(string id)

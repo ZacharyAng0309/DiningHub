@@ -1,12 +1,16 @@
 ﻿using DiningHub.Areas.Identity.Data;
-using X.PagedList;
+using DiningHub.Helpers;
 
 namespace DiningHub.Models
 {
     public class ManageUsersViewModel
     {
-        public IPagedList<DiningHubUser> Users { get; set; }
+        public PaginatedList<DiningHubUser> Users { get; set; }
         public Dictionary<string, IList<string>> UserRoles { get; set; }
-
+        public int PageNumber { get; set; }
+        public int TotalPages { get; set; }
+        public bool HasPreviousPage { get; set; }
+        public bool HasNextPage { get; set; }
     }
+
 }

@@ -122,7 +122,7 @@
         <div class="container my-5 py-5">
             <div class="row align-items-center g-5">
                 <div class="col-lg-6 text-center text-lg-start">
-                    <h1 class="display-3 text-white">Welcome To DiningHub</h1>
+                    <h1 class="display-3 text-white">Welcome To Dining Master</h1>
                     <p class="text-white mb-4 pb-2">"Experience the finest French cuisine, crafted with passion and tradition, right at your table." </p>
 
                     <a asp-area="" asp-action="Index" asp-controller="Menu" class="btn btn-danger py-sm-3 px-sm-5 me-3 col-6 rounded-pill ">View Our Menu</a>
@@ -133,7 +133,7 @@
         </div>
     </div>
     <!-- Service Start -->
-    @if (SignInManager.IsSignedIn(User))
+    @* @if (SignInManager.IsSignedIn(User))
     {
         <p> Logged in</p>
         @if (User.IsInRole("Manager"))
@@ -152,7 +152,7 @@
     else
     {
         <p>Guest</p>
-    }
+    } *@
     <div class="container-xxl py-5">
         <div class="container">
             <div class="row g-4">
