@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DiningHub.Migrations
 {
     [DbContext(typeof(DiningHubContext))]
-    [Migration("20240708113713_Database-setup")]
-    partial class Databasesetup
+    [Migration("20240718173551_DBsetup")]
+    partial class DBsetup
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -85,7 +85,6 @@ namespace DiningHub.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
-
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
@@ -396,11 +395,13 @@ namespace DiningHub.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("ShoppingCartItemId");
 
                     b.HasIndex("MenuItemId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("ShoppingCartItems");
                 });
@@ -666,7 +667,15 @@ namespace DiningHub.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("DiningHub.Areas.Identity.Data.DiningHubUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("MenuItem");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

@@ -51,6 +51,7 @@ namespace DiningHub.Areas.Identity.Pages.Account.Manage
 
             [Phone]
             [Display(Name = "Phone number")]
+            [RegularExpression(@"\d{10,}", ErrorMessage = "The phone number must contain at least 10 digits.")]
             public string PhoneNumber { get; set; }
 
             [DataType(DataType.Date)]
