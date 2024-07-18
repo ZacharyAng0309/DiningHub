@@ -5,8 +5,12 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using DiningHub.Data;
 using Amazon.S3;
-using Amazon.Extensions.NETCore.Setup;
+using Amazon.Runtime;
 using Amazon;
+using DotNetEnv;
+
+// Load environment variables from .env file
+Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders();
@@ -62,10 +66,15 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("RequireAnyRole", policy => policy.RequireRole("Manager", "Customer", "Staff"));
 });
 
-builder.Services.AddAWSService<IAmazonS3>(new AWSOptions
-{
-    Region = RegionEndpoint.GetBySystemName(builder.Configuration["AWS:Region"])
-});
+// Configure AWS options
+var awsAccessKeyId = Environment.GetEnvironmentVariable("AWS_ACCESS_KEY_ID");
+var awsSecretAccessKey = Environment.GetEnvironmentVariable("AWS_SECRET_ACCESS_KEY");
+var awsSessionToken = Environment.GetEnvironmentVariable("AWS_SESSION_TOKEN");
+var region = Environment.GetEnvironmentVariable("AWS_REGION");
+
+var awsCredentials = new SessionAWSCredentials(awsAccessKeyId, awsSecretAccessKey, awsSessionToken);
+
+builder.Services.AddSingleton<IAmazonS3>(new AmazonS3Client(awsCredentials, RegionEndpoint.GetBySystemName(region)));
 
 builder.Services.AddLogging(loggingBuilder =>
 {
@@ -96,7 +105,6 @@ else
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
-
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
