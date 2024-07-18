@@ -133,26 +133,6 @@
         </div>
     </div>
     <!-- Service Start -->
-    @if (SignInManager.IsSignedIn(User))
-    {
-        <p> Logged in</p>
-        @if (User.IsInRole("Manager"))
-        {
-            <p>Manager</p>
-        }
-        @if (User.IsInRole("Staff"))
-        {
-            <p>Staff</p>
-        }
-        @if (User.IsInRole("Customer"))
-        {
-            <p>Customer</p>
-        }
-    }
-    else
-    {
-        <p>Guest</p>
-    }
     <div class="container-xxl py-5">
         <div class="container">
             <div class="row g-4">
@@ -208,13 +188,13 @@
                             <img class="img-fluid rounded w-100" data-wow-delay="0.1s" src="Img/homepage/about1.jpg">
                         </div>
                         <div class="col-6 text-start">
-                            <img class="img-fluid rounded w-75" data-wow-delay="0.3s" src="img/homepage/about2.jpg" style="margin-top: 25%;">
+                            <img class="img-fluid rounded w-75" data-wow-delay="0.3s" src="Img/homepage/about2.jpg" style="margin-top: 25%;">
                         </div>
                         <div class="col-6 text-end">
-                            <img class="img-fluid rounded w-75" data-wow-delay="0.5s" src="img/homepage/about3.jpg">
+                            <img class="img-fluid rounded w-75" data-wow-delay="0.5s" src="Img/homepage/about3.jpg">
                         </div>
                         <div class="col-6 text-end">
-                            <img class="img-fluid rounded w-100" data-wow-delay="0.7s" src="img/homepage/about4.jpg">
+                            <img class="img-fluid rounded w-100" data-wow-delay="0.7s" src="Img/homepage/about4.jpg">
                         </div>
                     </div>
                 </div>

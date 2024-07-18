@@ -99,8 +99,6 @@ namespace DiningHub.Controllers
 
         }
 
-
-
         // View details of a single menu item
         [HttpGet("details/{id}")]
         public async Task<IActionResult> Details(int id)
@@ -117,7 +115,7 @@ namespace DiningHub.Controllers
         }
 
         [HttpPost("upload-image")]
-        public async Task<IActionResult> UploadImage(IFormFile file)
+        public async Task<IActionResult> UploadImage(IFormFile file, string oldImageUrl = null)
         {
             if (file == null || file.Length == 0)
             {
@@ -131,10 +129,37 @@ namespace DiningHub.Controllers
                 return BadRequest("Invalid file type. Only JPG, JPEG, PNG, and GIF are allowed.");
             }
 
+            // Delete the old image if it exists
+            if (!string.IsNullOrEmpty(oldImageUrl))
+            {
+                try
+                {
+                    if (oldImageUrl.StartsWith("http"))
+                    {
+                        // It's an S3 URL
+                        var key = oldImageUrl.Split(new[] { ".amazonaws.com/" }, StringSplitOptions.None)[1].Split('?')[0];
+                        await DeleteFileFromS3(key);
+                        _logger.LogInformation($"Deleted old image from S3: {key}");
+                    }
+                    else
+                    {
+                        // It's a local file URL
+                        var localFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", oldImageUrl.TrimStart('/'));
+                        DeleteFile(localFilePath);
+                        _logger.LogInformation($"Deleted old local image: {localFilePath}");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"Error deleting old image: {ex.Message}");
+                }
+            }
+
             var imageUrl = await UploadFileToS3(file);
 
             return Ok(new { imageUrl });
         }
+
 
 
         [HttpGet("create")]
@@ -284,8 +309,6 @@ namespace DiningHub.Controllers
             ViewBag.Categories = new SelectList(_context.Categories, "CategoryId", "Name", menuItem.CategoryId);
             return View(menuItem);
         }
-
-
        
         [HttpPost("edit/{id}")]
         [ValidateAntiForgeryToken]
@@ -464,10 +487,54 @@ namespace DiningHub.Controllers
             }
         }
 
+        private async Task DeleteFileFromS3(string key)
+        {
+            var deleteObjectRequest = new DeleteObjectRequest
+            {
+                BucketName = _configuration["AWS:BucketName"],
+                Key = key
+            };
+
+            await _s3Client.DeleteObjectAsync(deleteObjectRequest);
+        }
+
+        [HttpPost("delete-unsaved-image")]
+        public async Task<IActionResult> DeleteUnsavedImage(string unsavedImageUrl)
+        {
+            if (string.IsNullOrEmpty(unsavedImageUrl))
+            {
+                return BadRequest("No image URL provided.");
+            }
+
+            try
+            {
+                if (unsavedImageUrl.StartsWith("http"))
+                {
+                    var key = unsavedImageUrl.Split(new[] { ".amazonaws.com/" }, StringSplitOptions.None)[1].Split('?')[0];
+                    await DeleteFileFromS3(key);
+                    _logger.LogInformation($"Deleted unsaved image from S3: {key}");
+                }
+                else
+                {
+                    var localFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", unsavedImageUrl.TrimStart('/'));
+                    DeleteFile(localFilePath);
+                    _logger.LogInformation($"Deleted unsaved local image: {localFilePath}");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error deleting unsaved image: {ex.Message}");
+                return StatusCode(500, "Internal server error");
+            }
+
+            return Ok("Unsaved image deleted successfully");
+        }
+
+
         private async Task<string> UploadFileToS3(IFormFile file)
         {
             var bucketName = _configuration["AWS:BucketName"];
-            var key = $"images/{file.FileName}";
+            var key = $"images/{Guid.NewGuid()}_{file.FileName}"; // Ensure unique filename
 
             _logger.LogInformation($"Uploading file to bucket {bucketName} with key {key}");
 
@@ -475,18 +542,17 @@ namespace DiningHub.Controllers
             {
                 file.CopyTo(newMemoryStream);
 
-                var uploadRequest = new TransferUtilityUploadRequest
+                var putRequest = new PutObjectRequest
                 {
-                    InputStream = newMemoryStream,
+                    BucketName = bucketName,
                     Key = key,
-                    BucketName = bucketName
+                    InputStream = newMemoryStream,
+                    ContentType = file.ContentType
                 };
-
-                var fileTransferUtility = new TransferUtility(_s3Client);
 
                 try
                 {
-                    await fileTransferUtility.UploadAsync(uploadRequest);
+                    var response = await _s3Client.PutObjectAsync(putRequest);
                     _logger.LogInformation("File uploaded successfully.");
 
                     // Generate a pre-signed URL for 30 days
@@ -494,7 +560,7 @@ namespace DiningHub.Controllers
                     {
                         BucketName = bucketName,
                         Key = key,
-                        Expires = DateTime.UtcNow.AddDays(30) // URL valid for 30 days
+                        Expires = DateTime.UtcNow.AddDays(30)
                     };
 
                     string url = _s3Client.GetPreSignedURL(request);
@@ -503,11 +569,11 @@ namespace DiningHub.Controllers
                 catch (AmazonS3Exception ex)
                 {
                     _logger.LogError($"Error uploading file to S3: {ex.Message}");
-                    throw;
+                    _logger.LogInformation("Saving file locally due to S3 upload failure.");
+                    return await SaveFileLocally(file);
                 }
             }
         }
-
 
 
     }

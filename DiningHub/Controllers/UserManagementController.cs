@@ -12,6 +12,7 @@ using DiningHub.Models;
 using DiningHub.Helper;
 using X.PagedList;
 using Microsoft.Data.SqlClient;
+using X.PagedList.Extensions;
 
 namespace DiningHub.Controllers
 {

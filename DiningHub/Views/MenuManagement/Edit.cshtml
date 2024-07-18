@@ -55,6 +55,11 @@
                     <input type="file" class="form-control rounded-pill" accept="image/*" onchange="uploadImage(event)" id="imageUpload" />
                     <span asp-validation-for="ImageUrl" class="text-danger"></span>
                     <img id="imagePreview" src="@Model.ImageUrl" alt="Image Preview" class="img-thumbnail mt-2" style="max-width: 100px;" />
+                    <div id="loadingContainer" class="mt-2" style="display:none;">
+                        <div class="spinner-border text-primary" role="status">
+                        </div>
+                        <span class="ms-2 text-primary">Loading...</span>
+                    </div>
                 </div>
 
                 <div class="form-group form-check mb-4">
@@ -64,7 +69,7 @@
                 </div>
 
                 <div class="form-group text-center">
-                    <input type="submit" value="Save" class="btn btn-success rounded-pill btn-lg mx-2 col-9" />
+                    <input type="submit" value="Save" id="saveButton" class="btn btn-success rounded-pill btn-lg mx-2 col-9" />
                 </div>
             </form>
         </div>
@@ -77,9 +82,14 @@
         function uploadImage(event) {
             var file = event.target.files[0];
             var fileTypes = ['image/jpeg', 'image/png', 'image/gif'];
+            var oldImageUrl = $('#ImageUrl').val();
             if (file && fileTypes.includes(file.type)) {
                 var formData = new FormData();
                 formData.append('file', file);
+                formData.append('oldImageUrl', oldImageUrl);
+
+                $('#loadingContainer').show();
+                $('#saveButton').prop('disabled', true);
 
                 $.ajax({
                     url: '@Url.Action("UploadImage", "MenuManagement")',
@@ -90,16 +100,46 @@
                     success: function (data) {
                         $('#ImageUrl').val(data.imageUrl);
                         $('#imagePreview').attr('src', data.imageUrl).show();
+                        $('#loadingContainer').hide();
+                        $('#saveButton').prop('disabled', false);
                     },
                     error: function () {
                         alert('Error uploading image. Please try again.');
+                        $('#loadingContainer').hide();
+                        $('#saveButton').prop('disabled', false);
                     }
                 });
             } else {
                 alert('Please select a valid image file (jpg, png, gif).');
                 event.target.value = ''; // Clear the input
                 $('#imagePreview').hide();
+                $('#loadingContainer').hide();
+                $('#saveButton').prop('disabled', false);
             }
         }
+
+        $(document).ready(function () {
+            $('.btn-secondary').click(function (event) {
+                var unsavedImageUrl = $('#ImageUrl').val();
+                if (unsavedImageUrl) {
+                    var formData = new FormData();
+                    formData.append('unsavedImageUrl', unsavedImageUrl);
+
+                    $.ajax({
+                        url: '@Url.Action("DeleteUnsavedImage", "MenuManagement")',
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (data) {
+                            console.log('Unsaved image deleted successfully');
+                        },
+                        error: function () {
+                            console.log('Error deleting unsaved image');
+                        }
+                    });
+                }
+            });
+        });
     </script>
 }

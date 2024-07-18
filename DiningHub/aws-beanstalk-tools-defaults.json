@@ -8,7 +8,7 @@
     "environment"    : "DiningHub-dev",
     "enable-xray"    : false,
     "enhanced-health-type" : "basic",
-    "additional-options"   : "",
+    "additional-options"   : "\"aws:autoscaling:launchconfiguration,SecurityGroups\"=\"sg-0c5872a9619244450,sg-06024adf78e9a4028\";\"aws:ec2:vpc,Subnets\"=\"subnet-0afc2e98eb7a0d799\"",
     "solution-stack"       : "64bit Amazon Linux 2 v2.7.3 running .NET Core",
     "environment-type"     : "SingleInstance",
     "cname"                : "dininghub",
