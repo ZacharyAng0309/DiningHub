@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DiningHub.Migrations
 {
     /// <inheritdoc />
-    public partial class Databasesetup : Migration
+    public partial class DBsetup : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -365,13 +365,19 @@ namespace DiningHub.Migrations
                     ShoppingCartItemId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     MenuItemId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ShoppingCartItems", x => x.ShoppingCartItemId);
+                    table.ForeignKey(
+                        name: "FK_ShoppingCartItems_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_ShoppingCartItems_MenuItems_MenuItemId",
                         column: x => x.MenuItemId,
@@ -484,6 +490,11 @@ namespace DiningHub.Migrations
                 name: "IX_ShoppingCartItems_MenuItemId",
                 table: "ShoppingCartItems",
                 column: "MenuItemId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ShoppingCartItems_UserId",
+                table: "ShoppingCartItems",
+                column: "UserId");
         }
 
         /// <inheritdoc />
