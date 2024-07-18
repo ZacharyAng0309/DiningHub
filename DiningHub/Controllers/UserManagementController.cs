@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using DiningHub.Models;
 using DiningHub.Helper;
 using Microsoft.Data.SqlClient;
@@ -89,7 +88,6 @@ namespace DiningHub.Controllers
             return View(model);
         }
 
-
         [HttpGet("{id}")]
         public async Task<IActionResult> Details(string id)
         {
@@ -149,7 +147,6 @@ namespace DiningHub.Controllers
                 return View(user);
             }
 
-           
             var userWithSameEmail = await _userManager.Users
                 .FirstOrDefaultAsync(u => u.Email == user.Email && u.Id != user.Id);
             if (userWithSameEmail != null)
@@ -158,8 +155,6 @@ namespace DiningHub.Controllers
                 _logger.LogWarning($"A user with the email {user.Email} already exists.");
                 return View(user);
             }
-
-
 
             _logger.LogInformation($"Updating user: {user.UserName}");
 
@@ -238,13 +233,10 @@ namespace DiningHub.Controllers
                 UserName = user.UserName,
                 AvailableRoles = roles,
                 UserRoles = userRoles,
-                
             };
 
             return View(model);
         }
-
-
 
         [HttpPost("manage-roles/{id}")]
         [ValidateAntiForgeryToken]
@@ -354,7 +346,5 @@ namespace DiningHub.Controllers
 
             return RedirectToAction(nameof(AddStaff)); // Ensure redirect to same action to display TempData
         }
-
-
     }
 }

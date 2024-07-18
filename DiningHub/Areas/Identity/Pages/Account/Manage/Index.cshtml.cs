@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.ComponentModel.DataAnnotations;
 using DiningHub.Areas.Identity.Data;
 
 namespace DiningHub.Areas.Identity.Pages.Account.Manage
@@ -46,6 +48,7 @@ namespace DiningHub.Areas.Identity.Pages.Account.Manage
 
             [Phone]
             [Display(Name = "Phone number")]
+            [RegularExpression(@"\d{10,}", ErrorMessage = "The phone number must contain at least 10 digits.")]
             public string PhoneNumber { get; set; }
 
             [DataType(DataType.Date)]

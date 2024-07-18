@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-using DiningHub.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using DiningHub.Helper;
+using DiningHub.Models;
 
 namespace DiningHub.Areas.Identity.Data
 {
@@ -33,6 +31,9 @@ namespace DiningHub.Areas.Identity.Data
         public DateTime? DateOfBirth { get; set; }
 
         public bool IsDeleted { get; set; }
+
+        [RegularExpression(@"\d{10,}", ErrorMessage = "The phone number must contain at least 10 digits.")]
+        public override string PhoneNumber { get; set; }
 
         [BindNever]
         public ICollection<Order> Orders { get; set; }
