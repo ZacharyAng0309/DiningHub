@@ -1,13 +1,14 @@
-﻿using System;
+﻿#nullable disable
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using DiningHub.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using DiningHub.Areas.Identity.Data;
+using Microsoft.Extensions.Logging;
 
 namespace DiningHub.Areas.Identity.Pages.Account.Manage
 {
@@ -15,12 +16,16 @@ namespace DiningHub.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<DiningHubUser> _userManager;
         private readonly SignInManager<DiningHubUser> _signInManager;
+        private readonly ILogger<IndexModel> _logger;
 
-        public IndexModel(UserManager<DiningHubUser> userManager, SignInManager<DiningHubUser> signInManager)
+        public IndexModel(UserManager<DiningHubUser> userManager, SignInManager<DiningHubUser> signInManager, ILogger<IndexModel> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _logger = logger;
         }
+
+        public List<string> UserRoles { get; set; } = new List<string>();
 
         public string Username { get; set; }
 
@@ -32,8 +37,6 @@ namespace DiningHub.Areas.Identity.Pages.Account.Manage
 
         [BindProperty]
         public DeleteInputModel DeleteInput { get; set; }
-
-        public IList<string> UserRoles { get; set; }
 
         public class InputModel
         {
@@ -75,7 +78,6 @@ namespace DiningHub.Areas.Identity.Pages.Account.Manage
             var roles = await _userManager.GetRolesAsync(user);
 
             Username = userName;
-            UserRoles = roles.ToList();
 
             Input = new InputModel
             {
@@ -85,6 +87,8 @@ namespace DiningHub.Areas.Identity.Pages.Account.Manage
                 Email = user.Email,
                 DateOfBirth = user.DateOfBirth
             };
+
+            UserRoles = new List<string>(roles);
         }
 
         public async Task<IActionResult> OnGetAsync()
@@ -127,6 +131,7 @@ namespace DiningHub.Areas.Identity.Pages.Account.Manage
             user.FirstName = Input.FirstName;
             user.LastName = Input.LastName;
             user.DateOfBirth = Input.DateOfBirth;
+            user.Email = Input.Email; // Ensure Email is updated as well
 
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
@@ -136,7 +141,13 @@ namespace DiningHub.Areas.Identity.Pages.Account.Manage
             }
 
             await _signInManager.RefreshSignInAsync(user);
-            StatusMessage = "Your profile has been updated";
+
+            // Logging saved data
+            _logger.LogInformation("Profile updated for user: {UserId}, First Name: {FirstName}, Last Name: {LastName}, Email: {Email}, Date of Birth: {DateOfBirth}, Phone Number: {PhoneNumber}",
+                user.Id, user.FirstName, user.LastName, user.Email, user.DateOfBirth, user.PhoneNumber);
+
+            StatusMessage = $"Your profile has been updated. \n First Name: {user.FirstName}, \n Last Name: {user.LastName}, \n Email: {user.Email}, \n Date of Birth: {user.DateOfBirth?.ToShortDateString()}, \n Phone Number: {user.PhoneNumber}";
+
             return RedirectToPage();
         }
 
