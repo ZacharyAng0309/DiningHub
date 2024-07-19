@@ -103,7 +103,7 @@ namespace DiningHub.Areas.Identity.Pages.Account.Manage
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostUpdateProfileAsync()
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
@@ -111,8 +111,24 @@ namespace DiningHub.Areas.Identity.Pages.Account.Manage
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            if (!ModelState.IsValid)
+            // Clear model state errors for DeleteInputModel properties
+            ModelState.Remove(nameof(DeleteInput.Password));
+            ModelState.Remove(nameof(DeleteInput.ConfirmPassword));
+
+            // Remove all errors related to the properties that are not being updated in the Input model
+            ModelState.Remove(nameof(Input.Email));
+
+            if (!TryValidateModel(Input))
             {
+                // Log ModelState errors
+                foreach (var modelState in ModelState.Values)
+                {
+                    foreach (var error in modelState.Errors)
+                    {
+                        _logger.LogError(error.ErrorMessage);
+                    }
+                }
+
                 await LoadAsync(user);
                 return Page();
             }
@@ -131,7 +147,7 @@ namespace DiningHub.Areas.Identity.Pages.Account.Manage
             user.FirstName = Input.FirstName;
             user.LastName = Input.LastName;
             user.DateOfBirth = Input.DateOfBirth;
-            user.Email = Input.Email; // Ensure Email is updated as well
+            user.PhoneNumber = Input.PhoneNumber;
 
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
@@ -142,16 +158,15 @@ namespace DiningHub.Areas.Identity.Pages.Account.Manage
 
             await _signInManager.RefreshSignInAsync(user);
 
-            // Logging saved data
             _logger.LogInformation("Profile updated for user: {UserId}, First Name: {FirstName}, Last Name: {LastName}, Email: {Email}, Date of Birth: {DateOfBirth}, Phone Number: {PhoneNumber}",
                 user.Id, user.FirstName, user.LastName, user.Email, user.DateOfBirth, user.PhoneNumber);
 
-            StatusMessage = $"Your profile has been updated. \n First Name: {user.FirstName}, \n Last Name: {user.LastName}, \n Email: {user.Email}, \n Date of Birth: {user.DateOfBirth?.ToShortDateString()}, \n Phone Number: {user.PhoneNumber}";
+            StatusMessage = $"Your profile has been updated.";
 
             return RedirectToPage();
         }
 
-        public async Task<IActionResult> OnPostDeleteAsync()
+        public async Task<IActionResult> OnPostDeleteAccountAsync()
         {
             if (!ModelState.IsValid)
             {

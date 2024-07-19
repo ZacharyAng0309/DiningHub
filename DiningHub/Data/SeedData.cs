@@ -339,8 +339,8 @@ namespace DiningHub.Data
                     FirstName = "Staff",
                     LastName = "Member",
                     PhoneNumber = "0123456789",
-                    DateOfBirth = DateTimeHelper.GetMalaysiaTime().AddYears(-25), // Optional DateOfBirth
-                    EmailConfirmed = true // Ensure email is confirmed at creation
+                    DateOfBirth = DateTimeHelper.GetMalaysiaTime().AddYears(-25),
+                    EmailConfirmed = true 
                 };
 
                 var result = await userManager.CreateAsync(staffUser, staffPassword);

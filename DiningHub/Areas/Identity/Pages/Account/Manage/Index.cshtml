@@ -9,7 +9,7 @@
 
 <div class="container-fluid shadow rounded-3 mb-5 bg-white py-5">
     <h2>Profile Information</h2>
-    <form id="profile-form" method="post">
+    <form id="profile-form" method="post" asp-page-handler="UpdateProfile">
         <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
         <div class="row">
             <div class="col-sm-6 col-md-6 mb-3">
@@ -53,30 +53,15 @@
                     <label asp-for="Input.PhoneNumber" class="form-label"></label>
                     <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
                 </div>
-            </div> 
+            </div>
         </div>
         <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary mt-3">Save</button>
     </form>
 
-
-@*    --Debug purpose
-    <div>
-        <strong>User Roles:</strong>
-        @foreach (var role in Model.UserRoles)
-        {
-            <span>@role </span>
-        }
-        @if (!Model.UserRoles.Any())
-        {
-            <span class="text-danger">No roles found for this user.</span>
-        }
-    </div> *@
-
     @if (!Model.UserRoles.Contains("Manager"))
     {
-        
         <h2 class="mt-5">Delete Account</h2>
-        <form id="delete-account-form" method="post" asp-page-handler="Delete">
+        <form id="delete-account-form" method="post" asp-page-handler="DeleteAccount">
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
             <div class="form-floating mb-3">
                 <input asp-for="DeleteInput.Password" class="form-control" placeholder="Password" />
@@ -90,9 +75,7 @@
             </div>
             <button id="delete-account-button" type="submit" class="w-100 btn btn-lg btn-danger mt-3" onclick="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">Delete Account</button>
         </form>
-}
-
-   
+    }
 </div>
 
 @section Scripts {
