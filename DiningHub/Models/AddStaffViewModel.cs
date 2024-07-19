@@ -25,5 +25,9 @@ namespace DiningHub.Models
         [Required]
         [StringLength(50)]
         public string LastName { get; set; }
+
+        [Required]
+        [RegularExpression(@"\d{10,}", ErrorMessage = "The phone number must contain at least 10 digits.")]
+        public string PhoneNumber { get; set; }
     }
 }

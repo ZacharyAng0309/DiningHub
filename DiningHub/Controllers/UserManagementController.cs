@@ -296,6 +296,7 @@ namespace DiningHub.Controllers
                             TempData["AlertMessage"] = "A user with this email address already exists.";
                             _logger.LogWarning($"A user with the email {model.Email} already exists.");
                         }
+                        _logger.LogInformation("Redirecting to AddStaff due to existing user.");
                         return RedirectToAction(nameof(AddStaff)); // Ensure redirect to same action to display TempData
                     }
 
@@ -305,6 +306,7 @@ namespace DiningHub.Controllers
                         Email = model.Email,
                         FirstName = model.FirstName,
                         LastName = model.LastName,
+                        PhoneNumber = model.PhoneNumber,
                         EmailConfirmed = true, // Set to true if email confirmation is not required
                         CreatedAt = DateTimeHelper.GetMalaysiaTime(),
                         UpdatedAt = DateTimeHelper.GetMalaysiaTime()
@@ -319,11 +321,26 @@ namespace DiningHub.Controllers
                             _logger.LogInformation($"Staff user {model.Email} created successfully.");
                             return RedirectToAction(nameof(Index));
                         }
+                        else
+                        {
+                            _logger.LogError("Failed to add role 'Staff' to user.");
+                        }
                     }
-
-                    foreach (var error in result.Errors)
+                    else
                     {
-                        ModelState.AddModelError(string.Empty, error.Description);
+                        foreach (var error in result.Errors)
+                        {
+                            // Check if the error is related to the password and add to ModelState
+                            if (error.Code.StartsWith("Password"))
+                            {
+                                ModelState.AddModelError("Password", error.Description);
+                            }
+                            else
+                            {
+                                ModelState.AddModelError(string.Empty, error.Description);
+                            }
+                            _logger.LogError($"Error creating user: {error.Description}");
+                        }
                     }
                 }
                 catch (DbUpdateException ex) when (ex.InnerException is SqlException sqlEx && sqlEx.Number == 2627)
@@ -342,9 +359,14 @@ namespace DiningHub.Controllers
             else
             {
                 TempData["AlertMessage"] = "Please correct the errors in the form.";
+                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    _logger.LogError($"ModelState Error: {error.ErrorMessage}");
+                }
             }
 
-            return RedirectToAction(nameof(AddStaff)); // Ensure redirect to same action to display TempData
+            _logger.LogInformation("Redirecting to AddStaff due to form errors.");
+            return View(model); // Ensure the view is returned with model to display validation errors
         }
     }
 }

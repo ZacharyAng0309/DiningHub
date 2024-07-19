@@ -310,6 +310,7 @@ namespace DiningHub.Data
                     Email = adminEmail,
                     FirstName = "Admin",
                     LastName = "User",
+                    PhoneNumber = "1234567890",
                     DateOfBirth = DateTimeHelper.GetMalaysiaTime().AddYears(-30), // Optional DateOfBirth
                     EmailConfirmed = true // Ensure email is confirmed at creation
                 };
@@ -337,6 +338,7 @@ namespace DiningHub.Data
                     Email = staffEmail,
                     FirstName = "Staff",
                     LastName = "Member",
+                    PhoneNumber = "1234567890",
                     DateOfBirth = DateTimeHelper.GetMalaysiaTime().AddYears(-25), // Optional DateOfBirth
                     EmailConfirmed = true // Ensure email is confirmed at creation
                 };
@@ -364,6 +366,7 @@ namespace DiningHub.Data
                     Email = customerEmail,
                     FirstName = "Customer",
                     LastName = "User",
+                    PhoneNumber = "1234567890",
                     DateOfBirth = DateTimeHelper.GetMalaysiaTime().AddYears(-20), // Optional DateOfBirth
                     EmailConfirmed = true // Ensure email is confirmed at creation
                 };
