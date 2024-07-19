@@ -46,7 +46,8 @@ namespace DiningHub.Controllers
         public async Task<IActionResult> OrderReport(DateTime? startDate, DateTime? endDate)
         {
             startDate ??= DateTimeHelper.GetMalaysiaTime().AddMonths(-1);
-            endDate ??= DateTimeHelper.GetMalaysiaTime();
+            endDate ??= DateTimeHelper.GetMalaysiaTime().AddDays(1);
+
 
             var popularProducts = await GetPopularProductsAsync((DateTime)startDate, (DateTime)endDate);
             var popularCategories = await GetPopularCategoriesAsync((DateTime)startDate, (DateTime)endDate);
@@ -67,7 +68,8 @@ namespace DiningHub.Controllers
         public async Task<IActionResult> UserReport(DateTime? startDate, DateTime? endDate)
         {
             startDate ??= DateTimeHelper.GetMalaysiaTime().AddMonths(-1);
-            endDate ??= DateTimeHelper.GetMalaysiaTime();
+            endDate ??= DateTimeHelper.GetMalaysiaTime().AddDays(1);
+
 
             var userActivity = await GetUserActivityAsync((DateTime)startDate, (DateTime)endDate);
 

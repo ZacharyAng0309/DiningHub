@@ -18,10 +18,13 @@
                             <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" class="form-control rounded-pill" placeholder="Search by name or desc..." />
                             <select name="categoryId" class="form-select mx-2 rounded-pill">
                                 <option value="">All Categories</option>
-                                @foreach (var category in ViewBag.Categories)
+                                @if (ViewBag.Categories != null)
                                 {
-                                    bool selected = category.CategoryId == (int?)ViewData["CurrentCategory"];
-                                    <option value="@category.CategoryId" selected="@selected">@category.Name</option>
+                                    foreach (var category in ViewBag.Categories)
+                                    {
+                                        bool selected = category.CategoryId == (int?)ViewData["CurrentCategory"];
+                                        <option value="@category.CategoryId" selected="@selected">@category.Name</option>
+                                    }
                                 }
                             </select>
                             <button type="submit" class="btn btn-primary rounded-pill">Filter</button>
@@ -117,15 +120,29 @@
                             <dt class="col-sm-4">Quantity</dt>
                             <dd class="col-sm-8">@item.Quantity</dd>
                             <dt class="col-sm-4">Category</dt>
-                            <dd class="col-sm-8">@item.Category.Name</dd>
+                            <dd class="col-sm-8">@item.Category?.Name</dd>
                             <dt class="col-sm-4">Created By</dt>
-                            <dd class="col-sm-8">@item.CreatedBy.UserName</dd>
+                            <dd class="col-sm-8">
+                                @{
+                                    var createdBy = item.CreatedBy == null || item.CreatedBy.IsDeleted
+                                    ? "Deleted User"
+                                    : item.CreatedBy.UserName;
+                                }
+                                @createdBy
+                            </dd>
                             <dt class="col-sm-4">Created At</dt>
                             <dd class="col-sm-8">@item.CreatedAt.ToString("g")</dd>
                             <dt class="col-sm-4">Last Updated</dt>
                             <dd class="col-sm-8">@item.UpdatedAt.ToString("g")</dd>
                             <dt class="col-sm-4">Last Updated By</dt>
-                            <dd class="col-sm-8">@item.LastUpdatedBy.UserName</dd>
+                            <dd class="col-sm-8">
+                                @{
+                                    var lastUpdatedBy = item.LastUpdatedBy == null || item.LastUpdatedBy.IsDeleted
+                                    ? "Deleted User"
+                                    : item.LastUpdatedBy.UserName;
+                                }
+                                @lastUpdatedBy
+                            </dd>
                         </dl>
                     </div>
                 </div>
@@ -135,7 +152,6 @@
                         <button type="submit" class="btn btn-danger rounded-pill col-12" onclick="return confirm('Are you sure you want to delete this inventory item?');">Delete</button>
                     </form>
                     <button type="button" class="btn btn-secondary rounded-pill col-2" data-bs-dismiss="modal">Close</button>
-                  
                 </div>
             </div>
         </div>
