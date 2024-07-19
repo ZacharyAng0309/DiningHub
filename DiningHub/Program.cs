@@ -20,12 +20,12 @@ builder.Logging.AddEventSourceLogger();
 builder.Logging.SetMinimumLevel(LogLevel.Debug);
 
 // Configure connection string (Cloud)
-//string connectionString = builder.Configuration.GetConnectionString("DiningHubContextConnection")
-//    ?? throw new InvalidOperationException("Connection string 'DiningHubContextConnection' not found.");
+string connectionString = builder.Configuration.GetConnectionString("DiningHubContextConnection")
+    ?? throw new InvalidOperationException("Connection string 'DiningHubContextConnection' not found.");
 
 // Configure connection string (Cloud)
-string connectionString = builder.Configuration.GetConnectionString("DiningHubContextConnectionCloud")
-    ?? throw new InvalidOperationException("Connection string 'DiningHubContextConnectionCloud' not found.");
+//string connectionString = builder.Configuration.GetConnectionString("DiningHubContextConnectionCloud")
+//    ?? throw new InvalidOperationException("Connection string 'DiningHubContextConnectionCloud' not found.");
 
 // Configure DbContext with SQL Server
 builder.Services.AddDbContext<DiningHubContext>(options =>
