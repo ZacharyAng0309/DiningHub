@@ -73,7 +73,13 @@
         <div id="OnlineBankingInfo" style="display:none;">
             <div class="mb-3">
                 <label for="BankName" class="form-label">Bank Name</label>
-                <input id="BankName" name="BankName" class="form-control rounded-pill" />
+                <select id="BankName" name="BankName" class="form-control rounded-pill">
+                    <option value="">Select your bank</option>
+                    <option value="Maybank">Maybank</option>
+                    <option value="CIMB">CIMB</option>
+                    <option value="HongLeongBank">Hong Leong Bank</option>
+                    <option value="PublicBank">Public Bank</option>
+                </select>
                 <span id="BankNameError" class="text-danger"></span>
             </div>
             <div class="mb-3">
@@ -126,7 +132,15 @@
                 if (!creditCardNumber) {
                     document.getElementById("CreditCardNumberError").textContent = "Credit card number is required.";
                     isValid = false;
+                
+                } else if (!/^\d+$/.test(creditCardNumber)) {
+                    document.getElementById("CreditCardNumberError").textContent = "Credit card number must contain only digits.";
+                    isValid = false;
+                } else if (creditCardNumber.length < 13 || creditCardNumber.length > 19) {
+                    document.getElementById("CreditCardNumberError").textContent = "Credit card number must be between 13 and 19 digits.";
+                    isValid = false;
                 }
+
 
                 if (!expirationDate) {
                     document.getElementById("ExpirationDateError").textContent = "Expiration date is required.";
@@ -134,6 +148,17 @@
                 } else if (!/^\d{2}\/\d{2}$/.test(expirationDate)) {
                     document.getElementById("ExpirationDateError").textContent = "Expiration date must be in the format MM/YY.";
                     isValid = false;
+                } else {
+                    var parts = expirationDate.split('/');
+                    var month = parseInt(parts[0], 10);
+                    var year = parseInt(parts[1], 10);
+                    if (year < 24) {
+                        document.getElementById("ExpirationDateError").textContent = "Expiration year must be 2024 or later.";
+                        isValid = false;
+                    } else if (month < 1 || month > 12) {
+                        document.getElementById("ExpirationDateError").textContent = "Expiration month must be between 01 and 12.";
+                        isValid = false;
+                    }
                 }
 
                 if (!cvv) {
@@ -158,6 +183,12 @@
 
                 if (!accountNumber) {
                     document.getElementById("AccountNumberError").textContent = "Account number is required.";
+                    isValid = false;
+                } else if (!/^\d+$/.test(accountNumber)) {
+                    document.getElementById("AccountNumberError").textContent = "Account number must contain only digits.";
+                    isValid = false;
+                } else if (accountNumber.length < 8 || accountNumber.length > 12) {
+                    document.getElementById("AccountNumberError").textContent = "Account number must be between 8 and 12 digits.";
                     isValid = false;
                 }
             }

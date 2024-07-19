@@ -81,6 +81,7 @@ namespace DiningHub.Areas.Identity.Pages.Account
             [Required]
             [Phone]
             [Display(Name = "Phone Number")]
+            [RegularExpression(@"\d{10,}", ErrorMessage = "The phone number must contain at least 10 digits.")]
             public string PhoneNumber { get; set; }
 
             // Optional: Role selection during registration
@@ -146,7 +147,7 @@ namespace DiningHub.Areas.Identity.Pages.Account
                 catch (Exception ex)
                 {
                     // Handle other exceptions
-                    ModelState.AddModelError(string.Empty, "A deleted account with this email address already exists. Please use other email address.");
+                    ModelState.AddModelError(string.Empty, "A user with this email address already exists but is deactivated. Please contact support to reactivate the account.");
                     _logger.LogError($"Unexpected error: {ex.Message}");
                 }
             }

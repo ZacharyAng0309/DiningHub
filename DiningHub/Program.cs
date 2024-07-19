@@ -19,7 +19,7 @@ builder.Logging.AddDebug();
 builder.Logging.AddEventSourceLogger();
 builder.Logging.SetMinimumLevel(LogLevel.Debug);
 
-// Configure connection string (Cloud)
+// Configure connection string (Local)
 string connectionString = builder.Configuration.GetConnectionString("DiningHubContextConnection")
     ?? throw new InvalidOperationException("Connection string 'DiningHubContextConnection' not found.");
 
