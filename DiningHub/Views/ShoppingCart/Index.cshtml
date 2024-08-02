@@ -36,7 +36,7 @@
                             @item.MenuItem.Name
                         </td>
                         <td class="align-middle text-wrap">@item.MenuItem.Description</td>
-                        <td class="align-middle">@item.MenuItem.Price.ToString("C")</td>
+                        <td class="align-middle">RM @item.MenuItem.Price</td>
                         <td class="align-middle">
                             <form asp-action="UpdateQuantity" method="post" class="d-inline">
                                 <input type="hidden" name="cartItemId" value="@item.ShoppingCartItemId" />

@@ -5,9 +5,13 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using DiningHub.Data;
 using Amazon.S3;
+using Amazon.SimpleNotificationService;
+using Amazon.SQS;
 using Amazon.Runtime;
 using Amazon;
 using DotNetEnv;
+using DiningHub.Helpers;
+using DiningHub.Models;
 
 // Load environment variables from .env file
 Env.Load();
@@ -20,12 +24,12 @@ builder.Logging.AddEventSourceLogger();
 builder.Logging.SetMinimumLevel(LogLevel.Debug);
 
 // Configure connection string (Local)
-string connectionString = builder.Configuration.GetConnectionString("DiningHubContextConnection")
-    ?? throw new InvalidOperationException("Connection string 'DiningHubContextConnection' not found.");
+//string connectionString = builder.Configuration.GetConnectionString("DiningHubContextConnection")
+//    ?? throw new InvalidOperationException("Connection string 'DiningHubContextConnection' not found.");
 
 // Configure connection string (Cloud)
-//string connectionString = builder.Configuration.GetConnectionString("DiningHubContextConnectionCloud")
-//    ?? throw new InvalidOperationException("Connection string 'DiningHubContextConnectionCloud' not found.");
+string connectionString = builder.Configuration.GetConnectionString("DiningHubContextConnectionCloud")
+    ?? throw new InvalidOperationException("Connection string 'DiningHubContextConnectionCloud' not found.");
 
 // Configure DbContext with SQL Server
 builder.Services.AddDbContext<DiningHubContext>(options =>
@@ -75,10 +79,22 @@ var awsAccessKeyId = Environment.GetEnvironmentVariable("AWS_ACCESS_KEY_ID");
 var awsSecretAccessKey = Environment.GetEnvironmentVariable("AWS_SECRET_ACCESS_KEY");
 var awsSessionToken = Environment.GetEnvironmentVariable("AWS_SESSION_TOKEN");
 var region = Environment.GetEnvironmentVariable("AWS_REGION");
+var snsTopicArn = Environment.GetEnvironmentVariable("AWS_SNS_TOPIC_ARN");
+var sqsQueueUrl = Environment.GetEnvironmentVariable("AWS_SQS_QUEUE_URL");
 
 var awsCredentials = new SessionAWSCredentials(awsAccessKeyId, awsSecretAccessKey, awsSessionToken);
 
 builder.Services.AddSingleton<IAmazonS3>(new AmazonS3Client(awsCredentials, RegionEndpoint.GetBySystemName(region)));
+builder.Services.AddSingleton<IAmazonSimpleNotificationService>(new AmazonSimpleNotificationServiceClient(awsCredentials, RegionEndpoint.GetBySystemName(region)));
+builder.Services.AddSingleton<IAmazonSQS>(new AmazonSQSClient(awsCredentials, RegionEndpoint.GetBySystemName(region)));
+
+builder.Services.AddSingleton(new AWSSettings
+{
+    SnsTopicArn = snsTopicArn,
+    SqsQueueUrl = sqsQueueUrl
+});
+
+builder.Services.AddHostedService<SqsBackgroundService>();
 
 builder.Services.AddLogging(loggingBuilder =>
 {
