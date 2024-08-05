@@ -10,12 +10,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
-using Amazon.SimpleNotificationService;
-using Amazon.SimpleNotificationService.Model;
-using Amazon.SQS;
 using Amazon.SQS.Model;
 using System.Text.Json;
-using System.Text;
+using Amazon.SimpleNotificationService;
+using Amazon.SQS;
 
 namespace DiningHub.Controllers
 {
@@ -41,7 +39,139 @@ namespace DiningHub.Controllers
             _awsSettings = awsSettings;
         }
 
-        // Other methods...
+        // View the shopping cart
+        public async Task<IActionResult> Index()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var cartItems = await _context.ShoppingCartItems
+                .Include(c => c.MenuItem)
+                .Where(c => c.UserId == userId)
+                .ToListAsync();
+
+            // Check for soft-deleted menu items and remove them from the cart
+            var itemsToRemove = cartItems.Where(c => c.MenuItem.IsDeleted).ToList();
+            if (itemsToRemove.Any())
+            {
+                _context.ShoppingCartItems.RemoveRange(itemsToRemove);
+                await _context.SaveChangesAsync();
+            }
+
+            // Reload the cart items after removal
+            cartItems = await _context.ShoppingCartItems
+                .Include(c => c.MenuItem)
+                .Where(c => c.UserId == userId)
+                .ToListAsync();
+
+            if (!cartItems.Any())
+            {
+                ViewBag.Message = "No items in your cart.";
+                return View(cartItems);
+            }
+
+            return View(cartItems);
+        }
+
+        // Add item to the cart (POST)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddToCart(int menuItemId)
+        {
+            var menuItem = await _context.MenuItems.FindAsync(menuItemId);
+            if (menuItem == null || menuItem.IsDeleted)
+            {
+                return NotFound();
+            }
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var cartItem = await _context.ShoppingCartItems.FirstOrDefaultAsync(c => c.MenuItemId == menuItemId && c.UserId == userId);
+
+            if (cartItem == null)
+            {
+                cartItem = new ShoppingCartItem
+                {
+                    MenuItemId = menuItemId,
+                    Quantity = 1,
+                    UserId = userId
+                };
+                _context.ShoppingCartItems.Add(cartItem);
+            }
+            else
+            {
+                cartItem.Quantity++;
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        // Remove item from the cart (GET)
+        public async Task<IActionResult> RemoveFromCart(int cartItemId)
+        {
+            var cartItem = await _context.ShoppingCartItems.FindAsync(cartItemId);
+            if (cartItem == null)
+            {
+                return NotFound();
+            }
+
+            _context.ShoppingCartItems.Remove(cartItem);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        // Update the quantity of an item in the cart (POST)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateQuantity(int cartItemId, int quantity)
+        {
+            var cartItem = await _context.ShoppingCartItems.FindAsync(cartItemId);
+            if (cartItem == null)
+            {
+                return NotFound();
+            }
+
+            if (quantity > 0)
+            {
+                cartItem.Quantity = quantity;
+                _context.ShoppingCartItems.Update(cartItem);
+            }
+            else
+            {
+                _context.ShoppingCartItems.Remove(cartItem);
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        // Checkout (GET)
+        public async Task<IActionResult> Checkout()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var cartItems = await _context.ShoppingCartItems
+                .Include(c => c.MenuItem)
+                .Where(c => c.UserId == userId)
+                .ToListAsync();
+
+            if (!cartItems.Any())
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            var checkoutViewModel = new CheckoutViewModel
+            {
+                CartItems = cartItems,
+                TotalAmount = cartItems.Sum(c => c.MenuItem.Price * c.Quantity)
+            };
+
+            ViewBag.PaymentMethods = new SelectList(new List<SelectListItem>
+            {
+                new SelectListItem { Text = "Credit/Debit Card", Value = "CreditCard" },
+                new SelectListItem { Text = "Online Banking", Value = "OnlineBanking" },
+                new SelectListItem { Text = "Other", Value = "Other" }
+            }, "Value", "Text");
+
+            return View(checkoutViewModel);
+        }
 
         // Confirm Checkout (POST)
         [HttpPost]
@@ -49,8 +179,6 @@ namespace DiningHub.Controllers
         public async Task<IActionResult> ConfirmCheckout(CheckoutViewModel model)
         {
             _logger.LogInformation("ConfirmCheckout POST request received.");
-
-            // Additional server-side validation can be added here if needed
 
             var user = await _userManager.GetUserAsync(User);
 
