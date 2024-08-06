@@ -23,10 +23,6 @@ builder.Logging.AddDebug();
 builder.Logging.AddEventSourceLogger();
 builder.Logging.SetMinimumLevel(LogLevel.Debug);
 
-// Configure connection string (Local)
-//string connectionString = builder.Configuration.GetConnectionString("DiningHubContextConnection")
-//    ?? throw new InvalidOperationException("Connection string 'DiningHubContextConnection' not found.");
-
 // Configure connection string (Cloud)
 string connectionString = builder.Configuration.GetConnectionString("DiningHubContextConnectionCloud")
     ?? throw new InvalidOperationException("Connection string 'DiningHubContextConnectionCloud' not found.");
@@ -94,7 +90,7 @@ builder.Services.AddSingleton(new AWSSettings
     SqsQueueUrl = sqsQueueUrl
 });
 
-builder.Services.AddHostedService<SqsBackgroundService>();
+// Removed SqsBackgroundService as it is now handled by AWS Lambda
 
 builder.Services.AddLogging(loggingBuilder =>
 {
