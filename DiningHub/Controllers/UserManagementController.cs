@@ -11,6 +11,8 @@ using DiningHub.Models;
 using DiningHub.Helper;
 using Microsoft.Data.SqlClient;
 using DiningHub.Helpers;
+using Amazon.SimpleNotificationService;
+using Amazon.SimpleNotificationService.Model;
 
 namespace DiningHub.Controllers
 {
@@ -21,12 +23,17 @@ namespace DiningHub.Controllers
         private readonly UserManager<DiningHubUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ILogger<UserManagementController> _logger;
+        private readonly IAmazonSimpleNotificationService _snsClient;
+        private readonly string _staffSnsTopicArn;
 
-        public UserManagementController(UserManager<DiningHubUser> userManager, RoleManager<IdentityRole> roleManager, ILogger<UserManagementController> logger)
+        public UserManagementController(UserManager<DiningHubUser> userManager, RoleManager<IdentityRole> roleManager, ILogger<UserManagementController> logger, IAmazonSimpleNotificationService snsClient)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _logger = logger;
+            _snsClient = snsClient;
+            _staffSnsTopicArn = Environment.GetEnvironmentVariable("STAFF_SNS_TOPIC_ARN")
+                ?? throw new InvalidOperationException("STAFF_SNS_TOPIC_ARN is not configured.");
         }
 
         [HttpGet("")]
@@ -206,6 +213,8 @@ namespace DiningHub.Controllers
             var result = await _userManager.UpdateAsync(user);
             if (result.Succeeded)
             {
+                // Unsubscribe the staff from SNS
+                await UnsubscribeStaffAsync(user.Email);
                 return RedirectToAction(nameof(Index));
             }
 
@@ -265,6 +274,16 @@ namespace DiningHub.Controllers
                 return View(model);
             }
 
+            // Subscribe or unsubscribe from SNS topic based on roles
+            if (selectedRoles.Contains("Staff"))
+            {
+                await SubscribeStaffAsync(user.Email);
+            }
+            else
+            {
+                await UnsubscribeStaffAsync(user.Email);
+            }
+
             return RedirectToAction(nameof(Details), new { id = user.Id });
         }
 
@@ -319,6 +338,8 @@ namespace DiningHub.Controllers
                         if (result.Succeeded)
                         {
                             _logger.LogInformation($"Staff user {model.Email} created successfully.");
+                            // Subscribe the new staff member to the SNS topic
+                            await SubscribeStaffAsync(user.Email);
                             return RedirectToAction(nameof(Index));
                         }
                         else
@@ -367,6 +388,44 @@ namespace DiningHub.Controllers
 
             _logger.LogInformation("Redirecting to AddStaff due to form errors.");
             return View(model); // Ensure the view is returned with model to display validation errors
+        }
+
+        private async Task SubscribeStaffAsync(string email)
+        {
+            try
+            {
+                var subscribeRequest = new SubscribeRequest
+                {
+                    TopicArn = _staffSnsTopicArn,
+                    Protocol = "email",
+                    Endpoint = email,
+                    ReturnSubscriptionArn = true // Automatically confirm the subscription
+                };
+                var subscribeResponse = await _snsClient.SubscribeAsync(subscribeRequest);
+                _logger.LogInformation($"Staff {email} subscribed to SNS topic with SubscriptionArn: {subscribeResponse.SubscriptionArn}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error subscribing staff {email} to SNS topic: {ex.Message}");
+            }
+        }
+
+        private async Task UnsubscribeStaffAsync(string email)
+        {
+            try
+            {
+                var listSubscriptionsResponse = await _snsClient.ListSubscriptionsByTopicAsync(_staffSnsTopicArn);
+                var subscription = listSubscriptionsResponse.Subscriptions.FirstOrDefault(s => s.Endpoint == email);
+                if (subscription != null)
+                {
+                    await _snsClient.UnsubscribeAsync(subscription.SubscriptionArn);
+                    _logger.LogInformation($"Staff {email} unsubscribed from SNS topic with SubscriptionArn: {subscription.SubscriptionArn}");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error unsubscribing staff {email} from SNS topic: {ex.Message}");
+            }
         }
     }
 }
